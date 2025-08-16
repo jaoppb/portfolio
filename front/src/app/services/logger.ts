@@ -16,6 +16,14 @@ const ColorMap: Record<LogLevel, string> = {
     [LogLevel.ERROR]: 'color: #f00',
 };
 
+const functionMapping: Record<LogLevel, 'trace' | 'debug' | 'info' | 'warn' | 'error'> = {
+    [LogLevel.TRACE]: 'trace',
+    [LogLevel.DEBUG]: 'debug',
+    [LogLevel.INFO]: 'info',
+    [LogLevel.WARN]: 'warn',
+    [LogLevel.ERROR]: 'error',
+};
+
 @Injectable({
     providedIn: 'root',
 })
@@ -23,7 +31,13 @@ export class LoggerService {
     private _log(level: LogLevel, tag: string, message: string, ...args: any[]) {
         if (!isDevMode() && level !== LogLevel.ERROR) return;
 
-        console.log('%c', `${ColorMap[level]};`, `[${LogLevel[level]}] [${tag}]`, message, ...args);
+        console[functionMapping[level]](
+            '%c',
+            `${ColorMap[level]};`,
+            `[${LogLevel[level]}] [${tag}]`,
+            message,
+            ...args
+        );
     }
 
     trace(tag: string, message: string, ...args: any[]) {
