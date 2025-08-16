@@ -30,3 +30,4 @@ The [blender](https://blender.org) was used to model and some assets was downloa
 -   [Placeholder Books](https://www.blenderkit.com/asset-gallery-detail/bbd0c484-b823-4c0b-bef6-3c1ad07b7f40/)
 -   [DualShock 4](https://skfb.ly/oPRAI)
 -   [Wood Material](https://www.blenderkit.com/get-blenderkit/752306e7-fb72-4a84-89a1-3be404dcdc38/)
+-   [Paper Material](https://www.blenderkit.com/get-blenderkit/2168faea-3e64-42b6-89b3-d8d083805db2/)
