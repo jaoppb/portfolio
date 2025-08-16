@@ -29,3 +29,4 @@ The [blender](https://blender.org) was used to model and some assets was downloa
 -   [Bonsai](https://www.blenderkit.com/asset-gallery-detail/e660c066-9036-41eb-bb8f-de21ac070970/)
 -   [Placeholder Books](https://www.blenderkit.com/asset-gallery-detail/bbd0c484-b823-4c0b-bef6-3c1ad07b7f40/)
 -   [DualShock 4](https://skfb.ly/oPRAI)
+-   [Wood Material](https://www.blenderkit.com/get-blenderkit/752306e7-fb72-4a84-89a1-3be404dcdc38/)
