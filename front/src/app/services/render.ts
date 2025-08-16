@@ -67,8 +67,8 @@ export class RenderService implements OnDestroy {
             0.1,
             1000
         );
-        this.camera.position.set(-3.5, 5, -1);
-        this.camera.lookAt(-6, 4, -1);
+        this.camera.position.set(-3.5, 5.5, -1);
+        this.camera.lookAt(-6, 4.5, -1);
         light.position.set(
             this.camera.position.x,
             this.camera.position.y + 1,
