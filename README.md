@@ -12,6 +12,70 @@ The idea is to make a bookshelf or some sort of structure that holds some books 
 -   Each book will contains at least two pages, one with an overview and another with a image
 -   Each object in the scene will be focusable
 
+## 🌲 Project Structure
+
+```bash
+portfolio/
+├── front
+│   ├── angular.json
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   ├── favicon.ico
+│   │   └── models
+│   │       ├── bonsai.glb
+│   │       ├── book.glb
+│   │       ├── book_supports.glb
+│   │       ├── dualshock.glb
+│   │       └── planks.glb
+│   ├── README.md
+│   ├── src
+│   │   ├── app
+│   │   │   ├── app.config.server.ts
+│   │   │   ├── app.config.ts
+│   │   │   ├── app.html
+│   │   │   ├── app.routes.server.ts
+│   │   │   ├── app.routes.ts
+│   │   │   ├── app.scss
+│   │   │   ├── app.spec.ts
+│   │   │   ├── app.ts
+│   │   │   ├── models
+│   │   │   │   ├── bonsai.ts
+│   │   │   │   ├── book-supports.ts
+│   │   │   │   ├── book.ts
+│   │   │   │   ├── dualshock.ts
+│   │   │   │   ├── loadable.ts
+│   │   │   │   └── planks.ts
+│   │   │   ├── pages
+│   │   │   │   └── scene
+│   │   │   │       ├── scene.html
+│   │   │   │       ├── scene.scss
+│   │   │   │       ├── scene.spec.ts
+│   │   │   │       └── scene.ts
+│   │   │   └── services
+│   │   │       ├── logger.spec.ts
+│   │   │       ├── logger.ts
+│   │   │       ├── render.spec.ts
+│   │   │       └── render.ts
+│   │   ├── index.html
+│   │   ├── main.server.ts
+│   │   ├── main.ts
+│   │   ├── server.ts
+│   │   └── styles.scss
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   └── tsconfig.spec.json
+└── README.md
+```
+
+## ⚙️ Technologies
+
+![Blender](https://img.shields.io/badge/Blender-E87D0D?style=for-the-badge&logo=blender&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.JS-000000?style=for-the-badge&logo=three.js&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Node](https://img.shields.io/badge/Node.JS-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+
 ## 🧠 Brainstorming Process
 
 Initially it would be a simulation in a terminal. But in the end the idea didn't go through because the only outstanding thing was the terminal itself, with the final outcome a low resolution simulation.
