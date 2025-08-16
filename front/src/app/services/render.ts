@@ -1,7 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
 import { LoggerService } from './logger';
-import { BookshelfModel } from '@app/models/bookshelf';
+import { PlanksModel } from '@app/models/planks';
+import { BonsaiModel } from '@app/models/bonsai';
+import { LoadableModel } from '@app/models/loadable';
+import { BookSupportsModel } from '@app/models/book-supports';
+import { DualShockModel } from '@app/models/dualshock';
 
 @Injectable({
     providedIn: 'root',
@@ -14,10 +18,28 @@ export class RenderService implements OnDestroy {
 
     constructor(private readonly loggerService: LoggerService) {}
 
-    private async _loadModels() {
-        this.loggerService.info('RenderService', 'Book Shelf model loaded');
-        const bookshelf = new BookshelfModel(this.loggerService);
-        this.scene.add(await bookshelf.getModel());
+    private _loadModels() {
+        const models: LoadableModel[] = [];
+
+        models.push(new PlanksModel(this.loggerService));
+        models.push(new BonsaiModel(this.loggerService));
+        models.push(new BookSupportsModel(this.loggerService));
+        models.push(new DualShockModel(this.loggerService));
+
+        models.forEach((model) => {
+            model
+                .getModel()
+                .then((data) => {
+                    this.loggerService.info('RenderService', `Model loaded: ${model.name}`);
+                    this.scene.add(data);
+                })
+                .catch((error) => {
+                    this.loggerService.error(
+                        'RenderService',
+                        `Failed to load model ${model.name}: ${error}`
+                    );
+                });
+        });
     }
 
     private _start() {
