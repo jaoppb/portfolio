@@ -6,6 +6,7 @@ import { BonsaiModel } from '@app/models/bonsai';
 import { LoadableModel } from '@app/models/loadable';
 import { BookSupportsModel } from '@app/models/book-supports';
 import { DualShockModel } from '@app/models/dualshock';
+import { BookModel } from '@app/models/book';
 
 @Injectable({
     providedIn: 'root',
@@ -25,6 +26,7 @@ export class RenderService implements OnDestroy {
         models.push(new BonsaiModel(this.loggerService));
         models.push(new BookSupportsModel(this.loggerService));
         models.push(new DualShockModel(this.loggerService));
+        models.push(new BookModel(this.loggerService));
 
         models.forEach((model) => {
             model
