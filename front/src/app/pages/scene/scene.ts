@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, signal, Signal, ViewChild } from '@angular/core';
 import { RenderService } from '@services/render';
 
 @Component({
@@ -8,13 +8,12 @@ import { RenderService } from '@services/render';
     styleUrl: './scene.scss',
 })
 export class Scene {
-    @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas')
+    set canvas(ref: ElementRef<HTMLCanvasElement> | undefined) {
+        if (!ref) return;
+
+        this.renderService.initialize(ref.nativeElement);
+    }
 
     constructor(private readonly renderService: RenderService) {}
-
-    ngAfterViewInit() {
-        if (typeof window === 'undefined') return;
-
-        this.renderService.initialize(this.canvas.nativeElement);
-    }
 }
