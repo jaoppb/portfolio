@@ -119,6 +119,8 @@ export class RenderService implements IRenderService, OnDestroy {
         this.renderer.setAnimationLoop(this._animate.bind(this));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
+        this._onResize();
+
         this.loggerService.info('RenderService', 'Scene and camera initialized');
     }
 
