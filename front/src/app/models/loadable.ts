@@ -3,19 +3,18 @@ import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const loader = new GLTFLoader();
-
 THREE.Cache.enabled = true;
 
 type ModelPromise = {
     resolve: (model: THREE.Group) => void;
-    reject: () => void;
+    reject: (error?: unknown) => void;
 };
 
 export abstract class LoadableModel {
     private model: THREE.Group | null = null;
-    private isLoading = false;
     private promises: ModelPromise[] = [];
     private onProgressCallbacks: ((progress: number) => void)[] = [];
+    private isLoading = false;
 
     public abstract readonly name: string;
     protected abstract readonly path: string;
@@ -23,7 +22,7 @@ export abstract class LoadableModel {
     constructor(private readonly loggerService: LoggerService) {}
 
     private _loadModel() {
-        if (this.isLoading || typeof window === 'undefined') return;
+        if (this.isLoading) return;
 
         this.isLoading = true;
         loader.load(
@@ -36,10 +35,9 @@ export abstract class LoadableModel {
 
     private _onLoad(gltf: GLTF) {
         this.loggerService.info(`ModelLoader ${this.name}`, 'Model loaded successfully');
-        this.onProgressCallbacks.length = 0;
-
         this.model = gltf.scene;
         this.isLoading = false;
+        this._clearProgressCallbacks();
 
         let promise = this.promises.shift();
         while (promise) {
@@ -50,17 +48,18 @@ export abstract class LoadableModel {
 
     private _onProgress(progressEvent: ProgressEvent<EventTarget>) {
         const progress = (progressEvent.loaded / progressEvent.total) * 100;
-        this.loggerService.info(`ModelLoader ${this.name}`, 'Loading progress:', progress);
+        this.loggerService.debug(`ModelLoader ${this.name}`, 'Loading progress:', progress);
         this.onProgressCallbacks.forEach((callback) => callback(progress));
     }
 
     private _onError(error: unknown) {
         this.loggerService.error(`ModelLoader ${this.name}`, 'Error loading model:', error);
         this.isLoading = false;
+        this._clearProgressCallbacks();
 
         let promise = this.promises.shift();
         while (promise) {
-            promise.reject();
+            promise.reject(error);
             promise = this.promises.shift();
         }
     }
@@ -69,15 +68,17 @@ export abstract class LoadableModel {
         this.onProgressCallbacks.push(callback);
     }
 
+    private _clearProgressCallbacks() {
+        this.onProgressCallbacks.length = 0;
+    }
+
     getModel(): Promise<THREE.Group> {
         this.loggerService.info(`ModelLoader ${this.name}`, 'getModel called');
         if (this.model) {
-            return Promise.resolve(this.model.clone());
+            return Promise.resolve(this.model);
         }
 
-        if (!this.isLoading) {
-            this._loadModel();
-        }
+        this._loadModel();
 
         return new Promise((resolve, reject) => {
             this.promises.push({ resolve, reject });

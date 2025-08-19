@@ -1,0 +1,40 @@
+:host {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    background: hsl(0, 0%, 100%);
+}
+
+#loading {
+    display: grid;
+    grid-template-columns: 3fr 1fr 9fr;
+    padding: 12px;
+    gap: 8px;
+
+    & > span {
+        place-self: center;
+        justify-self: end;
+        height: 32px;
+        vertical-align: center;
+        line-height: 32px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #loading {
+        grid-template-columns: 3fr 1fr 6fr;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #loading {
+        grid-template-columns: 9fr 1fr 15fr;
+    }
+}

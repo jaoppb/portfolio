@@ -8,8 +8,18 @@ import { BookSupportsModel } from '@app/models/book-supports';
 import { DualShockModel } from '@app/models/dualshock';
 import { BookModel } from '@app/models/book';
 
+export type LoadingState = {
+    name: string;
+    progress: number;
+};
+
+type ModelLoadingCallback = (loadingState: LoadingState) => void;
+type ModelErrorCallback = (err: string) => void;
+
 export interface IRenderService {
     initialize(canvas: HTMLCanvasElement): void;
+    subscribeModelLoading(callback: ModelLoadingCallback): void;
+    subscribeModelError(callback: ModelErrorCallback): void;
 }
 
 @Injectable({
@@ -22,6 +32,9 @@ export class RenderService implements IRenderService, OnDestroy {
     private renderer?: THREE.WebGLRenderer;
 
     private light: THREE.PointLight;
+
+    private modelLoadingCallbacks: ModelLoadingCallback[] = [];
+    private modelErrorCallbacks: ModelErrorCallback[] = [];
 
     constructor(private readonly loggerService: LoggerService) {
         this.scene = new THREE.Scene();
@@ -45,13 +58,25 @@ export class RenderService implements IRenderService, OnDestroy {
         models.push(new BookModel(this.loggerService));
 
         models.forEach((model) => {
+            model.subscribeToProgress((progress) => {
+                this.modelLoadingCallbacks.forEach((callback) => {
+                    callback({ name: model.name, progress: Math.min(99, progress) });
+                });
+            });
+
             model
                 .getModel()
                 .then((data) => {
                     this.loggerService.info('RenderService', `Model loaded: ${model.name}`);
                     this.scene.add(data);
+                    this.modelLoadingCallbacks.forEach((callback) => {
+                        callback({ name: model.name, progress: 100 });
+                    });
                 })
                 .catch((error) => {
+                    this.modelErrorCallbacks.forEach((callback) => {
+                        callback(model.name);
+                    });
                     this.loggerService.error(
                         'RenderService',
                         `Failed to load model ${model.name}: ${error}`
@@ -132,6 +157,14 @@ export class RenderService implements IRenderService, OnDestroy {
         }
 
         this._setUp(canvas);
+    }
+
+    subscribeModelLoading(callback: ModelLoadingCallback): void {
+        this.modelLoadingCallbacks.push(callback);
+    }
+
+    subscribeModelError(callback: ModelErrorCallback): void {
+        this.modelErrorCallbacks.push(callback);
     }
 
     ngOnDestroy() {

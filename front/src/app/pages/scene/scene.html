@@ -1,1 +1,8 @@
+@if (errors().length > 0) {
+<app-error [errors]="errors()"></app-error>
+} @else { @if (isLoading()) {
+<app-loading [loadings]="loadings()"></app-loading>
+}
+
 <canvas #canvas></canvas>
+}

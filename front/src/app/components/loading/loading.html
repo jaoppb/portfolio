@@ -1,0 +1,9 @@
+<h1>Loading...</h1>
+
+<div id="loading">
+    @for (state of loadings; track state.name) {
+    <span>{{ state.name }}</span>
+    <span>{{ state.progress.toFixed(0) }}%</span>
+    <app-progress-bar [value]="state.progress" />
+    }
+</div>
