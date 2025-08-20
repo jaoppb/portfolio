@@ -1,4 +1,4 @@
-<h1>Loading...</h1>
+<h1>Loading{{ '.'.repeat((tick() % 3) + 1) }}</h1>
 
 <div id="loading">
     @for (state of loadings; track state.name) {

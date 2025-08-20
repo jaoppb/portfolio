@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { LoadingState } from '@app/services/render';
 import { ProgressBar } from '@app/components/progress-bar/progress-bar';
 
@@ -10,4 +10,11 @@ import { ProgressBar } from '@app/components/progress-bar/progress-bar';
 })
 export class Loading {
     @Input() loadings: LoadingState[] = [];
+    tick = signal(0);
+
+    ngOnInit() {
+        setInterval(() => {
+            this.tick.update((tick) => tick + 1);
+        }, 500);
+    }
 }
