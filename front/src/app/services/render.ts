@@ -2,6 +2,7 @@ import { Injectable, Injector, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { LoadableModel } from '@app/models/loadable';
+import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 export type LoadingState = {
     name: string;
@@ -12,6 +13,7 @@ type Model = {
     name: string;
     displayName: string;
     path: string;
+    location: THREE.Vector3Tuple;
 };
 
 type ModelLoadingCallback = (loadingState: LoadingState) => void;
@@ -30,6 +32,7 @@ export class RenderService implements IRenderService, OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
+    private controls?: OrbitControls;
     private renderer?: THREE.WebGLRenderer;
 
     private light: THREE.PointLight;
@@ -45,6 +48,7 @@ export class RenderService implements IRenderService, OnDestroy {
         this.scene.background = new THREE.Color(0xe7e7e7ff);
 
         this.light = new THREE.PointLight(0xffffff, 200);
+        this.light.castShadow = true;
         this.scene.add(this.light);
 
         this.camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.1, 1000);
@@ -78,7 +82,15 @@ export class RenderService implements IRenderService, OnDestroy {
                         'RenderService',
                         `Model loaded: ${loadable.displayName}`
                     );
+                    if (model.location) {
+                        data.position.copy(new THREE.Vector3(...model.location));
+                    }
                     this.scene.add(data);
+                    this.loggerService.debug(
+                        'RenderService',
+                        `Model ${loadable.displayName} added to scene`,
+                        data
+                    );
                     this.modelLoadingCallbacks.forEach((callback) => {
                         callback({ name: loadable.displayName, progress: 100 });
                     });
@@ -128,6 +140,9 @@ export class RenderService implements IRenderService, OnDestroy {
         });
         this.renderer.setAnimationLoop(this._animate.bind(this));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+
+        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
         this._onResize();
 
