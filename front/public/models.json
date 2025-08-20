@@ -1,0 +1,29 @@
+{
+    "models": [
+        {
+            "name": "bonsai",
+            "displayName": "Bonsai",
+            "path": "models/bonsai.glb"
+        },
+        {
+            "name": "planks",
+            "displayName": "Planks",
+            "path": "models/planks.glb"
+        },
+        {
+            "name": "book_supports",
+            "displayName": "Book Supports",
+            "path": "models/book_supports.glb"
+        },
+        {
+            "name": "dualshock",
+            "displayName": "DualShock 4",
+            "path": "models/dualshock.glb"
+        },
+        {
+            "name": "book",
+            "displayName": "Book",
+            "path": "models/book.glb"
+        }
+    ]
+}

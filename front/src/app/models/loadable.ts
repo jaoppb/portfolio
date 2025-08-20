@@ -1,3 +1,4 @@
+import { inject, Injector, runInInjectionContext } from '@angular/core';
 import { LoggerService } from '@app/services/logger';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -10,16 +11,23 @@ type ModelPromise = {
     reject: (error?: unknown) => void;
 };
 
-export abstract class LoadableModel {
+export class LoadableModel {
     private model: THREE.Group | null = null;
     private promises: ModelPromise[] = [];
     private onProgressCallbacks: ((progress: number) => void)[] = [];
     private isLoading = false;
+    private loggerService!: LoggerService;
 
-    public abstract readonly name: string;
-    protected abstract readonly path: string;
-
-    constructor(private readonly loggerService: LoggerService) {}
+    constructor(
+        injector: Injector,
+        public readonly name: string,
+        public readonly displayName: string,
+        private readonly path: string
+    ) {
+        runInInjectionContext(injector, () => {
+            this.loggerService = inject(LoggerService);
+        });
+    }
 
     private _loadModel() {
         if (this.isLoading) return;

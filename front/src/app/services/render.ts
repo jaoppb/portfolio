@@ -1,16 +1,17 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, Injector, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
 import { LoggerService } from './logger';
-import { PlanksModel } from '@app/models/planks';
-import { BonsaiModel } from '@app/models/bonsai';
 import { LoadableModel } from '@app/models/loadable';
-import { BookSupportsModel } from '@app/models/book-supports';
-import { DualShockModel } from '@app/models/dualshock';
-import { BookModel } from '@app/models/book';
 
 export type LoadingState = {
     name: string;
     progress: number;
+};
+
+type Model = {
+    name: string;
+    displayName: string;
+    path: string;
 };
 
 type ModelLoadingCallback = (loadingState: LoadingState) => void;
@@ -36,7 +37,10 @@ export class RenderService implements IRenderService, OnDestroy {
     private modelLoadingCallbacks: ModelLoadingCallback[] = [];
     private modelErrorCallbacks: ModelErrorCallback[] = [];
 
-    constructor(private readonly loggerService: LoggerService) {
+    constructor(
+        private readonly injector: Injector,
+        private readonly loggerService: LoggerService
+    ) {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0xe7e7e7ff);
 
@@ -49,37 +53,43 @@ export class RenderService implements IRenderService, OnDestroy {
     }
 
     private async _loadModels() {
-        const models: LoadableModel[] = [];
-
-        models.push(new PlanksModel(this.loggerService));
-        models.push(new BonsaiModel(this.loggerService));
-        models.push(new BookSupportsModel(this.loggerService));
-        models.push(new DualShockModel(this.loggerService));
-        models.push(new BookModel(this.loggerService));
+        const { models }: { models: Model[] } = await fetch('models.json').then((res) =>
+            res.json()
+        );
+        this.loggerService.debug('RenderService', 'Loaded model configuration:', models);
 
         models.forEach((model) => {
-            model.subscribeToProgress((progress) => {
+            const loadable = new LoadableModel(
+                this.injector,
+                model.name,
+                model.displayName,
+                model.path
+            );
+            loadable.subscribeToProgress((progress) => {
                 this.modelLoadingCallbacks.forEach((callback) => {
-                    callback({ name: model.name, progress: Math.min(99, progress) });
+                    callback({ name: loadable.displayName, progress: Math.min(99, progress) });
                 });
             });
 
-            model
+            loadable
                 .getModel()
                 .then((data) => {
-                    this.loggerService.info('RenderService', `Model loaded: ${model.name}`);
+                    this.loggerService.info(
+                        'RenderService',
+                        `Model loaded: ${loadable.displayName}`
+                    );
                     this.scene.add(data);
                     this.modelLoadingCallbacks.forEach((callback) => {
-                        callback({ name: model.name, progress: 100 });
+                        callback({ name: loadable.displayName, progress: 100 });
                     });
                 })
                 .catch((error) => {
                     this.modelErrorCallbacks.forEach((callback) => {
-                        callback(model.name);
+                        callback(loadable.displayName);
                     });
                     this.loggerService.error(
                         'RenderService',
-                        `Failed to load model ${model.name}: ${error}`
+                        `Failed to load model ${loadable.displayName}: ${error}`
                     );
                 });
         });
