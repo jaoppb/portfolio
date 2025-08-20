@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { LoadingState } from '@app/services/render';
-import { ProgressBar } from "@app/components/progress-bar/progress-bar";
+import { ProgressBar } from '@app/components/progress-bar/progress-bar';
 
 @Component({
     selector: 'app-loading',
