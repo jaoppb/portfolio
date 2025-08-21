@@ -2,11 +2,15 @@ import { Injectable, Injector, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { LoadableModel } from '@app/models/loadable';
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
+import { parseRotation } from '@app/utils';
 
 export type LoadingState = {
     name: string;
     progress: number;
+};
+
+type Focusable = {
+    rotation: THREE.Euler;
 };
 
 type Model = {
@@ -16,6 +20,16 @@ type Model = {
     location?: THREE.Vector3Tuple;
     rotation?: THREE.Vector3Tuple;
     scale?: number;
+    focusable?: {
+        rotation: THREE.Vector3Tuple;
+    };
+};
+
+type SelectedModel = {
+    object: THREE.Object3D<THREE.Object3DEventMap>;
+    location: THREE.Vector3;
+    rotation: THREE.Euler;
+    scale: THREE.Vector3;
 };
 
 type ModelLoadingCallback = (loadingState: LoadingState) => void;
@@ -35,6 +49,10 @@ export class RenderService implements IRenderService, OnDestroy {
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
     private renderer?: THREE.WebGLRenderer;
+    private raycaster: THREE.Raycaster = new THREE.Raycaster();
+    private mouse: THREE.Vector2 = new THREE.Vector2();
+    private intersects: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
+    private selected?: SelectedModel;
 
     private light: THREE.PointLight;
 
@@ -52,7 +70,7 @@ export class RenderService implements IRenderService, OnDestroy {
         this.light.castShadow = true;
         this.scene.add(this.light);
 
-        this.camera = new THREE.PerspectiveCamera(60, 16 / 9, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
 
         this._loadModels();
     }
@@ -61,13 +79,12 @@ export class RenderService implements IRenderService, OnDestroy {
         this.loggerService.info('RenderService', `Model loaded: ${model.displayName}`);
         if (model.location) data.position.copy(new THREE.Vector3(...model.location));
         if (model.scale) data.scale.setScalar(model.scale);
-        if (model.rotation)
-            data.rotation.copy(
-                new THREE.Euler(
-                    ...(model.rotation.map((e) => (e * Math.PI) / 180) as THREE.Vector3Tuple),
-                    'XYZ'
-                )
-            );
+        if (model.rotation) data.rotation.copy(parseRotation(model.rotation));
+        if (model.focusable)
+            data.userData['focusable'] = {
+                ...model.focusable,
+                rotation: parseRotation(model.focusable.rotation),
+            };
         this.scene.add(data);
         this.loggerService.debug(
             'RenderService',
@@ -136,6 +153,8 @@ export class RenderService implements IRenderService, OnDestroy {
         }
 
         this.canvas = canvas;
+        this.canvas.addEventListener('pointermove', this._onPointerMove.bind(this));
+        this.canvas.addEventListener('pointerdown', this._onClick.bind(this));
         window.addEventListener('resize', this._onResize.bind(this));
 
         this.camera.position.set(-3.5, 5.5, -1);
@@ -180,11 +199,55 @@ export class RenderService implements IRenderService, OnDestroy {
         if (!this.renderer || !this.camera || !this.canvas) return;
 
         this.loggerService.info('RenderService', 'Window resized, updating camera and renderer');
-        this.camera.aspect = window.innerWidth / window.innerHeight;
+        const { innerWidth: width, innerHeight: height } = window;
+        this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
 
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+
+    private _onPointerMove(e: PointerEvent) {
+        if (!this.canvas) return;
+
+        const { left, top } = this.canvas.getBoundingClientRect();
+        this.mouse.set(
+            ((e.clientX - left) / this.canvas.clientWidth) * 2 - 1,
+            (-(e.clientY - top) / this.canvas.clientHeight) * 2 + 1
+        );
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+
+        this.intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    }
+
+    private _onClick(e: PointerEvent) {
+        if (this.selected) {
+            this.selected.object.position.copy(this.selected.location);
+            this.selected.object.rotation.copy(this.selected.rotation);
+            this.selected.object.scale.copy(this.selected.scale);
+        }
+
+        let object = this.intersects[0]?.object;
+        if (!object) return;
+
+        while (object.parent && object.parent !== this.scene) object = object.parent;
+
+        const focusable: Focusable | undefined = object.userData['focusable'];
+        if (!focusable) return;
+
+        this.selected = {
+            object,
+            location: object.position.clone(),
+            rotation: object.rotation.clone(),
+            scale: object.scale.clone(),
+        };
+
+        object.position.set(
+            this.camera.position.x - 3,
+            this.camera.position.y - 1,
+            this.camera.position.z
+        );
+        object.rotation.copy(focusable.rotation);
     }
 
     initialize(canvas: HTMLCanvasElement) {
