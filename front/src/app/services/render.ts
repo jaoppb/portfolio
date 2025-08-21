@@ -11,6 +11,7 @@ export type LoadingState = {
 
 type Focusable = {
     rotation: THREE.Euler;
+    offsetPosition?: THREE.Vector3;
 };
 
 type Model = {
@@ -22,6 +23,7 @@ type Model = {
     scale?: number;
     focusable?: {
         rotation: THREE.Vector3Tuple;
+        offsetPosition: THREE.Vector3Tuple;
     };
 };
 
@@ -84,6 +86,9 @@ export class RenderService implements IRenderService, OnDestroy {
             data.userData['focusable'] = {
                 ...model.focusable,
                 rotation: parseRotation(model.focusable.rotation),
+                offsetPosition: model.focusable.offsetPosition
+                    ? new THREE.Vector3(...model.focusable.offsetPosition)
+                    : undefined,
             };
         this.scene.add(data);
         this.loggerService.debug(
@@ -242,11 +247,13 @@ export class RenderService implements IRenderService, OnDestroy {
             scale: object.scale.clone(),
         };
 
-        object.position.set(
+        const position = new THREE.Vector3(
             this.camera.position.x - 3,
             this.camera.position.y - 1,
             this.camera.position.z
         );
+        if (focusable.offsetPosition) position.add(focusable.offsetPosition);
+        object.position.copy(position);
         object.rotation.copy(focusable.rotation);
     }
 
