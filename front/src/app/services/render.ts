@@ -159,7 +159,10 @@ export class RenderService implements IRenderService, OnDestroy {
 
         this.canvas = canvas;
         this.canvas.addEventListener('pointermove', this._onPointerMove.bind(this));
-        this.canvas.addEventListener('pointerdown', this._onClick.bind(this));
+        this.canvas.addEventListener('pointerdown', (e) => {
+            this._onClick();
+            this._onPointerMove(e);
+        });
         window.addEventListener('resize', this._onResize.bind(this));
 
         this.camera.position.set(-3.5, 5.5, -1);
@@ -225,7 +228,7 @@ export class RenderService implements IRenderService, OnDestroy {
         this.intersects = this.raycaster.intersectObjects(this.scene.children, true);
     }
 
-    private _onClick(e: PointerEvent) {
+    private _onClick() {
         if (this.selected) {
             this.selected.object.position.copy(this.selected.location);
             this.selected.object.rotation.copy(this.selected.rotation);
