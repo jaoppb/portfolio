@@ -1,11 +1,13 @@
-@if (hasError()) { @if (errors.length <= 1) {
-<span>Failed to load model: {{ errors[0] }}</span>
-}@else {
-<span
-    >Failed to load models:
-    {{ errors.slice(0, errors.length - 1).join(', ') }}
-    and {{ errors[errors.length - 1] }}</span
->
-}
-<span>Please contact me at <a href="https://github.com/jaoppb/portfolio">github</a></span>
-}
+<div id="wrapper">
+    @if (hasError()) { @if (errors.length <= 1) {
+    <span>Failed to load model: {{ errors[0] }}</span>
+    }@else {
+    <span
+        >Failed to load models:
+        {{ errors.slice(0, errors.length - 1).join(', ') }}
+        and {{ errors[errors.length - 1] }}</span
+    >
+    }
+    <span>Please contact me at <a href="https://github.com/jaoppb/portfolio">github</a></span>
+    }
+</div>
