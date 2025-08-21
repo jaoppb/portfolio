@@ -10,7 +10,7 @@ export type LoadingState = {
 };
 
 type Focusable = {
-    rotation: THREE.Euler;
+    rotation: THREE.Quaternion;
     offsetPosition?: THREE.Vector3;
 };
 
@@ -30,7 +30,7 @@ type Model = {
 type SelectedModel = {
     object: THREE.Object3D<THREE.Object3DEventMap>;
     location: THREE.Vector3;
-    rotation: THREE.Euler;
+    rotation: THREE.Quaternion;
     scale: THREE.Vector3;
 };
 
@@ -81,7 +81,7 @@ export class RenderService implements IRenderService, OnDestroy {
         this.loggerService.info('RenderService', `Model loaded: ${model.displayName}`);
         if (model.location) data.position.copy(new THREE.Vector3(...model.location));
         if (model.scale) data.scale.setScalar(model.scale);
-        if (model.rotation) data.rotation.copy(parseRotation(model.rotation));
+        if (model.rotation) data.quaternion.copy(parseRotation(model.rotation));
         if (model.focusable)
             data.userData['focusable'] = {
                 ...model.focusable,
@@ -89,7 +89,7 @@ export class RenderService implements IRenderService, OnDestroy {
                 offsetPosition: model.focusable.offsetPosition
                     ? new THREE.Vector3(...model.focusable.offsetPosition)
                     : undefined,
-            };
+            } as Focusable;
         this.scene.add(data);
         this.loggerService.debug(
             'RenderService',
@@ -231,7 +231,7 @@ export class RenderService implements IRenderService, OnDestroy {
     private _onClick() {
         if (this.selected) {
             this.selected.object.position.copy(this.selected.location);
-            this.selected.object.rotation.copy(this.selected.rotation);
+            this.selected.object.quaternion.copy(this.selected.rotation);
             this.selected.object.scale.copy(this.selected.scale);
         }
 
@@ -246,18 +246,23 @@ export class RenderService implements IRenderService, OnDestroy {
         this.selected = {
             object,
             location: object.position.clone(),
-            rotation: object.rotation.clone(),
+            rotation: object.quaternion.clone(),
             scale: object.scale.clone(),
         };
 
-        const position = new THREE.Vector3(
-            this.camera.position.x - 3,
-            this.camera.position.y - 1,
-            this.camera.position.z
-        );
+        const direction = new THREE.Vector3();
+        this.camera.getWorldDirection(direction);
+        direction.multiplyScalar(1.5);
+        const position = this.camera.position.clone().add(direction);
         if (focusable.offsetPosition) position.add(focusable.offsetPosition);
         object.position.copy(position);
-        object.rotation.copy(focusable.rotation);
+
+        const upVector = new THREE.Vector3(0, 1, 0);
+        const upRotation = new THREE.Quaternion().setFromUnitVectors(
+            upVector.clone(),
+            upVector.clone().applyQuaternion(this.camera.quaternion)
+        );
+        object.quaternion.copy(upRotation.multiply(focusable.rotation));
     }
 
     initialize(canvas: HTMLCanvasElement) {
