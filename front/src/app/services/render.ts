@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { LoadableModel } from '@app/models/loadable';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
+import { EventEmitter } from '@app/utils/event-emitter';
 
 export type LoadingState = {
     name: string;
@@ -41,19 +42,22 @@ type SelectedModel = {
     scale: THREE.Vector3;
 };
 
-type ModelLoadingCallback = (loadingState: LoadingState) => void;
-type ModelErrorCallback = (err: string) => void;
-
-export interface IRenderService {
+export interface IRenderService extends EventEmitter<IRenderServiceEvents> {
     initialize(canvas: HTMLCanvasElement): void;
-    subscribeModelLoading(callback: ModelLoadingCallback): void;
-    subscribeModelError(callback: ModelErrorCallback): void;
+}
+
+export interface IRenderServiceEvents {
+    modelLoading: LoadingState;
+    modelError: string;
 }
 
 @Injectable({
     providedIn: 'root',
 })
-export class RenderService implements IRenderService, OnDestroy {
+export class RenderService
+    extends EventEmitter<IRenderServiceEvents>
+    implements IRenderService, OnDestroy
+{
     private canvas: HTMLCanvasElement | null = null;
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
@@ -65,13 +69,11 @@ export class RenderService implements IRenderService, OnDestroy {
 
     private light: THREE.PointLight;
 
-    private modelLoadingCallbacks: ModelLoadingCallback[] = [];
-    private modelErrorCallbacks: ModelErrorCallback[] = [];
-
     constructor(
         private readonly injector: Injector,
         private readonly loggerService: LoggerService
     ) {
+        super();
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0xe7e7e7ff);
 
@@ -126,15 +128,11 @@ export class RenderService implements IRenderService, OnDestroy {
             `Model ${model.displayName} added to scene`,
             data
         );
-        this.modelLoadingCallbacks.forEach((callback) => {
-            callback({ name: model.displayName, progress: 100 });
-        });
+        this.emit('modelLoading', { name: model.displayName, progress: 100 });
     }
 
     private _handleLoadModelError(model: Model, error: any) {
-        this.modelErrorCallbacks.forEach((callback) => {
-            callback(model.displayName);
-        });
+        this.emit('modelError', model.displayName);
         this.loggerService.error(
             'RenderService',
             `Failed to load model ${model.displayName}:`,
@@ -160,11 +158,9 @@ export class RenderService implements IRenderService, OnDestroy {
                 model.path
             );
             loadable.subscribeToProgress((progress) => {
-                this.modelLoadingCallbacks.forEach((callback) => {
-                    callback({
-                        name: loadable.displayName,
-                        progress: Math.min(99, progress),
-                    });
+                this.emit('modelLoading', {
+                    name: loadable.displayName,
+                    progress: Math.min(99, progress),
                 });
             });
 
@@ -299,14 +295,6 @@ export class RenderService implements IRenderService, OnDestroy {
         }
 
         this._setUp(canvas);
-    }
-
-    subscribeModelLoading(callback: ModelLoadingCallback): void {
-        this.modelLoadingCallbacks.push(callback);
-    }
-
-    subscribeModelError(callback: ModelErrorCallback): void {
-        this.modelErrorCallbacks.push(callback);
     }
 
     ngOnDestroy() {

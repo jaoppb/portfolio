@@ -25,8 +25,8 @@ export class Scene {
     errors: WritableSignal<string[]> = signal([], { equal: _.isEqual });
 
     constructor(private readonly renderService: RenderService) {
-        this.renderService.subscribeModelLoading(this._handleModelLoading.bind(this));
-        this.renderService.subscribeModelError(this._handleModelError.bind(this));
+        this.renderService.on('modelLoading', this._handleModelLoading.bind(this));
+        this.renderService.on('modelError', this._handleModelError.bind(this));
     }
 
     private _handleModelLoading(state: LoadingState) {

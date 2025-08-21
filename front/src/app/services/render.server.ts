@@ -1,26 +1,46 @@
 import { Injectable } from '@angular/core';
-import { IRenderService, LoadingState } from './render';
+import { IRenderService, IRenderServiceEvents, LoadingState } from './render';
 import { LoggerService } from './logger';
+import { EventEmitter } from '@app/utils/event-emitter';
 
 @Injectable()
-export class RenderServerService implements IRenderService {
-    constructor(private readonly loggerService: LoggerService) {}
+export class RenderServerService
+    extends EventEmitter<IRenderServiceEvents>
+    implements IRenderService
+{
+    constructor(private readonly loggerService: LoggerService) {
+        super();
+    }
 
     initialize(canvas: HTMLCanvasElement): void {
         this.loggerService.debug('RenderServerService', 'Ignoring canvas initialization on server');
     }
 
-    subscribeModelLoading(callback: (loadingState: LoadingState) => void): void {
+    override emit(key: keyof IRenderServiceEvents, event: string | LoadingState): boolean {
         this.loggerService.debug(
             'RenderServerService',
-            'Ignoring model loading subscription on server'
+            `Ignoring event emission for ${key} on server`
+        );
+        return false;
+    }
+
+    override on<K extends keyof IRenderServiceEvents>(
+        key: K,
+        listener: (event: IRenderServiceEvents[K]) => void
+    ): void {
+        this.loggerService.debug(
+            'RenderServerService',
+            `Ignoring event listener for ${key} on server`
         );
     }
 
-    subscribeModelError(callback: (name: string) => void): void {
+    override off<K extends keyof IRenderServiceEvents>(
+        key: K,
+        listener: (event: IRenderServiceEvents[K]) => void
+    ): void {
         this.loggerService.debug(
             'RenderServerService',
-            'Ignoring model loading error subscription on server'
+            `Ignoring event listener removal for ${key} on server`
         );
     }
 }
