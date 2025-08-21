@@ -17,8 +17,8 @@
             "rotation": [90, 0, 180],
             "scale": 0.2,
             "focusable": {
-                "rotation": [90, 0, 90],
-                "offsetPosition": [0, 0, -0.25]
+                "rotation": [-90, 0, 90],
+                "offsetPosition": [0, 0, 0.25]
             }
         },
         {
@@ -29,8 +29,8 @@
             "rotation": [90, 0, 180],
             "scale": 0.2,
             "focusable": {
-                "rotation": [90, 0, 90],
-                "offsetPosition": [0, 0, -0.25]
+                "rotation": [-90, 0, 90],
+                "offsetPosition": [0, 0, 0.25]
             }
         },
         {
@@ -41,8 +41,8 @@
             "rotation": [90, 0, 180],
             "scale": 0.2,
             "focusable": {
-                "rotation": [90, 0, 90],
-                "offsetPosition": [0, 0, -0.25]
+                "rotation": [-90, 0, 90],
+                "offsetPosition": [0, 0, 0.25]
             }
         },
         {
