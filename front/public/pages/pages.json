@@ -1,0 +1,7 @@
+{
+    "pages": {
+        "book-1": [{ "path": "about-me.md" }, { "path": "contact.md" }],
+        "book-2": [{ "path": "experiences/villa-pisani.md" }],
+        "book-3": []
+    }
+}

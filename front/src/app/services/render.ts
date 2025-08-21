@@ -14,6 +14,10 @@ type Focusable = {
     offsetPosition?: THREE.Vector3;
 };
 
+type Page = {
+    path: string;
+};
+
 type Model = {
     name: string;
     displayName: string;
@@ -21,6 +25,9 @@ type Model = {
     location?: THREE.Vector3Tuple;
     rotation?: THREE.Vector3Tuple;
     scale?: number;
+    template?: {
+        offset: THREE.Vector3Tuple;
+    };
     focusable?: {
         rotation: THREE.Vector3Tuple;
         offsetPosition: THREE.Vector3Tuple;
@@ -77,7 +84,11 @@ export class RenderService implements IRenderService, OnDestroy {
         this._loadModels();
     }
 
-    private _loadModel(model: Model, data: THREE.Group<THREE.Object3DEventMap>) {
+    private _loadModel(
+        model: Model,
+        pages: Page[] = [],
+        data: THREE.Group<THREE.Object3DEventMap>
+    ) {
         this.loggerService.info('RenderService', `Model loaded: ${model.displayName}`);
         if (model.location) data.position.copy(new THREE.Vector3(...model.location));
         if (model.scale) data.scale.setScalar(model.scale);
@@ -90,7 +101,26 @@ export class RenderService implements IRenderService, OnDestroy {
                     ? new THREE.Vector3(...model.focusable.offsetPosition)
                     : undefined,
             } as Focusable;
-        this.scene.add(data);
+        if (model.template) {
+            for (let index = 0; index < pages.length; index++) {
+                const page = pages[index];
+                const clone = data.clone();
+                clone.position.add(
+                    new THREE.Vector3(...model.template.offset).multiplyScalar(index)
+                );
+                this.scene.add(clone);
+                clone.userData = {
+                    ...data.userData,
+                    page,
+                    template: undefined,
+                };
+                this.loggerService.debug(
+                    'RenderService',
+                    `Model ${model.displayName} added to scene (template clone)`,
+                    clone
+                );
+            }
+        } else this.scene.add(data);
         this.loggerService.debug(
             'RenderService',
             `Model ${model.displayName} added to scene`,
@@ -118,6 +148,10 @@ export class RenderService implements IRenderService, OnDestroy {
         );
         this.loggerService.debug('RenderService', 'Loaded model configuration:', models);
 
+        const { pages }: { pages: { [key: string]: Page[] } } = await fetch(
+            'pages/pages.json'
+        ).then((res) => res.json());
+
         models.forEach((model) => {
             const loadable = new LoadableModel(
                 this.injector,
@@ -136,7 +170,7 @@ export class RenderService implements IRenderService, OnDestroy {
 
             loadable
                 .getModel()
-                .then(this._loadModel.bind(this, model))
+                .then(this._loadModel.bind(this, model, pages[model.name]))
                 .catch(this._handleLoadModelError.bind(this, model));
         });
     }
