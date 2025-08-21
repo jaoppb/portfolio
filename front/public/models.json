@@ -6,7 +6,8 @@
             "path": "models/bonsai.glb",
             "location": [-8.90441608428955, 4.249762535095215, -2.32463002204895],
             "focusable": {
-                "rotation": [0, 0, 0]
+                "rotation": [0, 0, -20],
+                "offsetPosition": [0, -0.2, 0]
             }
         },
         {
@@ -51,7 +52,8 @@
             "path": "models/dualshock_4.glb",
             "location": [-8.816716194152832, 3.2426741123199463, -2.5569093227386475],
             "focusable": {
-                "rotation": [0, 0, 0]
+                "rotation": [0, 0, -90],
+                "offsetPosition": [0, -0.15, 0]
             }
         },
         {
