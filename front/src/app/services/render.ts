@@ -2,7 +2,7 @@ import { Injectable, Injector, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { LoadableModel } from '@app/models/loadable';
-import { parseRotation } from '@app/utils';
+import { getPositionFromCamera, parseRotation } from '@app/utils';
 
 export type LoadingState = {
     name: string;
@@ -168,11 +168,7 @@ export class RenderService implements IRenderService, OnDestroy {
         this.camera.position.set(-3.5, 5.5, -1);
         this.camera.lookAt(-6, 4.5, -1);
 
-        this.light.position.set(
-            this.camera.position.x + 2,
-            this.camera.position.y + 1,
-            this.camera.position.z
-        );
+        this.light.position.copy(getPositionFromCamera(this.camera, -5));
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
@@ -250,10 +246,7 @@ export class RenderService implements IRenderService, OnDestroy {
             scale: object.scale.clone(),
         };
 
-        const direction = new THREE.Vector3();
-        this.camera.getWorldDirection(direction);
-        direction.multiplyScalar(1.5);
-        const position = this.camera.position.clone().add(direction);
+        const position = getPositionFromCamera(this.camera, 1.5);
         if (focusable.offsetPosition) position.add(focusable.offsetPosition);
         object.position.copy(position);
 
