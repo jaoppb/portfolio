@@ -4,81 +4,73 @@
             "name": "bonsai",
             "displayName": "Bonsai",
             "path": "models/bonsai.glb",
-            "location": [
-                -8.90441608428955,
-                4.249762535095215,
-                -2.32463002204895
-            ]
+            "location": [-8.90441608428955, 4.249762535095215, -2.32463002204895]
+        },
+        {
+            "name": "book-1",
+            "displayName": "Book",
+            "path": "models/book.glb",
+            "location": [-8.65, 4.57325, -1.2],
+            "rotation": [90, 0, 180],
+            "scale": 0.2
+        },
+        {
+            "name": "book-2",
+            "displayName": "Book",
+            "path": "models/book.glb",
+            "location": [-8.65, 3.41325, -1.92],
+            "rotation": [90, 0, 180],
+            "scale": 0.2
+        },
+        {
+            "name": "book-3",
+            "displayName": "Book",
+            "path": "models/book.glb",
+            "location": [-8.65, 2.21325, -2.58],
+            "rotation": [90, 0, 180],
+            "scale": 0.2
         },
         {
             "name": "dualshock_4",
             "displayName": "DualShock 4",
             "path": "models/dualshock_4.glb",
-            "location": [
-                -8.816716194152832,
-                3.2426741123199463,
-                -2.5569093227386475
-            ]
+            "location": [-8.816716194152832, 3.2426741123199463, -2.5569093227386475]
         },
         {
             "name": "large_plank",
             "displayName": "Large Plank",
             "path": "models/large_plank.glb",
-            "location": [
-                -8.945052146911621,
-                4.199999809265137,
-                -3.001723051071167
-            ]
+            "location": [-8.945052146911621, 4.199999809265137, -3.001723051071167]
         },
         {
             "name": "large_support",
             "displayName": "Large Support",
             "path": "models/large_support.glb",
-            "location": [
-                -8.945050239562988,
-                4.269999980926514,
-                -0.39141935110092163
-            ]
+            "location": [-8.945050239562988, 4.269999980926514, -0.39141935110092163]
         },
         {
             "name": "medium_plank",
             "displayName": "Medium Plank",
             "path": "models/medium_plank.glb",
-            "location": [
-                -8.94505500793457,
-                3.039501905441284,
-                -3.0017995834350586
-            ]
+            "location": [-8.94505500793457, 3.039501905441284, -3.0017995834350586]
         },
         {
             "name": "medium_support",
             "displayName": "Medium Support",
             "path": "models/medium_support.glb",
-            "location": [
-                -8.945051193237305,
-                3.1095001697540283,
-                -1.3078134059906006
-            ]
+            "location": [-8.945051193237305, 3.1095001697540283, -1.3078134059906006]
         },
         {
             "name": "small_plank",
             "displayName": "Small Plank",
             "path": "models/small_plank.glb",
-            "location": [
-                -8.945054054260254,
-                1.8395072221755981,
-                -3.0018796920776367
-            ]
+            "location": [-8.945054054260254, 1.8395072221755981, -3.0018796920776367]
         },
         {
             "name": "small_support",
             "displayName": "Small Support",
             "path": "models/small_support.glb",
-            "location": [
-                -8.945051193237305,
-                1.9095165729522705,
-                -2.2018799781799316
-            ]
+            "location": [-8.945051193237305, 1.9095165729522705, -2.2018799781799316]
         }
     ]
 }

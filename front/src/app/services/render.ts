@@ -13,7 +13,9 @@ type Model = {
     name: string;
     displayName: string;
     path: string;
-    location: THREE.Vector3Tuple;
+    location?: THREE.Vector3Tuple;
+    rotation?: THREE.Vector3Tuple;
+    scale?: number;
 };
 
 type ModelLoadingCallback = (loadingState: LoadingState) => void;
@@ -32,7 +34,6 @@ export class RenderService implements IRenderService, OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
-    private controls?: OrbitControls;
     private renderer?: THREE.WebGLRenderer;
 
     private light: THREE.PointLight;
@@ -56,6 +57,39 @@ export class RenderService implements IRenderService, OnDestroy {
         this._loadModels();
     }
 
+    private _loadModel(model: Model, data: THREE.Group<THREE.Object3DEventMap>) {
+        this.loggerService.info('RenderService', `Model loaded: ${model.displayName}`);
+        if (model.location) data.position.copy(new THREE.Vector3(...model.location));
+        if (model.scale) data.scale.setScalar(model.scale);
+        if (model.rotation)
+            data.rotation.copy(
+                new THREE.Euler(
+                    ...(model.rotation.map((e) => (e * Math.PI) / 180) as THREE.Vector3Tuple),
+                    'XYZ'
+                )
+            );
+        this.scene.add(data);
+        this.loggerService.debug(
+            'RenderService',
+            `Model ${model.displayName} added to scene`,
+            data
+        );
+        this.modelLoadingCallbacks.forEach((callback) => {
+            callback({ name: model.displayName, progress: 100 });
+        });
+    }
+
+    private _handleLoadModelError(model: Model, error: any) {
+        this.modelErrorCallbacks.forEach((callback) => {
+            callback(model.displayName);
+        });
+        this.loggerService.error(
+            'RenderService',
+            `Failed to load model ${model.displayName}:`,
+            error
+        );
+    }
+
     private async _loadModels() {
         const { models }: { models: Model[] } = await fetch('models.json').then((res) =>
             res.json()
@@ -71,39 +105,17 @@ export class RenderService implements IRenderService, OnDestroy {
             );
             loadable.subscribeToProgress((progress) => {
                 this.modelLoadingCallbacks.forEach((callback) => {
-                    callback({ name: loadable.displayName, progress: Math.min(99, progress) });
+                    callback({
+                        name: loadable.displayName,
+                        progress: Math.min(99, progress),
+                    });
                 });
             });
 
             loadable
                 .getModel()
-                .then((data) => {
-                    this.loggerService.info(
-                        'RenderService',
-                        `Model loaded: ${loadable.displayName}`
-                    );
-                    if (model.location) {
-                        data.position.copy(new THREE.Vector3(...model.location));
-                    }
-                    this.scene.add(data);
-                    this.loggerService.debug(
-                        'RenderService',
-                        `Model ${loadable.displayName} added to scene`,
-                        data
-                    );
-                    this.modelLoadingCallbacks.forEach((callback) => {
-                        callback({ name: loadable.displayName, progress: 100 });
-                    });
-                })
-                .catch((error) => {
-                    this.modelErrorCallbacks.forEach((callback) => {
-                        callback(loadable.displayName);
-                    });
-                    this.loggerService.error(
-                        'RenderService',
-                        `Failed to load model ${loadable.displayName}: ${error}`
-                    );
-                });
+                .then(this._loadModel.bind(this, model))
+                .catch(this._handleLoadModelError.bind(this, model));
         });
     }
 
@@ -141,8 +153,6 @@ export class RenderService implements IRenderService, OnDestroy {
         this.renderer.setAnimationLoop(this._animate.bind(this));
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
-
-        // this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
         this._onResize();
 
