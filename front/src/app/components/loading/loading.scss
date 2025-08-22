@@ -14,7 +14,7 @@
 
 #loading {
     display: grid;
-    grid-template-columns: 3fr 1fr 9fr;
+    grid-template-columns: 3fr 4fr 9fr;
     padding: 12px;
     gap: 8px;
 
@@ -29,12 +29,12 @@
 
 @media screen and (max-width: 768px) {
     #loading {
-        grid-template-columns: 3fr 1fr 6fr;
+        grid-template-columns: 3fr 4fr 6fr;
     }
 }
 
 @media screen and (max-width: 600px) {
     #loading {
-        grid-template-columns: 9fr 1fr 15fr;
+        grid-template-columns: 9fr 4fr 15fr;
     }
 }

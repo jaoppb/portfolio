@@ -69,7 +69,7 @@ export class ModelLoaderService extends EventEmitter<IModelLoaderEvents> {
             loadable.subscribeToProgress((progress) => {
                 this.emit('progress', {
                     name: loadable.displayName,
-                    progress: Math.min(99, progress),
+                    progress: progress,
                 });
             });
 

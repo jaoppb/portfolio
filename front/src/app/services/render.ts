@@ -6,6 +6,7 @@ import { Focusable, LoadedEvent, Model, ModelLoaderService } from './model-loade
 import { MouseService, PointerClick } from './mouse';
 import { DataService } from './data';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
+import { EventEmitter } from '@app/utils/event-emitter';
 
 export type Page = {
     path: string;
@@ -18,11 +19,16 @@ type SelectedModel = {
     scale: THREE.Vector3;
 };
 
+export type ModelLoadedEvent = { model: Model };
+
+interface IRenderServiceEvents {
+    modelLoaded: ModelLoadedEvent;
+}
 
 @Injectable({
     providedIn: 'root',
 })
-export class RenderService implements OnDestroy {
+export class RenderService extends EventEmitter<IRenderServiceEvents> implements OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private renderer?: THREE.WebGLRenderer;
     private selected?: SelectedModel;
@@ -39,6 +45,8 @@ export class RenderService implements OnDestroy {
         private readonly mouseService: MouseService,
         private readonly dataService: DataService
     ) {
+        super();
+
         this.light = new THREE.PointLight(0xffffff, 200);
         this.light.castShadow = true;
         this.scene.add(this.light);
@@ -82,6 +90,7 @@ export class RenderService implements OnDestroy {
                 clone
             );
         }
+        this.emit('modelLoaded', { model });
     }
 
     private _onModelLoaded({ model, object }: LoadedEvent) {
@@ -102,6 +111,7 @@ export class RenderService implements OnDestroy {
             `Model ${model.displayName} added to scene`,
             object
         );
+        this.emit('modelLoaded', { model });
     }
 
     private _setUp(canvas: HTMLCanvasElement) {
