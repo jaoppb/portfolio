@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { LoadableModel } from '@app/models/loadable';
 import { parseRotation } from '@app/utils';
+import { DataService } from './data';
+import { lastValueFrom } from 'rxjs';
 
 export type Model = {
     name: string;
@@ -43,7 +45,8 @@ export class ModelLoaderService extends EventEmitter<IModelLoaderEvents> {
     private started: boolean = false;
     constructor(
         private readonly injector: Injector,
-        private readonly loggerService: LoggerService
+        private readonly loggerService: LoggerService,
+        private readonly dataService: DataService
     ) {
         super();
         this._loadModels();
@@ -53,9 +56,7 @@ export class ModelLoaderService extends EventEmitter<IModelLoaderEvents> {
         if (this.started) return;
         this.started = true;
 
-        const { models }: { models: Model[] } = await fetch('models.json').then((res) =>
-            res.json()
-        );
+        const models = await lastValueFrom(this.dataService.models);
         this.loggerService.debug('RenderService', 'Loaded model configuration:', models);
 
         models.forEach((model) => {

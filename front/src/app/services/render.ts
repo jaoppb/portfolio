@@ -4,8 +4,10 @@ import { LoggerService } from './logger';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
 import { Focusable, LoadedEvent, Model, ModelLoaderService } from './model-loader';
 import { MouseService, PointerClick } from './mouse';
+import { DataService } from './data';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
-type Page = {
+export type Page = {
     path: string;
 };
 
@@ -37,7 +39,8 @@ export class RenderService implements IRenderService, OnDestroy {
         private readonly camera: THREE.PerspectiveCamera,
         private readonly loggerService: LoggerService,
         private readonly modelLoaderService: ModelLoaderService,
-        private readonly mouseService: MouseService
+        private readonly mouseService: MouseService,
+        private readonly dataService: DataService
     ) {
         this.light = new THREE.PointLight(0xffffff, 200);
         this.light.castShadow = true;
@@ -57,8 +60,7 @@ export class RenderService implements IRenderService, OnDestroy {
         }
 
         if (!this.pages) {
-            const response = await (await fetch('pages/pages.json')).json();
-            this.pages = response.pages;
+            this.pages = await lastValueFrom(this.dataService.pages);
         }
 
         const pages = this.pages?.[model.name];
