@@ -18,14 +18,11 @@ type SelectedModel = {
     scale: THREE.Vector3;
 };
 
-export interface IRenderService {
-    initialize(canvas: HTMLCanvasElement): void;
-}
 
 @Injectable({
     providedIn: 'root',
 })
-export class RenderService implements IRenderService, OnDestroy {
+export class RenderService implements OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private renderer?: THREE.WebGLRenderer;
     private selected?: SelectedModel;
