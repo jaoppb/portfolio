@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
 import { Focusable, LoadedEvent, Model, ModelLoaderService } from './model-loader';
+import { MouseService, PointerClick } from './mouse';
 
 type Page = {
     path: string;
@@ -24,12 +25,7 @@ export interface IRenderService {
 })
 export class RenderService implements IRenderService, OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
-    private scene: THREE.Scene;
-    private camera: THREE.PerspectiveCamera;
     private renderer?: THREE.WebGLRenderer;
-    private raycaster: THREE.Raycaster = new THREE.Raycaster();
-    private mouse: THREE.Vector2 = new THREE.Vector2();
-    private intersects: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
     private selected?: SelectedModel;
 
     private light: THREE.PointLight;
@@ -37,19 +33,18 @@ export class RenderService implements IRenderService, OnDestroy {
     private pages?: { [key: string]: Page[] };
 
     constructor(
+        private readonly scene: THREE.Scene,
+        private readonly camera: THREE.PerspectiveCamera,
         private readonly loggerService: LoggerService,
-        private readonly modelLoaderService: ModelLoaderService
+        private readonly modelLoaderService: ModelLoaderService,
+        private readonly mouseService: MouseService
     ) {
-        this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0xe7e7e7ff);
-
         this.light = new THREE.PointLight(0xffffff, 200);
         this.light.castShadow = true;
         this.scene.add(this.light);
 
-        this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-
         this.modelLoaderService.on('loaded', this._onModelLoaded.bind(this));
+        this.mouseService.on('click', this._onClick.bind(this));
     }
 
     private async _handleTemplate(model: Model, object: THREE.Object3D<THREE.Object3DEventMap>) {
@@ -127,11 +122,6 @@ export class RenderService implements IRenderService, OnDestroy {
         }
 
         this.canvas = canvas;
-        this.canvas.addEventListener('pointermove', this._onPointerMove.bind(this));
-        this.canvas.addEventListener('pointerdown', (e) => {
-            this._onClick();
-            this._onPointerMove(e);
-        });
         window.addEventListener('resize', this._onResize.bind(this));
 
         this.camera.position.set(-3.5, 5.5, -1);
@@ -180,27 +170,13 @@ export class RenderService implements IRenderService, OnDestroy {
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
 
-    private _onPointerMove(e: PointerEvent) {
-        if (!this.canvas) return;
-
-        const { left, top } = this.canvas.getBoundingClientRect();
-        this.mouse.set(
-            ((e.clientX - left) / this.canvas.clientWidth) * 2 - 1,
-            (-(e.clientY - top) / this.canvas.clientHeight) * 2 + 1
-        );
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-
-        this.intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    }
-
-    private _onClick() {
+    private _onClick({ object }: PointerClick) {
         if (this.selected) {
             this.selected.object.position.copy(this.selected.location);
             this.selected.object.quaternion.copy(this.selected.rotation);
             this.selected.object.scale.copy(this.selected.scale);
         }
 
-        let object = this.intersects[0]?.object;
         if (!object) return;
 
         while (object.parent && object.parent !== this.scene) object = object.parent;

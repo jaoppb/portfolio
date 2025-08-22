@@ -1,5 +1,4 @@
 import { Component, computed, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
-import { RenderService } from '@services/render';
 import { Loading } from '../../components/loading/loading';
 import _ from 'lodash';
 import { Error } from '@app/components/error/error';
@@ -10,6 +9,7 @@ import {
     ModelLoaderService,
     ProgressEvent,
 } from '@app/services/model-loader';
+import { InitializerService } from '@app/services/initializer';
 
 @Component({
     selector: 'app-scene',
@@ -22,7 +22,7 @@ export class Scene {
     set canvas(ref: ElementRef<HTMLCanvasElement> | undefined) {
         if (!ref) return;
 
-        this.renderService.initialize(ref.nativeElement);
+        this.initializerService.initialize(ref.nativeElement);
     }
 
     loadings: WritableSignal<LoadingState[]> = signal([], {
@@ -32,8 +32,8 @@ export class Scene {
     errors: WritableSignal<string[]> = signal([], { equal: _.isEqual });
 
     constructor(
-        private readonly renderService: RenderService,
-        private readonly modelLoaderService: ModelLoaderService
+        private readonly modelLoaderService: ModelLoaderService,
+        private readonly initializerService: InitializerService
     ) {
         this.modelLoaderService.on('progress', this._handleModelLoading.bind(this));
         this.modelLoaderService.on('error', this._handleModelError.bind(this));
