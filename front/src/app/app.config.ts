@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
             provide: THREE.Scene,
             useFactory: () => {
                 const scene = new THREE.Scene();
-                scene.background = new THREE.Color(0x000000);
+                scene.background = new THREE.Color(0xe7e7e7);
                 return scene;
             },
         },
