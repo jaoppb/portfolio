@@ -1,38 +1,11 @@
-import { Injectable, Injector, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import * as THREE from 'three';
 import { LoggerService } from './logger';
-import { LoadableModel } from '@app/models/loadable';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
-import { EventEmitter } from '@app/utils/event-emitter';
-
-export type LoadingState = {
-    name: string;
-    progress: number;
-};
-
-type Focusable = {
-    rotation: THREE.Quaternion;
-    offsetPosition?: THREE.Vector3;
-};
+import { Focusable, LoadedEvent, Model, ModelLoaderService } from './model-loader';
 
 type Page = {
     path: string;
-};
-
-type Model = {
-    name: string;
-    displayName: string;
-    path: string;
-    location?: THREE.Vector3Tuple;
-    rotation?: THREE.Vector3Tuple;
-    scale?: number;
-    template?: {
-        offset: THREE.Vector3Tuple;
-    };
-    focusable?: {
-        rotation: THREE.Vector3Tuple;
-        offsetPosition: THREE.Vector3Tuple;
-    };
 };
 
 type SelectedModel = {
@@ -42,22 +15,14 @@ type SelectedModel = {
     scale: THREE.Vector3;
 };
 
-export interface IRenderService extends EventEmitter<IRenderServiceEvents> {
+export interface IRenderService {
     initialize(canvas: HTMLCanvasElement): void;
-}
-
-export interface IRenderServiceEvents {
-    modelLoading: LoadingState;
-    modelError: string;
 }
 
 @Injectable({
     providedIn: 'root',
 })
-export class RenderService
-    extends EventEmitter<IRenderServiceEvents>
-    implements IRenderService, OnDestroy
-{
+export class RenderService implements IRenderService, OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
@@ -69,11 +34,12 @@ export class RenderService
 
     private light: THREE.PointLight;
 
+    private pages?: { [key: string]: Page[] };
+
     constructor(
-        private readonly injector: Injector,
-        private readonly loggerService: LoggerService
+        private readonly loggerService: LoggerService,
+        private readonly modelLoaderService: ModelLoaderService
     ) {
-        super();
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0xe7e7e7ff);
 
@@ -83,92 +49,65 @@ export class RenderService
 
         this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
 
-        this._loadModels();
+        this.modelLoaderService.on('loaded', this._onModelLoaded.bind(this));
     }
 
-    private _loadModel(
-        model: Model,
-        pages: Page[] = [],
-        data: THREE.Group<THREE.Object3DEventMap>
-    ) {
-        this.loggerService.info('RenderService', `Model loaded: ${model.displayName}`);
-        if (model.location) data.position.copy(new THREE.Vector3(...model.location));
-        if (model.scale) data.scale.setScalar(model.scale);
-        if (model.rotation) data.quaternion.copy(parseRotation(model.rotation));
-        if (model.focusable)
-            data.userData['focusable'] = {
-                ...model.focusable,
-                rotation: parseRotation(model.focusable.rotation),
-                offsetPosition: model.focusable.offsetPosition
-                    ? new THREE.Vector3(...model.focusable.offsetPosition)
-                    : undefined,
-            } as Focusable;
+    private async _handleTemplate(model: Model, object: THREE.Object3D<THREE.Object3DEventMap>) {
+        if (!model.template) {
+            this.loggerService.warn(
+                'RenderService',
+                `Model ${model.displayName} is missing a template`
+            );
+            return;
+        }
+
+        if (!this.pages) {
+            const response = await (await fetch('pages/pages.json')).json();
+            this.pages = response.pages;
+        }
+
+        const pages = this.pages?.[model.name];
+        if (!pages) {
+            this.loggerService.warn('RenderService', `Model ${model.displayName} is missing pages`);
+            return;
+        }
+
+        for (let index = 0; index < pages.length; index++) {
+            const page = pages[index];
+            const clone = object.clone();
+            clone.position.add(new THREE.Vector3(...model.template.offset).multiplyScalar(index));
+            clone.userData = {
+                ...object.userData,
+                template: undefined,
+                page,
+            };
+            this.scene.add(clone);
+            this.loggerService.info(
+                'RenderService',
+                `Model ${model.displayName} added to scene`,
+                clone
+            );
+        }
+    }
+
+    private _onModelLoaded({ model, object }: LoadedEvent) {
         if (model.template) {
-            for (let index = 0; index < pages.length; index++) {
-                const page = pages[index];
-                const clone = data.clone();
-                clone.position.add(
-                    new THREE.Vector3(...model.template.offset).multiplyScalar(index)
-                );
-                this.scene.add(clone);
-                clone.userData = {
-                    ...data.userData,
-                    page,
-                    template: undefined,
-                };
-                this.loggerService.debug(
-                    'RenderService',
-                    `Model ${model.displayName} added to scene (template clone)`,
-                    clone
-                );
-            }
-        } else this.scene.add(data);
-        this.loggerService.debug(
+            this._handleTemplate(model, object);
+            return;
+        }
+
+        if (model.focusable) {
+            const rotation = parseRotation(model.focusable.rotation);
+            const offsetPosition = new THREE.Vector3(...model.focusable.offsetPosition);
+            object.userData['focusable'] = { rotation, offsetPosition } as Focusable;
+        }
+
+        this.scene.add(object);
+        this.loggerService.info(
             'RenderService',
             `Model ${model.displayName} added to scene`,
-            data
+            object
         );
-        this.emit('modelLoading', { name: model.displayName, progress: 100 });
-    }
-
-    private _handleLoadModelError(model: Model, error: any) {
-        this.emit('modelError', model.displayName);
-        this.loggerService.error(
-            'RenderService',
-            `Failed to load model ${model.displayName}:`,
-            error
-        );
-    }
-
-    private async _loadModels() {
-        const { models }: { models: Model[] } = await fetch('models.json').then((res) =>
-            res.json()
-        );
-        this.loggerService.debug('RenderService', 'Loaded model configuration:', models);
-
-        const { pages }: { pages: { [key: string]: Page[] } } = await fetch(
-            'pages/pages.json'
-        ).then((res) => res.json());
-
-        models.forEach((model) => {
-            const loadable = new LoadableModel(
-                this.injector,
-                model.name,
-                model.displayName,
-                model.path
-            );
-            loadable.subscribeToProgress((progress) => {
-                this.emit('modelLoading', {
-                    name: loadable.displayName,
-                    progress: Math.min(99, progress),
-                });
-            });
-
-            loadable
-                .getModel()
-                .then(this._loadModel.bind(this, model, pages[model.name]))
-                .catch(this._handleLoadModelError.bind(this, model));
-        });
     }
 
     private _setUp(canvas: HTMLCanvasElement) {

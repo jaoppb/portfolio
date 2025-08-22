@@ -1,8 +1,15 @@
 import { Component, computed, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
-import { LoadingState, RenderService } from '@services/render';
+import { RenderService } from '@services/render';
 import { Loading } from '../../components/loading/loading';
 import _ from 'lodash';
 import { Error } from '@app/components/error/error';
+import {
+    ErrorEvent,
+    LoadedEvent,
+    LoadingState,
+    ModelLoaderService,
+    ProgressEvent,
+} from '@app/services/model-loader';
 
 @Component({
     selector: 'app-scene',
@@ -24,22 +31,36 @@ export class Scene {
     readonly isLoading = computed(() => this.loadings().some((state) => state.progress < 100));
     errors: WritableSignal<string[]> = signal([], { equal: _.isEqual });
 
-    constructor(private readonly renderService: RenderService) {
-        this.renderService.on('modelLoading', this._handleModelLoading.bind(this));
-        this.renderService.on('modelError', this._handleModelError.bind(this));
+    constructor(
+        private readonly renderService: RenderService,
+        private readonly modelLoaderService: ModelLoaderService
+    ) {
+        this.modelLoaderService.on('progress', this._handleModelLoading.bind(this));
+        this.modelLoaderService.on('error', this._handleModelError.bind(this));
+
+        this.modelLoaderService.on('loaded', this._handleModelLoaded.bind(this));
     }
 
-    private _handleModelLoading(state: LoadingState) {
+    private _handleModelLoading(event: ProgressEvent) {
         this.loadings.update((loading) => {
             const clone = _.cloneDeep(loading);
-            const index = clone.findIndex((item) => item.name === state.name);
-            if (index !== -1) clone[index] = state;
-            else clone.push(state);
+            const index = clone.findIndex((item) => item.name === event.name);
+            if (index !== -1) clone[index] = event;
+            else clone.push(event);
             return clone;
         });
     }
 
-    private _handleModelError(name: string) {
-        this.errors.update((errors) => [...errors, name]);
+    private _handleModelLoaded(event: LoadedEvent) {
+        this.loadings.update((loading) => {
+            const clone = _.cloneDeep(loading);
+            const index = clone.findIndex((item) => item.name === event.model.displayName);
+            if (index !== -1) clone[index] = { ...clone[index], progress: 100 };
+            return clone;
+        });
+    }
+
+    private _handleModelError(event: ErrorEvent) {
+        this.errors.update((errors) => [...errors, event.model.displayName]);
     }
 }

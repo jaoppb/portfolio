@@ -1,5 +1,5 @@
 import { Component, Input, signal } from '@angular/core';
-import { LoadingState } from '@app/services/render';
+import { LoadingState } from '@app/services/model-loader';
 import { ProgressBar } from '@app/components/progress-bar/progress-bar';
 
 @Component({
