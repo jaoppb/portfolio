@@ -6,6 +6,8 @@ import { LoadableModel } from '@app/models/loadable';
 import { parseRotation } from '@app/utils';
 import { DataService } from './data';
 import { lastValueFrom } from 'rxjs';
+import { GLTF } from 'three/examples/jsm/Addons.js';
+import { PlayAnimationOptions } from './animation';
 
 export type Model = {
     name: string;
@@ -21,6 +23,10 @@ export type Model = {
         rotation: THREE.Vector3Tuple;
         offsetPosition: THREE.Vector3Tuple;
     };
+    animation?: {
+        options: PlayAnimationOptions;
+        state: string;
+    };
 };
 
 export type Focusable = {
@@ -29,7 +35,11 @@ export type Focusable = {
 };
 
 export type ProgressEvent = { name: string; progress: number };
-export type LoadedEvent = { model: Model; object: THREE.Object3D<THREE.Object3DEventMap> };
+export type LoadedEvent = {
+    model: Model;
+    gltf: GLTF;
+    object: THREE.Object3D<THREE.Object3DEventMap>;
+};
 export type ErrorEvent = { model: Model; error: any };
 
 export interface IModelLoaderEvents {
@@ -80,7 +90,8 @@ export class ModelLoaderService extends EventEmitter<IModelLoaderEvents> {
         });
     }
 
-    private _loadModel(model: Model, data: THREE.Group<THREE.Object3DEventMap>) {
+    private _loadModel(model: Model, gltf: GLTF) {
+        const data = gltf.scene.clone();
         this.loggerService.info('ModelLoaderService', `Model loaded: ${model.displayName}`);
         if (model.location) data.position.copy(new THREE.Vector3(...model.location));
         if (model.scale) data.scale.setScalar(model.scale);
@@ -99,6 +110,6 @@ export class ModelLoaderService extends EventEmitter<IModelLoaderEvents> {
             `Model ${model.displayName} added to scene`,
             data
         );
-        this.emit('loaded', { model: model, object: data });
+        this.emit('loaded', { model: model, object: data, gltf });
     }
 }

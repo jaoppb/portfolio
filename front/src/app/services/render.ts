@@ -6,6 +6,7 @@ import { Focusable, LoadedEvent, Model, ModelLoaderService } from './model-loade
 import { DataService } from './data';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 import { EventEmitter } from '@app/utils/event-emitter';
+import { AnimationService } from './animation';
 
 export type Page = {
     path: string;
@@ -25,6 +26,8 @@ interface IRenderServiceEvents {
 export class RenderService extends EventEmitter<IRenderServiceEvents> implements OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private renderer?: THREE.WebGLRenderer;
+    private clock = new THREE.Clock();
+    private mixers: THREE.AnimationMixer[] = [];
 
     private light: THREE.PointLight;
 
@@ -35,7 +38,8 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         private readonly camera: THREE.PerspectiveCamera,
         private readonly loggerService: LoggerService,
         private readonly modelLoaderService: ModelLoaderService,
-        private readonly dataService: DataService
+        private readonly dataService: DataService,
+        private readonly animationService: AnimationService
     ) {
         super();
 
@@ -44,6 +48,7 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.scene.add(this.light);
 
         this.modelLoaderService.on('loaded', this._onModelLoaded.bind(this));
+        this.animationService.on('mixer', ({ mixer }) => this.mixers.push(mixer));
     }
 
     private _onModelLoaded({ model, object }: LoadedEvent) {
@@ -90,6 +95,9 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
             object.userData['focusable'] = { rotation, offsetPosition } as Focusable;
         }
 
+        object.userData['name'] = model.name;
+        object.userData['animation'] = model.animation;
+
         this.scene.add(object);
         this.loggerService.info(
             'RenderService',
@@ -135,6 +143,12 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
 
     private _animate() {
         if (!this.renderer) return;
+
+        const delta = this.clock.getDelta();
+
+        for (const mixer of this.mixers) {
+            mixer.update(delta);
+        }
 
         this.renderer.render(this.scene, this.camera);
     }

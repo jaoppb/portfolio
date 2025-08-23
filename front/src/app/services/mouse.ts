@@ -4,7 +4,7 @@ import { EventEmitter } from '@app/utils/event-emitter';
 import * as THREE from 'three';
 
 export type PointerClick = {
-    object: THREE.Object3D<THREE.Object3DEventMap>;
+    object?: THREE.Object3D<THREE.Object3DEventMap>;
 };
 
 export type PointerMove = {

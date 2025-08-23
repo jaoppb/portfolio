@@ -23,6 +23,12 @@
             },
             "template": {
                 "offset": [0, 0, 0.17]
+            },
+            "animation": {
+                "options": {
+                    "holdOnLastFrame": true
+                },
+                "state": "opened"
             }
         },
         {
@@ -38,6 +44,12 @@
             },
             "template": {
                 "offset": [0, 0, 0.17]
+            },
+            "animation": {
+                "options": {
+                    "holdOnLastFrame": true
+                },
+                "state": "opened"
             }
         },
         {
@@ -53,6 +65,12 @@
             },
             "template": {
                 "offset": [0, 0, 0.17]
+            },
+            "animation": {
+                "options": {
+                    "holdOnLastFrame": true
+                },
+                "state": "opened"
             }
         },
         {

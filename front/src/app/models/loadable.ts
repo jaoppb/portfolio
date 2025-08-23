@@ -7,12 +7,12 @@ const loader = new GLTFLoader();
 THREE.Cache.enabled = true;
 
 type ModelPromise = {
-    resolve: (model: THREE.Group) => void;
+    resolve: (gltf: GLTF) => void;
     reject: (error?: unknown) => void;
 };
 
 export class LoadableModel {
-    private model: THREE.Group | null = null;
+    private gltf: GLTF | null = null;
     private promises: ModelPromise[] = [];
     private onProgressCallbacks: ((progress: number) => void)[] = [];
     private isLoading = false;
@@ -43,13 +43,13 @@ export class LoadableModel {
 
     private _onLoad(gltf: GLTF) {
         this.loggerService.info(`ModelLoader ${this.name}`, 'Model loaded successfully');
-        this.model = gltf.scene;
+        this.gltf = gltf;
         this.isLoading = false;
         this._clearProgressCallbacks();
 
         let promise = this.promises.shift();
         while (promise) {
-            promise.resolve(this.model.clone());
+            promise.resolve(gltf);
             promise = this.promises.shift();
         }
     }
@@ -80,10 +80,10 @@ export class LoadableModel {
         this.onProgressCallbacks.length = 0;
     }
 
-    getModel(): Promise<THREE.Group> {
+    getModel(): Promise<GLTF> {
         this.loggerService.info(`ModelLoader ${this.name}`, 'getModel called');
-        if (this.model) {
-            return Promise.resolve(this.model);
+        if (this.gltf) {
+            return Promise.resolve(this.gltf);
         }
 
         this._loadModel();

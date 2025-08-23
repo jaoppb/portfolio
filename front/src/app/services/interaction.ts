@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import * as THREE from 'three';
 import { MouseService, PointerClick } from './mouse';
-import { Focusable } from './model-loader';
+import { Focusable, Model } from './model-loader';
 import { getPositionFromCamera } from '@app/utils';
+import { AnimationService } from './animation';
+import { LoggerService } from './logger';
 
 type SelectedModel = {
     object: THREE.Object3D<THREE.Object3DEventMap>;
@@ -18,18 +20,44 @@ export class InteractionService {
     private selected?: SelectedModel;
 
     constructor(
+        private readonly loggerService: LoggerService,
         private readonly mouseService: MouseService,
         private readonly camera: THREE.PerspectiveCamera,
-        private readonly scene: THREE.Scene
+        private readonly scene: THREE.Scene,
+        private readonly animationService: AnimationService
     ) {}
+
+    private _checkObjectAnimationState(object: THREE.Object3D<THREE.Object3DEventMap>): boolean {
+        const animation: Model['animation'] | undefined = object.userData['animation'];
+        if (!animation) return false;
+
+        const stateName = animation.state;
+        return object.userData[stateName];
+    }
+
+    private _setObjectAnimationState(
+        object: THREE.Object3D<THREE.Object3DEventMap>,
+        value: boolean
+    ) {
+        const animation: Model['animation'] | undefined = object.userData['animation'];
+        if (!animation) return;
+
+        const stateName = animation.state;
+        object.userData[stateName] = value;
+    }
 
     private _resetSelection() {
         if (!this.selected) return;
+
+        if (this._checkObjectAnimationState(this.selected.object)) {
+            this._playAnimation(this.selected.object);
+        }
 
         const { location, rotation, scale } = this.selected.restore;
         this.selected.object.position.copy(location);
         this.selected.object.quaternion.copy(rotation);
         this.selected.object.scale.copy(scale);
+        this.selected = undefined;
     }
 
     private _selectObject(object: THREE.Object3D<THREE.Object3DEventMap>) {
@@ -64,12 +92,37 @@ export class InteractionService {
         return object;
     }
 
+    private _playAnimation(object: THREE.Object3D<THREE.Object3DEventMap>) {
+        const animation: Model['animation'] | undefined = object.userData['animation'];
+        if (!animation) return;
+
+        this.loggerService.info(
+            'InteractionService',
+            `Clicked on object: ${object.userData['name']}`
+        );
+
+        if (this._checkObjectAnimationState(object) === undefined)
+            this._setObjectAnimationState(object, false);
+        const current = this._checkObjectAnimationState(object);
+        this.animationService.playAnimation(object.userData['name'], object as THREE.Group, {
+            ...(animation.options ?? {}),
+            inReverse: current,
+        });
+        this._setObjectAnimationState(object, !current);
+    }
+
     private _onClick({ object }: PointerClick) {
-        if (this.selected) this._resetSelection();
+        if (object) {
+            object = this._getTopMostObject(object);
+            if (this.selected?.object === object) {
+                this._playAnimation(object);
+                return;
+            }
+        }
+
+        this._resetSelection();
 
         if (!object) return;
-
-        object = this._getTopMostObject(object);
         this._selectObject(object);
     }
 
