@@ -12,9 +12,11 @@ export type Page = {
 };
 
 export type ModelLoadedEvent = { model: Model };
+export type CreatedRendererEvent = { renderer: THREE.WebGLRenderer };
 
 interface IRenderServiceEvents {
     modelLoaded: ModelLoadedEvent;
+    createdRenderer: CreatedRendererEvent;
 }
 
 @Injectable({
@@ -120,7 +122,6 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         }
 
         this.canvas = canvas;
-        window.addEventListener('resize', this._onResize.bind(this));
 
         this.camera.position.set(-3.5, 5.5, -1);
         this.camera.lookAt(-6, 4.5, -1);
@@ -134,8 +135,7 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMap.enabled = true;
 
-        this._onResize();
-
+        this.emit('createdRenderer', { renderer: this.renderer });
         this.loggerService.info('RenderService', 'Scene and camera initialized');
     }
 
@@ -154,18 +154,6 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.renderer = undefined;
 
         this.loggerService.info('RenderService', 'Resources disposed');
-    }
-
-    private _onResize() {
-        if (!this.renderer || !this.camera || !this.canvas) return;
-
-        this.loggerService.info('RenderService', 'Window resized, updating camera and renderer');
-        const { innerWidth: width, innerHeight: height } = window;
-        this.camera.aspect = width / height;
-        this.camera.updateProjectionMatrix();
-
-        this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
 
     initialize(canvas: HTMLCanvasElement) {
