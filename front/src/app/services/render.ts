@@ -3,20 +3,12 @@ import * as THREE from 'three';
 import { LoggerService } from './logger';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
 import { Focusable, LoadedEvent, Model, ModelLoaderService } from './model-loader';
-import { MouseService, PointerClick } from './mouse';
 import { DataService } from './data';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 import { EventEmitter } from '@app/utils/event-emitter';
 
 export type Page = {
     path: string;
-};
-
-type SelectedModel = {
-    object: THREE.Object3D<THREE.Object3DEventMap>;
-    location: THREE.Vector3;
-    rotation: THREE.Quaternion;
-    scale: THREE.Vector3;
 };
 
 export type ModelLoadedEvent = { model: Model };
@@ -31,7 +23,6 @@ interface IRenderServiceEvents {
 export class RenderService extends EventEmitter<IRenderServiceEvents> implements OnDestroy {
     private canvas: HTMLCanvasElement | null = null;
     private renderer?: THREE.WebGLRenderer;
-    private selected?: SelectedModel;
 
     private light: THREE.PointLight;
 
@@ -42,7 +33,6 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         private readonly camera: THREE.PerspectiveCamera,
         private readonly loggerService: LoggerService,
         private readonly modelLoaderService: ModelLoaderService,
-        private readonly mouseService: MouseService,
         private readonly dataService: DataService
     ) {
         super();
@@ -52,7 +42,6 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.scene.add(this.light);
 
         this.modelLoaderService.on('loaded', this._onModelLoaded.bind(this));
-        this.mouseService.on('click', this._onClick.bind(this));
     }
 
     private async _handleTemplate(model: Model, object: THREE.Object3D<THREE.Object3DEventMap>) {
@@ -177,39 +166,6 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
 
         this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    }
-
-    private _onClick({ object }: PointerClick) {
-        if (this.selected) {
-            this.selected.object.position.copy(this.selected.location);
-            this.selected.object.quaternion.copy(this.selected.rotation);
-            this.selected.object.scale.copy(this.selected.scale);
-        }
-
-        if (!object) return;
-
-        while (object.parent && object.parent !== this.scene) object = object.parent;
-
-        const focusable: Focusable | undefined = object.userData['focusable'];
-        if (!focusable) return;
-
-        this.selected = {
-            object,
-            location: object.position.clone(),
-            rotation: object.quaternion.clone(),
-            scale: object.scale.clone(),
-        };
-
-        const position = getPositionFromCamera(this.camera, 1.5);
-        if (focusable.offsetPosition) position.add(focusable.offsetPosition);
-        object.position.copy(position);
-
-        const upVector = new THREE.Vector3(0, 1, 0);
-        const upRotation = new THREE.Quaternion().setFromUnitVectors(
-            upVector.clone(),
-            upVector.clone().applyQuaternion(this.camera.quaternion)
-        );
-        object.quaternion.copy(upRotation.multiply(focusable.rotation));
     }
 
     initialize(canvas: HTMLCanvasElement) {
