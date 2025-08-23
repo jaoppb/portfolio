@@ -46,15 +46,28 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.modelLoaderService.on('loaded', this._onModelLoaded.bind(this));
     }
 
-    private async _handleTemplate(model: Model, object: THREE.Object3D<THREE.Object3DEventMap>) {
-        if (!model.template) {
-            this.loggerService.warn(
-                'RenderService',
-                `Model ${model.displayName} is missing a template`
-            );
-            return;
-        }
+    private _onModelLoaded({ model, object }: LoadedEvent) {
+        if (model.template) this._handleTemplate(model, object);
+        else this._addObject(model, object);
+    }
 
+    private _loadPage(
+        object: THREE.Object3D<THREE.Object3DEventMap>,
+        model: Model,
+        index: number,
+        page: Page
+    ) {
+        const clone = object.clone();
+        clone.position.add(new THREE.Vector3(...model.template!.offset).multiplyScalar(index));
+        clone.userData = {
+            ...object.userData,
+            template: undefined,
+            page,
+        };
+        this._addObject(model, clone);
+    }
+
+    private async _handleTemplate(model: Model, object: THREE.Object3D<THREE.Object3DEventMap>) {
         if (!this.pages) {
             this.pages = await lastValueFrom(this.dataService.pages);
         }
@@ -66,30 +79,11 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         }
 
         for (let index = 0; index < pages.length; index++) {
-            const page = pages[index];
-            const clone = object.clone();
-            clone.position.add(new THREE.Vector3(...model.template.offset).multiplyScalar(index));
-            clone.userData = {
-                ...object.userData,
-                template: undefined,
-                page,
-            };
-            this.scene.add(clone);
-            this.loggerService.info(
-                'RenderService',
-                `Model ${model.displayName} added to scene`,
-                clone
-            );
+            this._loadPage(object, model, index, pages[index]);
         }
-        this.emit('modelLoaded', { model });
     }
 
-    private _onModelLoaded({ model, object }: LoadedEvent) {
-        if (model.template) {
-            this._handleTemplate(model, object);
-            return;
-        }
-
+    private _addObject(model: Model, object: THREE.Object3D) {
         if (model.focusable) {
             const rotation = parseRotation(model.focusable.rotation);
             const offsetPosition = new THREE.Vector3(...model.focusable.offsetPosition);
@@ -99,7 +93,7 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.scene.add(object);
         this.loggerService.info(
             'RenderService',
-            `Model ${model.displayName} added to scene`,
+            `Object ${model.displayName} added to scene`,
             object
         );
         this.emit('modelLoaded', { model });
