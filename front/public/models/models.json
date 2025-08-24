@@ -14,7 +14,7 @@
             "name": "book-1",
             "displayName": "Book",
             "path": "models/book.glb",
-            "location": [-8.65, 4.57325, -1.2],
+            "location": [-8.95, 4.57325, -1.2],
             "rotation": [90, 0, 180],
             "scale": 0.2,
             "focusable": {
@@ -35,7 +35,7 @@
             "name": "book-2",
             "displayName": "Book",
             "path": "models/book.glb",
-            "location": [-8.65, 3.41325, -1.92],
+            "location": [-8.95, 3.41325, -1.92],
             "rotation": [90, 0, 180],
             "scale": 0.2,
             "focusable": {
@@ -56,7 +56,7 @@
             "name": "book-3",
             "displayName": "Book",
             "path": "models/book.glb",
-            "location": [-8.65, 2.21325, -2.58],
+            "location": [-8.95, 2.21325, -2.58],
             "rotation": [90, 0, 180],
             "scale": 0.2,
             "focusable": {
