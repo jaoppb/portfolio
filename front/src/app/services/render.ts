@@ -43,7 +43,7 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
     ) {
         super();
 
-        this.light = new THREE.PointLight(0xffffff, 200);
+        this.light = new THREE.PointLight(0xffffff, 80, 0, 1.5);
         this.light.castShadow = true;
         this.scene.add(this.light);
 
@@ -128,7 +128,9 @@ export class RenderService extends EventEmitter<IRenderServiceEvents> implements
         this.camera.position.set(-3.5, 5.5, -1);
         this.camera.lookAt(-6, 4.5, -1);
 
-        this.light.position.copy(getPositionFromCamera(this.camera, -5));
+        this.light.position.copy(
+            getPositionFromCamera(this.camera, -3, new THREE.Vector3(0, 3, 0))
+        );
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
