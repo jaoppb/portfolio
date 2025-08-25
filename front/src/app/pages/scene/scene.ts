@@ -1,4 +1,13 @@
-import { Component, computed, ElementRef, signal, ViewChild, WritableSignal } from '@angular/core';
+import {
+    Component,
+    computed,
+    ElementRef,
+    OnInit,
+    signal,
+    ViewChild,
+    ViewContainerRef,
+    WritableSignal,
+} from '@angular/core';
 import { Loading } from '../../components/loading/loading';
 import _ from 'lodash';
 import { Error } from '@app/components/error/error';
@@ -9,7 +18,7 @@ import {
     ProgressEvent,
 } from '@app/services/model-loader';
 import { InitializerService } from '@app/services/initializer';
-import { ModelLoadedEvent, RenderService } from '@app/services/render';
+import { CanvasRendererService, ModelLoadedEvent } from '@app/services/renderers/canvas';
 
 export type SceneLoadingState = LoadingState & {
     inScene: boolean;
@@ -21,12 +30,19 @@ export type SceneLoadingState = LoadingState & {
     templateUrl: './scene.html',
     styleUrl: './scene.scss',
 })
-export class Scene {
+export class Scene implements OnInit {
     @ViewChild('canvas')
     set canvas(ref: ElementRef<HTMLCanvasElement> | undefined) {
         if (!ref) return;
 
-        this.initializerService.initialize(ref.nativeElement);
+        this.initializerService.initializeCanvas(ref.nativeElement);
+    }
+
+    @ViewChild('overlay')
+    set overlay(ref: ElementRef<HTMLDivElement> | undefined) {
+        if (!ref) return;
+
+        this.initializerService.initializeOverlay(ref.nativeElement);
     }
 
     loadings: WritableSignal<SceneLoadingState[]> = signal([], {
@@ -36,14 +52,15 @@ export class Scene {
     errors: WritableSignal<string[]> = signal([], { equal: _.isEqual });
 
     constructor(
-        private readonly renderService: RenderService,
+        private readonly canvasRendererService: CanvasRendererService,
         private readonly modelLoaderService: ModelLoaderService,
-        private readonly initializerService: InitializerService
+        private readonly initializerService: InitializerService,
+        private readonly viewContainerRef: ViewContainerRef
     ) {
         this.modelLoaderService.on('progress', this._handleModelLoading.bind(this));
         this.modelLoaderService.on('error', this._handleModelError.bind(this));
 
-        this.renderService.on('modelLoaded', this._handleModelLoaded.bind(this));
+        this.canvasRendererService.on('modelLoaded', this._handleModelLoaded.bind(this));
     }
 
     private _handleModelLoading(event: ProgressEvent) {
@@ -67,5 +84,9 @@ export class Scene {
 
     private _handleModelError(event: ErrorEvent) {
         this.errors.update((errors) => [...errors, event.model.displayName]);
+    }
+
+    ngOnInit(): void {
+        this.initializerService.initializeContainer(this.viewContainerRef);
     }
 }

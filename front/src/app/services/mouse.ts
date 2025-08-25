@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { CANVAS_SCENE } from '@app/tokens';
 import { EventEmitter } from '@app/utils/event-emitter';
 
 import * as THREE from 'three';
@@ -21,9 +22,10 @@ export class MouseService extends EventEmitter<IMouseServiceEvents> {
     private raycaster: THREE.Raycaster = new THREE.Raycaster();
     private mouse: THREE.Vector2 = new THREE.Vector2();
     private intersects: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
-    private canvas?: HTMLCanvasElement;
+    private overlay?: HTMLDivElement;
 
     constructor(
+        @Inject(CANVAS_SCENE)
         private readonly scene: THREE.Scene,
         private readonly camera: THREE.PerspectiveCamera
     ) {
@@ -31,12 +33,12 @@ export class MouseService extends EventEmitter<IMouseServiceEvents> {
     }
 
     private _onPointerMove(e: PointerEvent) {
-        if (!this.canvas) return;
+        if (!this.overlay) return;
 
-        const { left, top } = this.canvas.getBoundingClientRect();
+        const { left, top } = this.overlay.getBoundingClientRect();
         this.mouse.set(
-            ((e.clientX - left) / this.canvas.clientWidth) * 2 - 1,
-            (-(e.clientY - top) / this.canvas.clientHeight) * 2 + 1
+            ((e.clientX - left) / this.overlay.clientWidth) * 2 - 1,
+            (-(e.clientY - top) / this.overlay.clientHeight) * 2 + 1
         );
         this.raycaster.setFromCamera(this.mouse, this.camera);
         this.intersects = this.raycaster.intersectObjects(this.scene.children, true);
@@ -48,11 +50,11 @@ export class MouseService extends EventEmitter<IMouseServiceEvents> {
         this.emit('click', { object: this.intersects[0]?.object });
     }
 
-    initialize(canvas: HTMLCanvasElement) {
-        this.canvas = canvas;
+    initialize(overlay: HTMLDivElement) {
+        this.overlay = overlay;
 
-        this.canvas.addEventListener('pointermove', this._onPointerMove.bind(this));
-        this.canvas.addEventListener('pointerdown', (e) => {
+        this.overlay.addEventListener('pointermove', this._onPointerMove.bind(this));
+        this.overlay.addEventListener('pointerdown', (e) => {
             this._onPointerDown();
             this._onPointerMove(e);
         });

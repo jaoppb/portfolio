@@ -9,10 +9,17 @@ interface IAnimationServiceEvents {
     mixer: { mixer: THREE.AnimationMixer };
 }
 
-export type PlayAnimationOptions = {
-    holdOnLastFrame?: boolean;
-    inReverse?: boolean;
+export type PlayAnimation = {
+    modelName: string;
+    object: THREE.Group;
+    clipOptions: {
+        holdOnLastFrame?: boolean;
+        inReverse?: boolean;
+    };
+    onEnd?: () => void;
 };
+
+export type PlayAnimationOptions = PlayAnimation['clipOptions'];
 
 @Injectable({ providedIn: 'root' })
 export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
@@ -33,38 +40,45 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
         this.animations[model.name] = gltf.animations;
     }
 
-    playAnimation(modelName: string, object: THREE.Group, options?: PlayAnimationOptions) {
+    playAnimation(options: PlayAnimation) {
         this.loggerService.info(
             'AnimationService',
-            `Playing animation for model: ${modelName}`,
-            options
+            `Playing animation for model: ${options.modelName}`,
+            options.clipOptions
         );
-        const clips = this.animations[modelName];
+        const clips = this.animations[options.modelName];
         if (!clips) return;
 
         let mixer: THREE.AnimationMixer;
-        if (this.mixers[object.uuid]) {
-            mixer = this.mixers[object.uuid];
+        if (this.mixers[options.object.uuid]) {
+            mixer = this.mixers[options.object.uuid];
         } else {
-            mixer = new THREE.AnimationMixer(object);
-            this.mixers[object.uuid] = mixer;
+            mixer = new THREE.AnimationMixer(options.object);
+            this.mixers[options.object.uuid] = mixer;
             this.emit('mixer', { mixer });
         }
 
-        clips.forEach((clip) => {
+        for (const clip of clips) {
             const action = mixer.clipAction(clip);
             action.reset();
-            if (options?.holdOnLastFrame) {
+            if (options.clipOptions?.holdOnLastFrame) {
                 action.clampWhenFinished = true;
                 action.loop = THREE.LoopOnce;
             }
-            if (options?.inReverse) {
+            if (options.clipOptions?.inReverse) {
                 action.timeScale = -1;
                 action.time = action.getClip().duration;
             } else {
                 action.timeScale = 1;
             }
             action.play();
-        });
+        }
+        if (options.onEnd) {
+            const callback = () => {
+                options.onEnd?.();
+                mixer.removeEventListener('finished', callback);
+            };
+            mixer.addEventListener('finished', callback);
+        }
     }
 }
