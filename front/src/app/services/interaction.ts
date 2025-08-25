@@ -5,7 +5,7 @@ import { Focusable, Model } from './model-loader';
 import { getObjectScreenSize, getPositionFromCamera } from '@app/utils';
 import { AnimationService, PlayAnimation } from './animation';
 import { LoggerService } from './logger';
-import { CanvasRendererService, Page } from './renderers/canvas';
+import { CanvasRendererService, PageData } from './renderers/canvas';
 import { CANVAS_SCENE } from '@app/tokens';
 import { Book as PageComponent } from '@app/components/page/book';
 import { ComponentService } from './component';
@@ -147,7 +147,7 @@ export class InteractionService {
     private _loadPage(object: THREE.Object3D<THREE.Object3DEventMap>) {
         if (!this.renderer) return;
 
-        const page: Page | undefined = object.userData['page'];
+        const page: PageData | undefined = object.userData['page'];
         if (!page) return;
 
         this._unloadPage();

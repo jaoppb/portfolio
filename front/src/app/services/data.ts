@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { BASE_URL } from '@app/tokens';
 import { Model } from './model-loader';
 import { map } from 'rxjs/internal/operators/map';
-import { Page } from './renderers/canvas';
+import { PageData } from './renderers/canvas';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
@@ -26,7 +26,7 @@ export class DataService {
 
     get pages() {
         return this.http
-            .get<{ pages: { [key: string]: Page[] } }>(`${this.baseURL}/pages/pages.json`)
+            .get<{ pages: { [key: string]: PageData[] } }>(`${this.baseURL}/pages/pages.json`)
             .pipe(map((response) => response.pages));
     }
 

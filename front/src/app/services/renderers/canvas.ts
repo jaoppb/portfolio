@@ -11,7 +11,7 @@ import { CANVAS_SCENE } from '@app/tokens';
 import { OverlayRendererService } from './overlay';
 import _ from 'lodash';
 
-export type Page = {
+export type PageData = {
     path: string;
 };
 
@@ -32,7 +32,7 @@ export class CanvasRendererService extends RendererService<
 
     private readonly light: THREE.PointLight;
 
-    private pages?: { [key: string]: Page[] };
+    private pages?: { [key: string]: PageData[] };
 
     constructor(
         @Inject(CANVAS_SCENE)
@@ -57,7 +57,7 @@ export class CanvasRendererService extends RendererService<
         object: THREE.Object3D<THREE.Object3DEventMap>,
         model: Model,
         index: number,
-        page: Page
+        page: PageData
     ) {
         const clone = object.clone();
         clone.position.add(new THREE.Vector3(...model.template!.offset).multiplyScalar(index));
