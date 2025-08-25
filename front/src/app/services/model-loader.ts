@@ -20,8 +20,9 @@ export type Model = {
         offset: THREE.Vector3Tuple;
     };
     focusable?: {
-        rotation: THREE.Vector3Tuple;
-        offsetPosition: THREE.Vector3Tuple;
+        rotation?: THREE.Vector3Tuple;
+        offsetPosition?: THREE.Vector3Tuple;
+        distance?: number;
     };
     animation?: {
         options: PlayAnimationOptions;
@@ -30,8 +31,9 @@ export type Model = {
 };
 
 export type Focusable = {
-    rotation: THREE.Quaternion;
+    rotation?: THREE.Quaternion;
     offsetPosition?: THREE.Vector3;
+    distance?: number;
 };
 
 export type ProgressEvent = { name: string; progress: number };
@@ -90,20 +92,26 @@ export class ModelLoaderService extends EventEmitter<IModelLoaderEvents> {
         });
     }
 
+    private _parseFocusable(focusable: Model['focusable'] | undefined): Focusable | undefined {
+        if (!focusable) return undefined;
+        const parsed: Focusable = {};
+        if (focusable.distance) parsed.distance = focusable.distance;
+        if (focusable.rotation) parsed.rotation = parseRotation(focusable.rotation);
+        if (focusable.offsetPosition)
+            parsed.offsetPosition = new THREE.Vector3(...focusable.offsetPosition);
+        return parsed;
+    }
+
     private _loadModel(model: Model, gltf: GLTF) {
-        const data = gltf.scene.clone();
+        const data = gltf.scene;
         this.loggerService.info('ModelLoaderService', `Model loaded: ${model.displayName}`);
         if (model.location) data.position.copy(new THREE.Vector3(...model.location));
         if (model.scale) data.scale.setScalar(model.scale);
         if (model.rotation) data.quaternion.copy(parseRotation(model.rotation));
-        if (model.focusable)
-            data.userData['focusable'] = {
-                ...model.focusable,
-                rotation: parseRotation(model.focusable.rotation),
-                offsetPosition: model.focusable.offsetPosition
-                    ? new THREE.Vector3(...model.focusable.offsetPosition)
-                    : undefined,
-            } as Focusable;
+        data.userData['focusable'] = this._parseFocusable(model.focusable);
+
+        data.userData['name'] = model.name;
+        data.userData['animation'] = model.animation;
 
         this.loggerService.debug(
             'ModelLoaderService',

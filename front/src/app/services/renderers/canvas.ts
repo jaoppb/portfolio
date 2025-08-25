@@ -2,13 +2,14 @@ import { Inject, Injectable } from '@angular/core';
 import { AnimationService } from '../animation';
 import { DataService } from '../data';
 import { LoggerService } from '../logger';
-import { Focusable, LoadedEvent, Model, ModelLoaderService } from '../model-loader';
+import { LoadedEvent, Model, ModelLoaderService } from '../model-loader';
 import { IRenderServiceEvents, RendererService } from './base';
 import * as THREE from 'three';
 import { lastValueFrom } from 'rxjs';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
 import { CANVAS_SCENE } from '@app/tokens';
 import { OverlayRendererService } from './overlay';
+import _ from 'lodash';
 
 export type Page = {
     path: string;
@@ -60,11 +61,9 @@ export class CanvasRendererService extends RendererService<
     ) {
         const clone = object.clone();
         clone.position.add(new THREE.Vector3(...model.template!.offset).multiplyScalar(index));
-        clone.userData = {
-            ...object.userData,
-            template: undefined,
-            page,
-        };
+        clone.userData = _.cloneDeep(object.userData);
+        delete clone.userData['template'];
+        clone.userData['page'] = page;
         this._addObject(model, clone);
     }
 
@@ -85,12 +84,6 @@ export class CanvasRendererService extends RendererService<
     }
 
     private _addObject(model: Model, object: THREE.Object3D) {
-        if (model.focusable) {
-            const rotation = parseRotation(model.focusable.rotation);
-            const offsetPosition = new THREE.Vector3(...model.focusable.offsetPosition);
-            object.userData['focusable'] = { rotation, offsetPosition } as Focusable;
-        }
-
         object.userData['name'] = model.name;
         object.userData['animation'] = model.animation;
 

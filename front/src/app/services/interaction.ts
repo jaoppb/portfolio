@@ -5,7 +5,6 @@ import { Focusable, Model } from './model-loader';
 import { getObjectScreenSize, getPositionFromCamera } from '@app/utils';
 import { AnimationService, PlayAnimation } from './animation';
 import { LoggerService } from './logger';
-import { CSS3DObject } from 'three/examples/jsm/Addons.js';
 import { CanvasRendererService, Page } from './renderers/canvas';
 import { CANVAS_SCENE } from '@app/tokens';
 import { Book as PageComponent } from '@app/components/page/book';
@@ -91,7 +90,7 @@ export class InteractionService {
             },
         };
 
-        const position = getPositionFromCamera(this.camera, 1.5);
+        const position = getPositionFromCamera(this.camera, focusable.distance ?? 1.5);
         if (focusable.offsetPosition) position.add(focusable.offsetPosition);
         object.position.copy(position);
 
@@ -100,7 +99,8 @@ export class InteractionService {
             upVector.clone(),
             upVector.clone().applyQuaternion(this.camera.quaternion)
         );
-        object.quaternion.copy(upRotation.multiply(focusable.rotation));
+        if (focusable.rotation) upRotation.multiply(focusable.rotation);
+        object.quaternion.copy(upRotation);
     }
 
     private _getTopMostObject(
@@ -130,7 +130,7 @@ export class InteractionService {
                 inReverse: current,
             },
         };
-        if (current) this._unloadPage();
+        if (current) options.onEnd = this._unloadPage.bind(this);
         else this._loadPage(object);
         this.animationService.playAnimation(options);
         this._setObjectAnimationState(object, !current);

@@ -19,7 +19,7 @@
             "scale": 0.2,
             "focusable": {
                 "rotation": [-90, 0, 90],
-                "offsetPosition": [0, 0, 0]
+                "distance": 1
             },
             "template": {
                 "offset": [0, 0, 0.17]
@@ -40,7 +40,7 @@
             "scale": 0.2,
             "focusable": {
                 "rotation": [-90, 0, 90],
-                "offsetPosition": [0, 0, 0]
+                "distance": 1
             },
             "template": {
                 "offset": [0, 0, 0.17]
