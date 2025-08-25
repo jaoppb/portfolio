@@ -11,7 +11,7 @@ export class EventEmitter<T> {
         this.listeners[key] = this.listeners[key].filter((l) => l !== listener);
     }
 
-    emit<K extends keyof T>(key: K, event: T[K]): void {
+    protected emit<K extends keyof T>(key: K, event: T[K]): void {
         if (!this.listeners[key]) return;
         for (const listener of this.listeners[key]) listener(event);
     }
