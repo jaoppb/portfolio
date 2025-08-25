@@ -53,7 +53,7 @@ export class OverlayRendererService extends RendererService<HTMLElement, CSS3DRe
     animate(): void {
         this.objects.forEach(({ overlay, object }) => {
             object.getWorldPosition(overlay.position);
-            overlay.quaternion.copy(object.getWorldQuaternion(new THREE.Quaternion()));
+            object.getWorldQuaternion(overlay.quaternion);
             overlay.scale.setScalar(0.0015);
         });
 
