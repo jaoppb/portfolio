@@ -2,14 +2,15 @@ import { ComponentRef, Inject, Injectable } from '@angular/core';
 import * as THREE from 'three';
 import { MouseService, PointerClick } from './mouse';
 import { Focusable, Model } from './model-loader';
-import { getObjectScreenSize, getPositionFromCamera, parseRotation } from '@app/utils';
+import { getObjectScreenSize, getPositionFromCamera } from '@app/utils';
 import { AnimationService, PlayAnimation } from './animation';
 import { LoggerService } from './logger';
 import { CSS3DObject } from 'three/examples/jsm/Addons.js';
 import { CanvasRendererService, Page } from './renderers/canvas';
-import { CANVAS_SCENE, OVERLAY_SCENE } from '@app/tokens';
+import { CANVAS_SCENE } from '@app/tokens';
 import { Book as PageComponent } from '@app/components/page/book';
 import { ComponentService } from './component';
+import { OverlayRendererService } from './renderers/overlay';
 
 type SelectedModel = {
     object: THREE.Object3D<THREE.Object3DEventMap>;
@@ -24,7 +25,6 @@ type SelectedModel = {
 export class InteractionService {
     private selected?: SelectedModel;
     private pageElement?: ComponentRef<PageComponent>;
-    private pageObject?: CSS3DObject;
     private renderer?: THREE.WebGLRenderer;
 
     constructor(
@@ -33,8 +33,7 @@ export class InteractionService {
         private readonly camera: THREE.PerspectiveCamera,
         @Inject(CANVAS_SCENE)
         private readonly canvasScene: THREE.Scene,
-        @Inject(OVERLAY_SCENE)
-        private readonly overlayScene: THREE.Scene,
+        private readonly overlayRendererService: OverlayRendererService,
         private readonly componentService: ComponentService,
         private readonly animationService: AnimationService,
         private readonly canvasRendererService: CanvasRendererService
@@ -131,18 +130,15 @@ export class InteractionService {
                 inReverse: current,
             },
         };
-        if (current) options.onEnd = this._unloadPage.bind(this);
-        else options.onEnd = this._loadPage.bind(this, object);
+        if (current) this._unloadPage();
+        else this._loadPage(object);
         this.animationService.playAnimation(options);
         this._setObjectAnimationState(object, !current);
     }
 
     private _unloadPage() {
-        if (this.pageObject) {
-            this.overlayScene.remove(this.pageObject);
-            this.pageObject = undefined;
-        }
         if (this.pageElement) {
+            this.overlayRendererService.removeObject(this.pageElement);
             this.componentService.destroyComponent(this.pageElement);
             this.pageElement = undefined;
         }
@@ -167,16 +163,11 @@ export class InteractionService {
         this.pageElement.instance.path = page.path;
 
         const size = getObjectScreenSize(found, this.camera, this.renderer);
-        this.pageElement.location.nativeElement.style.width = `${size.x * 2}px`;
-        this.pageElement.location.nativeElement.style.height = `${size.y}px`;
+        const { style } = this.pageElement.location.nativeElement;
+        style.width = `${size.x * 2}px`;
+        style.height = `${size.y}px`;
 
-        this.pageObject = new CSS3DObject(this.pageElement.location.nativeElement);
-        const position = found.getWorldPosition(new THREE.Vector3());
-        this.pageObject.position.copy(position);
-        this.pageObject.quaternion.copy(found.getWorldQuaternion(new THREE.Quaternion()));
-        this.pageObject.scale.setScalar(0.0015);
-
-        this.overlayScene.add(this.pageObject);
+        this.overlayRendererService.addObject(this.pageElement, found);
     }
 
     private _onClick({ object }: PointerClick) {
