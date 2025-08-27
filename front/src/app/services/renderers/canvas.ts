@@ -48,7 +48,7 @@ export class CanvasRendererService extends RendererService<
         private readonly animationService: AnimationService
     ) {
         super(scene, camera, loggerService);
-        this.light = new THREE.PointLight(0xffffff, 80, 0, 1.5);
+        this.light = new THREE.PointLight(0xffffff, 20, 0, 1);
         this.light.castShadow = true;
         this.scene.add(this.light);
 
@@ -109,7 +109,7 @@ export class CanvasRendererService extends RendererService<
         this.camera.lookAt(-6, 4.5, -1);
 
         this.light.position.copy(
-            getPositionFromCamera(this.camera, -3, new THREE.Vector3(0, 3, 0))
+            getPositionFromCamera(this.camera, -3, new THREE.Vector3(0, 3, 2))
         );
 
         const renderer = new THREE.WebGLRenderer({
