@@ -114,6 +114,7 @@ export class CanvasRendererService extends RendererService<
 
         const renderer = new THREE.WebGLRenderer({
             canvas,
+            antialias: true,
         });
         renderer.setAnimationLoop(this._animate.bind(this));
         renderer.setSize(window.innerWidth, window.innerHeight);

@@ -51,11 +51,11 @@ export class Page {
     orientation: WritableSignal<PageOrientation> = signal(PageOrientation.LEFT);
 
     private size: Signal<THREE.Vector2> = computed(() => {
-        this.canvasRendererService.frame();
-
         const plane = this.plane();
         const renderer = this.renderer();
         if (!plane || !renderer) return new THREE.Vector2();
+
+        this.canvasRendererService.frame();
 
         return getPlaneScreenSize(plane, this.camera, renderer);
     });

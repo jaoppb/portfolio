@@ -129,8 +129,8 @@ export class InteractionService {
                 inReverse: current,
             },
         };
-        if (current) options.onEnd = this._unloadPage.bind(this);
-        else this._loadPage(object);
+        if (current) this._unloadPage();
+        else options.onEnd = this._loadPage.bind(this, object);
         this.animationService.playAnimation(options);
         this._setObjectAnimationState(object, !current);
     }

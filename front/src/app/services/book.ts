@@ -81,37 +81,18 @@ export class BookService {
         while (children.length > 0) {
             const child = children.shift()!;
             if (!wrapper || !plane || !size) {
-                wrapper = this.componentService.createComponent(Page)!;
-                this.components.push(wrapper);
-                this.loggerService.debug(
-                    'BookService',
-                    'Current plane:',
-                    this._pagesObject,
-                    startIndex,
-                    this._pagesObject.children[startIndex]
+                const result = this._setupComponent(
+                    this._pagesObject.children[startIndex++] as THREE.Mesh,
+                    orientation
                 );
-                plane = this._pagesObject.children[startIndex++] as THREE.Mesh;
-                size = getPlaneScreenSize(plane, this.camera, this.renderer);
-
-                const overlayObject = this.overlayRendererService.addObject(wrapper, plane, {
-                    rotation: {
-                        offset: parseRotation([
-                            180,
-                            orientation === PageOrientation.LEFT ? 180 : 0,
-                            0,
-                        ]),
-                    },
-                });
-
-                wrapper.instance.plane.set(plane);
-                wrapper.instance.overlay.set(overlayObject);
-                wrapper.instance.orientation.set(orientation);
-
-                this.loggerService.debug('BookService', 'Page component:', {
-                    wrapper,
-                    plane,
-                    size,
-                });
+                if (result) {
+                    wrapper = result.wrapper;
+                    plane = result.plane;
+                    size = result.size;
+                } else {
+                    this.loggerService.error('BookService', 'Failed to setup component');
+                    return;
+                }
             }
 
             wrapper.location.nativeElement.appendChild(child);
@@ -130,6 +111,32 @@ export class BookService {
                         : PageOrientation.LEFT;
             }
         }
+    }
+
+    private _setupComponent(plane: THREE.Mesh, orientation: PageOrientation) {
+        if (!this.renderer) return;
+
+        const wrapper = this.componentService.createComponent(Page)!;
+        this.components.push(wrapper);
+        this.loggerService.debug('BookService', 'Current plane:', plane);
+        const size = getPlaneScreenSize(plane, this.camera, this.renderer);
+
+        const overlayObject = this.overlayRendererService.addObject(wrapper, plane, {
+            rotation: {
+                offset: parseRotation([180, orientation === PageOrientation.LEFT ? 180 : 0, 0]),
+            },
+        });
+
+        wrapper.instance.plane.set(plane);
+        wrapper.instance.overlay.set(overlayObject);
+        wrapper.instance.orientation.set(orientation);
+
+        this.loggerService.debug('BookService', 'Page component:', {
+            wrapper,
+            plane,
+            size,
+        });
+        return { wrapper, plane, size };
     }
 
     private _removePagesFromScene(restoreElements: boolean) {
