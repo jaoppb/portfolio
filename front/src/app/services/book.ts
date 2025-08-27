@@ -47,11 +47,7 @@ export class BookService {
         });
 
         effect(async () => {
-            if (this._page() === undefined || this._pagesObject() === undefined) {
-                this._clearPages();
-                return;
-            }
-
+            this._clearPages(this._page() !== undefined && this._pagesObject() !== undefined);
             await this._loadMarkdown();
             this._loadPages();
         });
