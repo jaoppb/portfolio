@@ -1,0 +1,28 @@
+button {
+    border-radius: 100px;
+    overflow: hidden;
+    background-color: hsl(0, 0%, 40%);
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+span {
+    background-color: hsl(0, 0%, 80%);
+    color: black;
+    transition: color 300ms ease-in-out, background-color 300ms ease-in-out;
+}
+
+span:nth-child(1) {
+    padding: 4px 4px 4px 8px;
+}
+
+span:nth-child(2) {
+    padding: 4px 8px 4px 4px;
+}
+
+.active {
+    padding: 4px 8px 4px 4px;
+    background-color: hsl(212, 100%, 48%);
+    color: white;
+}

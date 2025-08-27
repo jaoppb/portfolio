@@ -1,4 +1,11 @@
-import { ComponentRef, Injectable, SecurityContext } from '@angular/core';
+import {
+    ComponentRef,
+    effect,
+    Injectable,
+    SecurityContext,
+    signal,
+    WritableSignal,
+} from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { DataService } from './data';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -13,24 +20,16 @@ import { LoggerService } from './logger';
 
 @Injectable({ providedIn: 'root' })
 export class BookService {
-    private _page?: PageData;
+    private _page: WritableSignal<PageData | undefined> = signal(undefined);
+    private _pagesObject: WritableSignal<THREE.Object3D<THREE.Object3DEventMap> | undefined> =
+        signal(undefined);
+    private renderer: WritableSignal<THREE.WebGLRenderer | undefined> = signal(undefined);
+
     private markdownContent: string = '';
     private markdownParsed: string = '';
     private rootElement: HTMLElement;
     private components: ComponentRef<Page>[] = [];
-    private _pagesObject?: THREE.Object3D<THREE.Object3DEventMap>;
-    private renderer?: THREE.WebGLRenderer;
-
-    set pagesObject(object: THREE.Object3D<THREE.Object3DEventMap> | undefined) {
-        if (object !== undefined && this._pagesObject === object) return;
-
-        if (this._pagesObject !== undefined || object === undefined)
-            this._removePagesFromScene(true);
-
-        this._pagesObject = object;
-        this.loggerService.debug('BookService', 'Setting pagesObject:', object);
-        if (this._pagesObject) this._addPagesToScene();
-    }
+    private _language: WritableSignal<'english' | 'portuguese'> = signal('english');
 
     constructor(
         private readonly dataService: DataService,
@@ -44,21 +43,41 @@ export class BookService {
         this.rootElement = document.createElement('div');
 
         this.canvasRendererService.on('createdRenderer', ({ renderer }) => {
-            this.renderer = renderer;
+            this.renderer.set(renderer);
         });
+
+        effect(async () => {
+            if (this._page() === undefined || this._pagesObject() === undefined) {
+                this._clearPages();
+                return;
+            }
+
+            await this._loadMarkdown();
+            this._loadPages();
+        });
+    }
+
+    set language(language: 'english' | 'portuguese') {
+        this._language.set(language);
+    }
+
+    set pagesObject(object: THREE.Object3D<THREE.Object3DEventMap> | undefined) {
+        this.loggerService.debug('BookService', 'Setting pagesObject:', object);
+        this._pagesObject.set(object);
     }
 
     set page(data: PageData) {
         this.loggerService.debug('BookService', 'Setting page:', data);
-        if (data === this._page || data.path === this._page?.path) return;
-        if (this._pagesObject) this._removePagesFromScene(false);
-        this._page = data;
-        this._loadMarkdown();
+        this._page.set(data);
     }
 
-    private _clearPages() {
-        this.loggerService.debug('BookService', 'Clearing pages');
+    private _clearPages(restoreElements: boolean = false) {
+        this.loggerService.debug('BookService', 'Removing pages from scene');
         for (const page of this.components) {
+            if (restoreElements)
+                while (page.location.nativeElement.firstChild)
+                    this.rootElement.appendChild(page.location.nativeElement.firstChild);
+            this.overlayRendererService.removeObject(page);
             this.componentService.destroyComponent(page);
         }
         this.components.length = 0;
@@ -66,7 +85,8 @@ export class BookService {
 
     private _addPagesToScene() {
         if (this.rootElement.children.length === 0) return;
-        if (!this._pagesObject || !this.renderer) return;
+        const pagesObject = this._pagesObject();
+        if (!pagesObject) return;
 
         this.loggerService.debug('BookService', 'Adding pages to scene');
 
@@ -82,7 +102,7 @@ export class BookService {
             const child = children.shift()!;
             if (!wrapper || !plane || !size) {
                 const result = this._setupComponent(
-                    this._pagesObject.children[startIndex++] as THREE.Mesh,
+                    pagesObject.children[startIndex++] as THREE.Mesh,
                     orientation
                 );
                 if (result) {
@@ -114,12 +134,13 @@ export class BookService {
     }
 
     private _setupComponent(plane: THREE.Mesh, orientation: PageOrientation) {
-        if (!this.renderer) return;
+        const renderer = this.renderer();
+        if (!renderer) return;
 
         const wrapper = this.componentService.createComponent(Page)!;
         this.components.push(wrapper);
         this.loggerService.debug('BookService', 'Current plane:', plane);
-        const size = getPlaneScreenSize(plane, this.camera, this.renderer);
+        const size = getPlaneScreenSize(plane, this.camera, renderer);
 
         const overlayObject = this.overlayRendererService.addObject(wrapper, plane, {
             rotation: {
@@ -139,34 +160,22 @@ export class BookService {
         return { wrapper, plane, size };
     }
 
-    private _removePagesFromScene(restoreElements: boolean) {
-        this.loggerService.debug('BookService', 'Removing pages from scene');
-        for (const page of this.components) {
-            if (restoreElements)
-                while (page.location.nativeElement.firstChild)
-                    this.rootElement.appendChild(page.location.nativeElement.firstChild);
-            this.overlayRendererService.removeObject(page);
-            this.componentService.destroyComponent(page);
-        }
-        this.components.length = 0;
-    }
-
     private _loadPages() {
-        this.loggerService.debug('BookService', 'Loading pages');
         this._clearPages();
         this._addPagesToScene();
     }
 
     private async _loadMarkdown() {
         this.loggerService.debug('BookService', 'Loading markdown');
-        if (!this._page || this._page?.path.length === 0) {
+        const page = this._page();
+        if (!page || page.path.length === 0) {
             this.markdownContent = '';
             this.markdownParsed = '';
             return;
         }
 
         this.markdownContent = await lastValueFrom(
-            this.dataService.getPage('english', this._page.path)
+            this.dataService.getPage(this._language(), page.path)
         );
         this.markdownParsed =
             this.sanitizer.sanitize(
@@ -175,6 +184,5 @@ export class BookService {
             ) ?? '';
         this.rootElement.innerHTML = this.markdownParsed;
         this.loggerService.debug('BookService', 'Markdown loaded and parsed', this.markdownParsed);
-        this._loadPages();
     }
 }

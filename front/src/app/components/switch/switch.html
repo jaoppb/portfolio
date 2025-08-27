@@ -1,0 +1,4 @@
+<button (click)="toggle()">
+    <span [ngClass]="{ active: !_state() }">{{ left }}</span>
+    <span [ngClass]="{ active: _state() }">{{ right }}</span>
+</button>

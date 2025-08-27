@@ -19,6 +19,8 @@ import {
 } from '@app/services/model-loader';
 import { InitializerService } from '@app/services/initializer';
 import { CanvasRendererService, ModelLoadedEvent } from '@app/services/renderers/canvas';
+import { Switch } from '@app/components/switch/switch';
+import { BookService } from '@app/services/book';
 
 export type SceneLoadingState = LoadingState & {
     inScene: boolean;
@@ -26,7 +28,7 @@ export type SceneLoadingState = LoadingState & {
 
 @Component({
     selector: 'app-scene',
-    imports: [Loading, Error],
+    imports: [Loading, Error, Switch],
     templateUrl: './scene.html',
     styleUrl: './scene.scss',
 })
@@ -55,7 +57,8 @@ export class Scene implements OnInit {
         private readonly canvasRendererService: CanvasRendererService,
         private readonly modelLoaderService: ModelLoaderService,
         private readonly initializerService: InitializerService,
-        private readonly viewContainerRef: ViewContainerRef
+        private readonly viewContainerRef: ViewContainerRef,
+        private readonly bookService: BookService
     ) {
         this.modelLoaderService.on('progress', this._handleModelLoading.bind(this));
         this.modelLoaderService.on('error', this._handleModelError.bind(this));
@@ -84,6 +87,10 @@ export class Scene implements OnInit {
 
     private _handleModelError(event: ErrorEvent) {
         this.errors.update((errors) => [...errors, event.model.displayName]);
+    }
+
+    changeLanguage(state: boolean) {
+        this.bookService.language = state ? 'portuguese' : 'english';
     }
 
     ngOnInit(): void {

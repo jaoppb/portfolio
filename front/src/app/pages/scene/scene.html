@@ -4,6 +4,8 @@
 <app-loading [loadings]="loadings"></app-loading>
 }
 
+<app-switch (state)="changeLanguage($event)" left="EN" right="PT"></app-switch>
+
 <canvas #canvas></canvas>
 <div #overlay id="overlay"></div>
 }
