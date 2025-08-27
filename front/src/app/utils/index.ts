@@ -64,3 +64,42 @@ export function getObjectScreenSize(
 
     return new THREE.Vector2(width, height);
 }
+
+export function getPlaneScreenSize(
+    plane: THREE.Mesh,
+    camera: THREE.Camera,
+    renderer: THREE.WebGLRenderer
+): THREE.Vector2 {
+    if (!plane.geometry.attributes['position']) {
+        return new THREE.Vector2(0, 0);
+    }
+
+    const localVertices: THREE.Vector3[] = [];
+    const positions = plane.geometry.attributes['position'];
+    for (let i = 0; i < 4; i++) {
+        const vertex = new THREE.Vector3();
+        vertex.fromBufferAttribute(positions, i);
+        localVertices.push(vertex);
+    }
+
+    plane.updateMatrixWorld(true);
+
+    const screenVertices: THREE.Vector2[] = [];
+    for (const localVertex of localVertices) {
+        const worldVertex = localVertex.clone().applyMatrix4(plane.matrixWorld);
+
+        worldVertex.project(camera);
+        screenVertices.push(new THREE.Vector2(worldVertex.x, worldVertex.y));
+    }
+
+    const screenBounds = new THREE.Box2().setFromPoints(screenVertices);
+
+    const canvas = renderer.domElement;
+    const canvasWidth = canvas.clientWidth;
+    const canvasHeight = canvas.clientHeight;
+
+    const pixelWidth = ((screenBounds.max.x - screenBounds.min.x) * canvasWidth) / 2;
+    const pixelHeight = ((screenBounds.max.y - screenBounds.min.y) * canvasHeight) / 2;
+
+    return new THREE.Vector2(pixelWidth, pixelHeight);
+}

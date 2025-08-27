@@ -25,6 +25,7 @@ export type PlayAnimationOptions = PlayAnimation['clipOptions'];
 export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
     private readonly animations: Record<string, THREE.AnimationClip[]> = {};
     private readonly mixers: Record<string, THREE.AnimationMixer> = {};
+    private readonly mixerCallbacks: [THREE.AnimationMixer, (() => void)[]][] = [];
 
     constructor(
         private readonly loggerService: LoggerService,
@@ -73,12 +74,19 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
             }
             action.play();
         }
+
+        const found = this.mixerCallbacks.find(([m]) => m === mixer);
+        if (found) found[1].forEach((callback) => mixer.removeEventListener('finished', callback));
+
         if (options.onEnd) {
             const callback = () => {
                 options.onEnd?.();
                 mixer.removeEventListener('finished', callback);
             };
             mixer.addEventListener('finished', callback);
+            const found = this.mixerCallbacks.find(([mixer]) => mixer === mixer);
+            if (found) found[1].push(callback);
+            else this.mixerCallbacks.push([mixer, [callback]]);
         }
     }
 }

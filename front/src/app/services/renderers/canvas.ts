@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { AnimationService } from '../animation';
 import { DataService } from '../data';
 import { LoggerService } from '../logger';
@@ -29,6 +29,9 @@ export class CanvasRendererService extends RendererService<
 > {
     private clock = new THREE.Clock();
     private mixers: THREE.AnimationMixer[] = [];
+
+    private readonly _frame: WritableSignal<number> = signal(0);
+    public readonly frame: Signal<number> = this._frame.asReadonly();
 
     private readonly light: THREE.PointLight;
 
@@ -128,5 +131,6 @@ export class CanvasRendererService extends RendererService<
 
         this.overlayRendererService.animate();
         super._animate();
+        this._frame.update((frame) => frame + 1);
     }
 }

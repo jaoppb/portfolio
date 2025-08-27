@@ -2,14 +2,15 @@ import { ComponentRef, Inject, Injectable } from '@angular/core';
 import * as THREE from 'three';
 import { MouseService, PointerClick } from './mouse';
 import { Focusable, Model } from './model-loader';
-import { getObjectScreenSize, getPositionFromCamera } from '@app/utils';
+import { getPositionFromCamera } from '@app/utils';
 import { AnimationService, PlayAnimation } from './animation';
 import { LoggerService } from './logger';
 import { CanvasRendererService, PageData } from './renderers/canvas';
 import { CANVAS_SCENE } from '@app/tokens';
-import { Book as PageComponent } from '@app/components/page/book';
+import { Page as PageComponent } from '@app/components/page/page';
 import { ComponentService } from './component';
 import { OverlayRendererService } from './renderers/overlay';
+import { BookService } from './book';
 
 type SelectedModel = {
     object: THREE.Object3D<THREE.Object3DEventMap>;
@@ -23,7 +24,6 @@ type SelectedModel = {
 @Injectable({ providedIn: 'root' })
 export class InteractionService {
     private selected?: SelectedModel;
-    private pageElement?: ComponentRef<PageComponent>;
     private renderer?: THREE.WebGLRenderer;
 
     constructor(
@@ -32,8 +32,7 @@ export class InteractionService {
         private readonly camera: THREE.PerspectiveCamera,
         @Inject(CANVAS_SCENE)
         private readonly canvasScene: THREE.Scene,
-        private readonly overlayRendererService: OverlayRendererService,
-        private readonly componentService: ComponentService,
+        private readonly bookService: BookService,
         private readonly animationService: AnimationService,
         private readonly canvasRendererService: CanvasRendererService
     ) {
@@ -137,11 +136,7 @@ export class InteractionService {
     }
 
     private _unloadPage() {
-        if (this.pageElement) {
-            this.overlayRendererService.removeObject(this.pageElement);
-            this.componentService.destroyComponent(this.pageElement);
-            this.pageElement = undefined;
-        }
+        this.bookService.pagesObject = undefined;
     }
 
     private _loadPage(object: THREE.Object3D<THREE.Object3DEventMap>) {
@@ -153,21 +148,11 @@ export class InteractionService {
         this._unloadPage();
 
         this.loggerService.info('InteractionService', 'Loading page', page);
-        let found = object.children[0]?.children[0]?.children[24];
+        let found = object.children[0]?.children[0];
         if (!found) return;
 
-        this.loggerService.info('InteractionService', 'Loading page at', found);
-        this.pageElement = this.componentService.createComponent(PageComponent);
-        if (!this.pageElement) return;
-
-        this.pageElement.instance.path = page.path;
-
-        const size = getObjectScreenSize(found, this.camera, this.renderer);
-        const { style } = this.pageElement.location.nativeElement;
-        style.width = `${size.x * 2}px`;
-        style.height = `${size.y}px`;
-
-        this.overlayRendererService.addObject(this.pageElement, found);
+        this.bookService.pagesObject = found;
+        this.bookService.page = page;
     }
 
     private _onClick({ object }: PointerClick) {

@@ -32,8 +32,8 @@ export class ResizeService {
         this.camera.updateProjectionMatrix();
     }
 
-    registerRendererService<E extends HTMLElement, R extends SupportedRenderers>(
-        rendererService: RendererService<E, R>
+    registerRendererService<R extends SupportedRenderers>(
+        rendererService: RendererService<any, R>
     ) {
         rendererService.on('createdRenderer', this._onCreatedRenderer.bind(this));
     }
