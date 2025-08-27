@@ -6,10 +6,12 @@ import * as THREE from 'three';
 
 export type PointerClick = {
     object?: THREE.Object3D<THREE.Object3DEventMap>;
+    element: HTMLElement;
 };
 
 export type PointerMove = {
     objects?: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[];
+    element: HTMLElement;
 };
 
 interface IMouseServiceEvents {
@@ -43,11 +45,17 @@ export class MouseService extends EventEmitter<IMouseServiceEvents> {
         this.raycaster.setFromCamera(this.mouse, this.camera);
         this.intersects = this.raycaster.intersectObjects(this.scene.children, true);
 
-        this.emit('move', { objects: this.intersects });
+        this.emit('move', {
+            objects: this.intersects,
+            element: e.target as HTMLElement,
+        });
     }
 
-    private _onPointerDown() {
-        this.emit('click', { object: this.intersects[0]?.object });
+    private _onPointerDown(e: PointerEvent) {
+        this.emit('click', {
+            object: this.intersects[0]?.object,
+            element: e.target as HTMLElement,
+        });
     }
 
     initialize(overlay: HTMLDivElement) {
@@ -55,7 +63,7 @@ export class MouseService extends EventEmitter<IMouseServiceEvents> {
 
         this.overlay.addEventListener('pointermove', this._onPointerMove.bind(this));
         this.overlay.addEventListener('pointerdown', (e) => {
-            this._onPointerDown();
+            this._onPointerDown(e);
             this._onPointerMove(e);
         });
     }

@@ -1,4 +1,4 @@
-import { ComponentRef, Inject, Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import * as THREE from 'three';
 import { MouseService, PointerClick } from './mouse';
 import { Focusable, Model } from './model-loader';
@@ -7,9 +7,6 @@ import { AnimationService, PlayAnimation } from './animation';
 import { LoggerService } from './logger';
 import { CanvasRendererService, PageData } from './renderers/canvas';
 import { CANVAS_SCENE } from '@app/tokens';
-import { Page as PageComponent } from '@app/components/page/page';
-import { ComponentService } from './component';
-import { OverlayRendererService } from './renderers/overlay';
 import { BookService } from './book';
 
 type SelectedModel = {
@@ -155,7 +152,10 @@ export class InteractionService {
         this.bookService.page = page;
     }
 
-    private _onClick({ object }: PointerClick) {
+    private _onClick({ object, element }: PointerClick) {
+        this.loggerService.debug('InteractionService', 'Pointer clicked', { object, element });
+        if (element.classList.contains('prevent-interaction')) return;
+
         if (object) {
             object = this._getTopMostObject(object);
             if (this.selected?.object === object) {

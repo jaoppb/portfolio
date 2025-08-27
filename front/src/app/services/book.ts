@@ -158,6 +158,13 @@ export class BookService {
         return { wrapper, plane, size };
     }
 
+    private _addPreventInteraction(element: HTMLElement) {
+        Array.from(element.children).forEach((child) => {
+            child.classList.add('prevent-interaction');
+            this._addPreventInteraction(child as HTMLElement);
+        });
+    }
+
     private async _loadMarkdown() {
         this.loggerService.debug('BookService', 'Loading markdown');
         const page = this._page();
@@ -176,6 +183,7 @@ export class BookService {
                 await marked.parse(this.markdownContent)
             ) ?? '';
         this.rootElement.innerHTML = this.markdownParsed;
+        this._addPreventInteraction(this.rootElement);
         this.loggerService.debug('BookService', 'Markdown loaded and parsed', this.markdownParsed);
     }
 }
