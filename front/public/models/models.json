@@ -74,12 +74,14 @@
             }
         },
         {
-            "name": "dualshock_4",
-            "displayName": "DualShock 4",
-            "path": "models/dualshock_4.glb",
-            "location": [-8.816716194152832, 3.2426741123199463, -2.5569093227386475],
+            "name": "portrait",
+            "displayName": "Portrait",
+            "path": "models/portrait.glb",
+            "location": [-8.716716194152832, 3.2426741123199463, -2.5569093227386475],
+            "rotation": [0, -90, 0],
+            "scale": 3,
             "focusable": {
-                "rotation": [0, 0, -90],
+                "rotation": [0, -90, 0],
                 "offsetPosition": [0, -0.15, 0]
             }
         },
