@@ -25,7 +25,10 @@ export type PlayAnimationOptions = PlayAnimation['clipOptions'];
 export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
     private readonly animations: Record<string, THREE.AnimationClip[]> = {};
     private readonly mixers: Record<string, THREE.AnimationMixer> = {};
-    private readonly mixerCallbacks: [THREE.AnimationMixer, (() => void)[]][] = [];
+    private readonly mixerCallbacks: {
+        mixer: THREE.AnimationMixer;
+        callbacks: (() => void)[];
+    }[] = [];
 
     constructor(
         private readonly loggerService: LoggerService,
@@ -75,8 +78,11 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
             action.play();
         }
 
-        const found = this.mixerCallbacks.find(([m]) => m === mixer);
-        if (found) found[1].forEach((callback) => mixer.removeEventListener('finished', callback));
+        const found = this.mixerCallbacks.find(({ mixer: m }) => m === mixer);
+        if (found) {
+            found.callbacks.forEach((callback) => mixer.removeEventListener('finished', callback));
+            found.callbacks.length = 0;
+        }
 
         if (options.onEnd) {
             const callback = () => {
@@ -84,9 +90,9 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
                 mixer.removeEventListener('finished', callback);
             };
             mixer.addEventListener('finished', callback);
-            const found = this.mixerCallbacks.find(([mixer]) => mixer === mixer);
-            if (found) found[1].push(callback);
-            else this.mixerCallbacks.push([mixer, [callback]]);
+            const found = this.mixerCallbacks.find(({ mixer: m }) => m === mixer);
+            if (found) found.callbacks.push(callback);
+            else this.mixerCallbacks.push({ mixer, callbacks: [callback] });
         }
     }
 }
