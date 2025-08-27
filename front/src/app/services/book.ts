@@ -47,9 +47,11 @@ export class BookService {
         });
 
         effect(async () => {
-            this._clearPages(this._page() !== undefined && this._pagesObject() !== undefined);
+            const pagesObject = this._pagesObject();
+            this._clearPages(this._page() !== undefined && pagesObject !== undefined);
+            if (pagesObject === undefined) return;
             await this._loadMarkdown();
-            this._loadPages();
+            this._addPagesToScene();
         });
     }
 
@@ -154,11 +156,6 @@ export class BookService {
             size,
         });
         return { wrapper, plane, size };
-    }
-
-    private _loadPages() {
-        this._clearPages();
-        this._addPagesToScene();
     }
 
     private async _loadMarkdown() {
