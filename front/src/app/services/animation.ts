@@ -29,6 +29,7 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
         mixer: THREE.AnimationMixer;
         callbacks: (() => void)[];
     }[] = [];
+    private readonly ongoingAnimations: Set<THREE.AnimationMixer> = new Set();
 
     constructor(
         private readonly loggerService: LoggerService,
@@ -62,16 +63,19 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
             this.emit('mixer', { mixer });
         }
 
+        this.ongoingAnimations.add(mixer);
+
         for (const clip of clips) {
             const action = mixer.clipAction(clip);
-            action.reset();
+            const doReset = !this.ongoingAnimations.has(mixer) || action.paused;
+            if (doReset) action.reset();
             if (options.clipOptions?.holdOnLastFrame) {
                 action.clampWhenFinished = true;
                 action.loop = THREE.LoopOnce;
             }
             if (options.clipOptions?.inReverse) {
                 action.timeScale = -1;
-                action.time = action.getClip().duration;
+                if (doReset) action.time = action.getClip().duration;
             } else {
                 action.timeScale = 1;
             }
@@ -94,5 +98,12 @@ export class AnimationService extends EventEmitter<IAnimationServiceEvents> {
             if (found) found.callbacks.push(callback);
             else this.mixerCallbacks.push({ mixer, callbacks: [callback] });
         }
+
+        const doneCallback = () => {
+            this.ongoingAnimations.delete(mixer);
+            mixer.removeEventListener('finished', doneCallback);
+        };
+        mixer.addEventListener('finished', doneCallback);
+        found?.callbacks.push(doneCallback);
     }
 }
