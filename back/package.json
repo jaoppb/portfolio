@@ -2,10 +2,7 @@
 	"name": "portfolio",
 	"version": "0.0.0",
 	"description": "",
-	"scripts": {
-		"build": "esbuild 'src/**/*.ts' --minify --outdir=./dist",
-		"start": "node dist/server.js"
-	},
+	"scripts": {},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",

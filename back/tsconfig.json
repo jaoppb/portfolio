@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
-		"rootDir": "./src",
-		"outDir": "./dist",
+		"rootDir": "api",
 		"module": "nodenext",
 		"target": "esnext",
 		"types": ["node"],
@@ -15,11 +14,11 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"strict": true,
-		"verbatimModuleSyntax": true,
 		"isolatedModules": true,
-		"noUncheckedSideEffectImports": true,
 		"moduleDetection": "force",
 		"skipLibCheck": true,
 		"noEmit": true
-	}
+	},
+	"include": ["api/**/*.ts"],
+	"exclude": ["node_modules", "**/node_modules"]
 }
