@@ -6,6 +6,7 @@ import { validateMessage } from './utils.js';
 process.loadEnvFile();
 
 const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_TARGET = process.env.EMAIL_TARGET;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
 const app = express();
@@ -38,7 +39,7 @@ app.post('/email', async (req, res) => {
 		const mailOptions = {
 			from: EMAIL_USER,
 			replyTo: email,
-			to: EMAIL_USER,
+			to: EMAIL_TARGET,
 			subject: `New message from ${name}`,
 			text: message,
 		};
