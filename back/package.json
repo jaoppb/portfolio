@@ -2,10 +2,9 @@
 	"name": "portfolio",
 	"version": "0.0.0",
 	"description": "",
-	"main": "index.js",
 	"scripts": {
 		"build": "esbuild 'src/**/*.ts' --minify --outdir=./dist",
-		"start": "node dist/index.js"
+		"start": "node dist/server.js"
 	},
 	"keywords": [],
 	"author": "",
