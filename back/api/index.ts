@@ -3,9 +3,10 @@ import nodemailer from 'nodemailer';
 import cors from 'cors';
 import { validateMessage } from './utils.js';
 
-// @ts-ignore
-if (typeof EdgeRuntime !== 'string') {
+try {
 	process.loadEnvFile();
+} catch (error) {
+	console.error('Error loading .env file:', error);
 }
 
 const EMAIL_USER = process.env.EMAIL_USER;
