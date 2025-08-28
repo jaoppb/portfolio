@@ -9,7 +9,7 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { Loading } from '../../components/loading/loading';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Error } from '@app/components/error/error';
 import {
     ErrorEvent,

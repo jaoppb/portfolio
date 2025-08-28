@@ -9,7 +9,7 @@ import { lastValueFrom } from 'rxjs';
 import { getPositionFromCamera, parseRotation } from '@app/utils';
 import { CANVAS_SCENE } from '@app/tokens';
 import { OverlayRendererService } from './overlay';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export type PageData = {
     path: string;
@@ -19,7 +19,7 @@ export type ModelOrigin = {
     position: THREE.Vector3;
     rotation: THREE.Quaternion;
     scale: THREE.Vector3;
-}
+};
 
 interface ICanvasRendererService extends IRenderServiceEvents<THREE.WebGLRenderer> {
     modelLoaded: { model: Model };
