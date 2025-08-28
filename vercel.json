@@ -1,0 +1,20 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"version": 2,
+	"builds": [
+		{
+			"src": "front/package.json",
+			"use": "@vercel/angular"
+		},
+		{
+			"src": "back/src/server.ts",
+			"use": "@vercel/node"
+		}
+	],
+	"rewrites": [
+		{
+			"source": "/api/(.*)",
+			"destination": "/back/src/server.ts"
+		}
+	]
+}
