@@ -15,6 +15,12 @@ export type PageData = {
     path: string;
 };
 
+export type ModelOrigin = {
+    position: THREE.Vector3;
+    rotation: THREE.Quaternion;
+    scale: THREE.Vector3;
+}
+
 interface ICanvasRendererService extends IRenderServiceEvents<THREE.WebGLRenderer> {
     modelLoaded: { model: Model };
 }
@@ -89,6 +95,11 @@ export class CanvasRendererService extends RendererService<
     private _addObject(model: Model, object: THREE.Object3D) {
         object.userData['name'] = model.name;
         object.userData['animation'] = model.animation;
+        object.userData['origin'] = {
+            position: object.position.clone(),
+            rotation: object.quaternion.clone(),
+            scale: object.scale.clone(),
+        } as ModelOrigin;
 
         this.scene.add(object);
         this.loggerService.info(

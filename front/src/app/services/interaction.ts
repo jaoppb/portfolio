@@ -5,17 +5,13 @@ import { Focusable, Model } from './model-loader';
 import { getPositionFromCamera } from '@app/utils';
 import { AnimationService, PlayAnimation } from './animation';
 import { LoggerService } from './logger';
-import { CanvasRendererService, PageData } from './renderers/canvas';
+import { CanvasRendererService, ModelOrigin, PageData } from './renderers/canvas';
 import { CANVAS_SCENE } from '@app/tokens';
 import { BookService } from './book';
 
 type SelectedModel = {
     object: THREE.Object3D<THREE.Object3DEventMap>;
-    restore: {
-        location: THREE.Vector3;
-        rotation: THREE.Quaternion;
-        scale: THREE.Vector3;
-    };
+    restore: ModelOrigin;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -66,10 +62,9 @@ export class InteractionService {
 
         this._unloadPage();
 
-        const { location, rotation, scale } = this.selected.restore;
-        this.selected.object.position.copy(location);
-        this.selected.object.quaternion.copy(rotation);
-        this.selected.object.scale.copy(scale);
+        const { position, rotation } = this.selected.restore;
+        this.selected.object.userData['moveTo'] = { position, velocity: 0.1 };
+        this.selected.object.userData['rotateTo'] = { rotation, velocity: 0.1 };
         this.selected = undefined;
     }
 
@@ -79,16 +74,12 @@ export class InteractionService {
 
         this.selected = {
             object,
-            restore: {
-                location: object.position.clone(),
-                rotation: object.quaternion.clone(),
-                scale: object.scale.clone(),
-            },
+            restore: object.userData['origin'],
         };
 
         const position = getPositionFromCamera(this.camera, focusable.distance ?? 1.5);
         if (focusable.offsetPosition) position.add(focusable.offsetPosition);
-        object.position.copy(position);
+        object.userData['moveTo'] = { position, velocity: 0.5 };
 
         const upVector = new THREE.Vector3(0, 1, 0);
         const upRotation = new THREE.Quaternion().setFromUnitVectors(
@@ -96,7 +87,7 @@ export class InteractionService {
             upVector.clone().applyQuaternion(this.camera.quaternion)
         );
         if (focusable.rotation) upRotation.multiply(focusable.rotation);
-        object.quaternion.copy(upRotation);
+        object.userData['rotateTo'] = { rotation: upRotation, velocity: 0.5 };
     }
 
     private _getTopMostObject(
