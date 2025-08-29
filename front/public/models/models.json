@@ -120,6 +120,18 @@
             "displayName": "Small Support",
             "path": "models/small_support.glb",
             "location": [-8.945051193237305, 1.9095165729522705, -2.2018799781799316]
+        },
+        {
+            "name": "wall",
+            "displayName": "Wall",
+            "path": "models/wall.glb",
+            "location": [-9.344712257385254, 0.0, -0.0]
+        },
+        {
+            "name": "floor",
+            "displayName": "Floor",
+            "path": "models/floor.glb",
+            "location": [0.0, 0.0, -0.0]
         }
     ]
 }
