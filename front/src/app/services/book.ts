@@ -113,11 +113,14 @@ export class BookService {
                 }
             }
 
-            wrapper.location.nativeElement.appendChild(child);
-            currentHeight += child.getBoundingClientRect().height / 2;
+            wrapper.instance.innerHTML += child.outerHTML;
+            currentHeight += wrapper.location.nativeElement.getBoundingClientRect().height * 2;
             this.loggerService.debug('BookService', 'Current height:', currentHeight, size.y);
             if (currentHeight > size.y) {
-                wrapper.location.nativeElement.removeChild(child);
+                wrapper.instance.innerHTML = (wrapper.instance.innerHTML as string).slice(
+                    0,
+                    -child.outerHTML.length
+                );
                 children.unshift(child);
                 plane = undefined;
                 wrapper = undefined;
@@ -127,6 +130,8 @@ export class BookService {
                     orientation === PageOrientation.LEFT
                         ? PageOrientation.RIGHT
                         : PageOrientation.LEFT;
+            } else {
+                this.rootElement.lastChild?.remove();
             }
         }
     }

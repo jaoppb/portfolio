@@ -8,6 +8,7 @@ import {
     Signal,
     WritableSignal,
 } from '@angular/core';
+import { SafeHtml } from '@angular/platform-browser';
 import { CanvasRendererService } from '@app/services/renderers/canvas';
 import { getPlaneScreenSize } from '@app/utils';
 import * as THREE from 'three';
@@ -73,4 +74,7 @@ export class Page {
         if (!size) return 0;
         return size.y;
     }
+
+    @HostBinding('innerHtml')
+    innerHTML: SafeHtml = '';
 }

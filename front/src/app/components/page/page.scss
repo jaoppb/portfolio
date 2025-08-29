@@ -4,4 +4,9 @@
 
     text-align: justify;
     text-justify: inter-word;
+
+    ::ng-deep * {
+        font-family: 'Gloria Hallelujah', sans-serif;
+        line-height: 1.5;
+    }
 }
