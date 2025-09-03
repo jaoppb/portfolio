@@ -1,24 +1,20 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
-import { BASE_URL } from '@app/tokens';
+import { Injectable } from '@angular/core';
 import { Model } from './model-loader';
 import { map } from 'rxjs/internal/operators/map';
 import { PageData } from './renderers/canvas';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-    constructor(
-        @Inject(BASE_URL)
-        private readonly baseURL: string,
-        private readonly http: HttpClient
-    ) {}
+    constructor(private readonly http: HttpClient) {}
 
     get models() {
-        return this.http.get<{ models: Model[] }>(`${this.baseURL}/models/models.json`).pipe(
+        return this.http.get<{ models: Model[] }>(`${environment.baseURL}/models.json`).pipe(
             map((response) =>
                 response.models.map((model) => ({
                     ...model,
-                    path: `${this.baseURL}/${model.path}`,
+                    path: `${environment.r2BaseURL}/${model.path}`,
                 }))
             )
         );
@@ -26,12 +22,14 @@ export class DataService {
 
     get pages() {
         return this.http
-            .get<{ pages: { [key: string]: PageData[] } }>(`${this.baseURL}/pages/pages.json`)
+            .get<{ pages: { [key: string]: PageData[] } }>(
+                `${environment.baseURL}/pages/pages.json`
+            )
             .pipe(map((response) => response.pages));
     }
 
     getPage(language: string, path: string) {
-        return this.http.get<string>(`${this.baseURL}/pages/${language}/${path}`, {
+        return this.http.get<string>(`${environment.baseURL}/pages/${language}/${path}`, {
             responseType: 'text' as 'json',
         });
     }

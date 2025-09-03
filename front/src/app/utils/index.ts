@@ -103,3 +103,7 @@ export function getPlaneScreenSize(
 
     return new THREE.Vector2(pixelWidth, pixelHeight);
 }
+
+export function getOriginWithSubdomain(subdomain: string) {
+    return `${window.location.protocol}//${subdomain}.${window.location.hostname}`;
+}
