@@ -39,7 +39,7 @@ export class CanvasRendererService extends RendererService<
     private readonly _frame: WritableSignal<number> = signal(0);
     public readonly frame: Signal<number> = this._frame.asReadonly();
 
-    private readonly light: THREE.PointLight;
+    private readonly lights: THREE.PointLight[] = [];
 
     private pages?: { [key: string]: PageData[] };
 
@@ -54,9 +54,12 @@ export class CanvasRendererService extends RendererService<
         private readonly animationService: AnimationService
     ) {
         super(scene, camera, loggerService);
-        this.light = new THREE.PointLight(0xffffff, 20, 0, 1);
-        this.light.castShadow = true;
-        this.scene.add(this.light);
+        this.lights.push(new THREE.PointLight(0xffffff, 20, 0, 1));
+        this.lights.push(new THREE.PointLight(0xf7e32d, 10, 0, 0.8));
+        for (const light of this.lights) {
+            light.castShadow = true;
+            this.scene.add(light);
+        }
 
         this.modelLoaderService.on('loaded', this._onModelLoaded.bind(this));
         this.animationService.on('mixer', ({ mixer }) => this.mixers.push(mixer));
@@ -119,8 +122,12 @@ export class CanvasRendererService extends RendererService<
         this.camera.position.set(-3.5, 5.5, -1);
         this.camera.lookAt(-6, 4.5, -1);
 
-        this.light.position.copy(
+        this.lights[0].position.copy(
             getPositionFromCamera(this.camera, -3, new THREE.Vector3(0, 3, 2))
+        );
+
+        this.lights[1].position.copy(
+            getPositionFromCamera(this.camera, -1, new THREE.Vector3(0, 3, -2))
         );
 
         const renderer = new THREE.WebGLRenderer({
