@@ -9,4 +9,13 @@
         font-family: 'Gloria Hallelujah', sans-serif;
         line-height: 1.5;
     }
+
+    ::ng-deep h1 {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    ::ng-deep img.fill-width {
+        width: 100%;
+    }
 }
