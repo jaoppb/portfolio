@@ -15,7 +15,17 @@
         justify-content: space-between;
     }
 
-    ::ng-deep img.fill-width {
+    ::ng-deep .width-full {
         width: 100%;
+    }
+
+    ::ng-deep .width-3\/5 {
+        width: 60%;
+    }
+
+    ::ng-deep .center-x {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }

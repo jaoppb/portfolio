@@ -4,4 +4,4 @@ Eu tive um problema com meu teclado emitindo tecla fantasma, especificamente a t
 
 Então pensei: por que não fazer um mapeador de teclas no nível do kernel para Linux? Fui inspirado por uma funcionalidade do Windows que permite essa alteração pelo regedit. Após algumas pesquisas e leituras, consegui fazer o módulo em C e resolver meu problema, mapeando a tecla fantasma para o nada.
 
-<p><img class="fill-width" src="/images/remapper.png" alt="A linux penguin fixing a keyboard. AI generated" /></p>
+<p><img class="width-full" src="/images/remapper.png" alt="A linux penguin fixing a keyboard. AI generated" /></p>

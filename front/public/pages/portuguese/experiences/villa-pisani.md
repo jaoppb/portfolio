@@ -4,4 +4,4 @@ Sistema de gestão condominial para o Condomínio Villa Pisani, visando melhorar
 
 <br />
 
-<p><img class="fill-width" src="/images/villa-pisani.gif" alt="A gif showing some screens of the project" /></p>
+<p><img class="width-full" src="/images/villa-pisani.gif" alt="A gif showing some screens of the project" /></p>

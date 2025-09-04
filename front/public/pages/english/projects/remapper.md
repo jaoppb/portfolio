@@ -4,4 +4,4 @@ I had a problem with my keyboard emitting a phantom key, specifically the \* key
 
 So I thought: why not make a key remapper at the kernel level for Linux? I was inspired by a Windows feature that allows this change through regedit. After some research and reading, I managed to create the module in C and solve my problem by mapping the phantom key to nothing.
 
-<p><img class="fill-width" src="/images/remapper.png" alt="A linux penguin fixing a keyboard. AI generated" /></p>
+<p><img class="width-full" src="/images/remapper.png" alt="A linux penguin fixing a keyboard. AI generated" /></p>

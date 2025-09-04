@@ -5,3 +5,5 @@ Sou um estudante de Engenharia de Software na Pontifícia Universidade Católica
 Gosto bastante de leitura, acredito que os livros contribuem muito para o meu desenvolvimento têcnico; e sempre que possível eu reservo um tempo do meu dia para os estudos.
 
 Partindo um pouco mais para o pessoal, gosto muito de jogos, dentre eles: Minecraft, Rocket League, Balatro, Idle Factory, Portal 1 e 2, Slime Rancher, Grand Theft Auto V, Fortnite, Brawlhalla e etc.
+
+<p class="center-x width-full"><img class="width-3/5" src="/images/madeline.png" alt="madeline png" /></p>

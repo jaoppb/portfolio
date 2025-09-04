@@ -4,4 +4,4 @@ Condominium management system for Villa Pisani, aimed at improving communication
 
 <br />
 
-<p><img class="fill-width" src="/images/villa-pisani.gif" alt="A gif showing some screens of the project" /></p>
+<p><img class="width-full" src="/images/villa-pisani.gif" alt="A gif showing some screens of the project" /></p>

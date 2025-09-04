@@ -5,3 +5,5 @@ I am a Software Engineer student at _Pontifícia Universidade Católica de Minas
 I like reading and believes that books contributes largely for my technical development; and every time that is possible I manage to read to help my studies.
 
 Going more personal, I like games, including: Minecraft, Rocket League, Balatro, Idle Factory, Portal 1 e 2, Slime Rancher, Grand Theft Auto V, Fortnite, Brawlhalla e etc.
+
+<p class="center-x width-full"><img class="width-3/5" src="/images/madeline.png" alt="madeline png" /></p>
