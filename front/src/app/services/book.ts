@@ -116,12 +116,12 @@ export class BookService {
             wrapper.instance.innerHTML += child.outerHTML;
             currentHeight += wrapper.location.nativeElement.getBoundingClientRect().height * 2;
             this.loggerService.debug('BookService', 'Current height:', currentHeight, size.y);
-            if (currentHeight > size.y) {
+            if (currentHeight > size.y || child.tagName.toLowerCase() === 'br') {
                 wrapper.instance.innerHTML = (wrapper.instance.innerHTML as string).slice(
                     0,
                     -child.outerHTML.length
                 );
-                children.unshift(child);
+                if (child.tagName.toLowerCase() !== 'br') children.unshift(child);
                 plane = undefined;
                 wrapper = undefined;
                 size = undefined;
