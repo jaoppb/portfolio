@@ -87,12 +87,13 @@ Effort is measured in Fibonacci points: `1`, `2`, `3`, `5`, `8`, `13`.
 
 ## 6. Tooling and Auditing
 
-- **Provisioning Labels**:
-  ```bash
-  just setup-labels
-  ```
 - **Auditing Open Issues**:
   ```bash
   just issues-check
   ```
-  Checks that every open issue has a valid `type:*` (or `epic`), at least one `area:*`, and a milestone.
+  Runs `scripts/issues-check.py` to check that every open issue has a valid `type:*` (or `epic`), at least one `area:*`, and a milestone.
+
+- **Provisioning Labels (One-time setup)**:
+  ```bash
+  ./scripts/setup-labels.sh
+  ```
