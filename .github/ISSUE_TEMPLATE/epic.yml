@@ -1,7 +1,7 @@
 name: "Epic"
 description: "A closeable outcome made of stories or tasks"
 title: "Epic: "
-labels: ["epic"]
+labels: ["type:epic"]
 body:
   - type: markdown
     attributes:
