@@ -21,6 +21,8 @@
           packages = [
             pkgs.just
             pkgs.gh
+            pkgs.nodejs
+            pkgs.pnpm
             toolsPkgs.issues-check
             toolsPkgs.project-sync
             toolsPkgs.repo-sync
