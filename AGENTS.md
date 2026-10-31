@@ -42,3 +42,20 @@ This repository is João Pedro's personal portfolio website and project showcase
 | Repository settings, label taxonomy, and milestones drift | `just repo-check` (`jaoppb/tools`) | Enforced |
 | Form structure | `.github/ISSUE_TEMPLATE/*.yml` with `blank_issues_enabled: false` | Enforced |
 | Merge method (merge commit only) | GitHub repository settings & PR review | Enforced |
+
+## 2. Agent skills
+
+Persistent domain guidance and quality standards are codified under `.agent/skills/`. Agents working on this repository must consult the corresponding skill before planning, proposing, implementing, or reviewing code in that domain.
+
+| Skill | Trigger & Mandatory Scope | Location |
+|-------|---------------------------|----------|
+| `impeccable-design` | **Required** before proposing, implementing, or reviewing visual styling, UI components, typography, layout, themes, or micro-motion (`area:design`, `area:ui`). | [.agent/skills/impeccable-design/SKILL.md](.agent/skills/impeccable-design/SKILL.md) |
+| `react-best-practices` | **Required** before proposing, implementing, or reviewing React components, Next.js App Router structure, hooks, state management, or static export architecture (`area:ui`). | [.agent/skills/react-best-practices/SKILL.md](.agent/skills/react-best-practices/SKILL.md) |
+
+### Usage rules during development turns
+
+1. **Pre-turn consultation**: Read the relevant `SKILL.md` in full before writing plans or editing code.
+2. **Strict adherence to design principles**: All UI work must adhere to editorial restraint, accessibility (WCAG AA/AAA), `prefers-reduced-motion`, and the explicit anti-slop rules codified in `impeccable-design`.
+3. **Static export alignment**: All React components must conform to Next.js static export (`output: 'export'`) constraints, leaf-isolated Client Components, and hook purity codified in `react-best-practices`.
+4. **Review verification**: Multi-agent review rounds must cross-examine changes against both skills' checklists before approval.
+
