@@ -29,3 +29,15 @@ milestones-sync:
 
 # Bootstrap and reconcile all repository configuration (settings, labels, milestones)
 repo-bootstrap: repo-sync
+
+# Run Biome linter across workspace
+lint:
+    pnpm exec biome lint .
+
+# Format all files across workspace with Biome
+format:
+    pnpm exec biome format --write .
+
+# Verify formatting, linting, and imports across workspace with Biome
+check:
+    pnpm exec biome check .
