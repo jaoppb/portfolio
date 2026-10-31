@@ -1,0 +1,44 @@
+name: "Fix"
+description: "Something is broken"
+title: "fix: "
+labels: ["type:fix"]
+body:
+  - type: markdown
+    attributes:
+      value: "After filing, set the area label, milestone (v0.1.0, v0.2.0, etc.), priority (P0-P3), effort (1-13 Fibonacci), and parent epic if applicable. See AGENTS.md."
+  - type: textarea
+    id: goal
+    attributes:
+      label: "Goal"
+      description: "What should be true once this is fixed."
+    validations:
+      required: true
+  - type: textarea
+    id: details-scope
+    attributes:
+      label: "Details & Scope"
+      description: "Steps to reproduce, what happens, and what should happen instead."
+    validations:
+      required: true
+  - type: textarea
+    id: depends
+    attributes:
+      label: "Depends on"
+      description: "Issues that must close first, as #numbers with a reason."
+      value: |
+        None.
+  - type: textarea
+    id: dod
+    attributes:
+      label: "Definition of Done"
+      description: "Observable, checkable outcomes."
+      value: |
+        - [ ] Bug is fixed and regression is prevented
+        - [ ] `just issues-check` passes
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: "Non-goals"
+      description: "What this issue explicitly does not do."

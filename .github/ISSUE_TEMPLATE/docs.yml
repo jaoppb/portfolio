@@ -1,0 +1,42 @@
+name: "Docs"
+description: "Documentation, copy, ADRs, or content guides"
+title: "docs: "
+labels: ["type:docs"]
+body:
+  - type: markdown
+    attributes:
+      value: "After filing, set the area label, milestone (v0.1.0, v0.2.0, etc.), priority (P0-P3), effort (1-13 Fibonacci), and parent epic if applicable. See AGENTS.md."
+  - type: textarea
+    id: goal
+    attributes:
+      label: "Goal"
+      description: "What gets written down or updated."
+    validations:
+      required: true
+  - type: textarea
+    id: details-scope
+    attributes:
+      label: "Details & Scope"
+      description: "Which documents change and why."
+  - type: textarea
+    id: depends
+    attributes:
+      label: "Depends on"
+      description: "Issues that must close first, as #numbers with a reason."
+      value: |
+        None.
+  - type: textarea
+    id: dod
+    attributes:
+      label: "Definition of Done"
+      description: "Observable, checkable outcomes."
+      value: |
+        - [ ] Documentation is clear, accurate, and properly formatted
+        - [ ] `just issues-check` passes
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: "Non-goals"
+      description: "What this issue explicitly does not do."

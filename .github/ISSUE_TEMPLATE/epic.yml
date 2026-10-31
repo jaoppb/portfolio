@@ -1,0 +1,33 @@
+name: "Epic"
+description: "A closeable outcome made of stories or tasks"
+title: "Epic: "
+labels: ["epic"]
+body:
+  - type: markdown
+    attributes:
+      value: "After filing, set the area label, milestone (v0.1.0, v0.2.0, etc.), priority (P0-P3), and link children sub-issues. See AGENTS.md."
+  - type: textarea
+    id: goal
+    attributes:
+      label: "Goal"
+      description: "The overarching outcome, and the milestone it belongs to."
+    validations:
+      required: true
+  - type: textarea
+    id: children
+    attributes:
+      label: "Children"
+      description: "The constituent stories or tasks as a checklist of #numbers. (Native GitHub sub-issues should also be linked)."
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: "Definition of Done"
+      description: "Observable, checkable outcomes."
+      value: |
+        - [ ] Every child issue is closed
+        - [ ] Outcome is verified end-to-end
+        - [ ] `just issues-check` passes
+    validations:
+      required: true

@@ -1,0 +1,43 @@
+name: "Spike"
+description: "A time-boxed research question to answer before building"
+title: "spike: "
+labels: ["type:spike"]
+body:
+  - type: markdown
+    attributes:
+      value: "After filing, set the area label, milestone (v0.1.0, v0.2.0, etc.), priority (P0-P3), effort (1-13 Fibonacci), and parent epic if applicable. See AGENTS.md."
+  - type: textarea
+    id: goal
+    attributes:
+      label: "Goal"
+      description: "The technical or architectural question this spike answers."
+    validations:
+      required: true
+  - type: textarea
+    id: details-scope
+    attributes:
+      label: "Details & Scope"
+      description: "What is currently known vs unknown, time box, and expected output."
+  - type: textarea
+    id: depends
+    attributes:
+      label: "Depends on"
+      description: "Issues that must close first, as #numbers with a reason."
+      value: |
+        None.
+  - type: textarea
+    id: dod
+    attributes:
+      label: "Definition of Done"
+      description: "Observable, checkable outcomes."
+      value: |
+        - [ ] Findings and decision recorded with reasons and rejected alternatives
+        - [ ] Follow-up issues filed if needed
+        - [ ] `just issues-check` passes
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: "Non-goals"
+      description: "What this issue explicitly does not do."

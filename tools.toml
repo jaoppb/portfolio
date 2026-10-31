@@ -1,0 +1,56 @@
+[github.repository]
+owner = "jaoppb"
+name = "portfolio"
+
+[github.repository.settings]
+allow_merge_commit = true
+allow_squash_merge = false
+allow_rebase_merge = false
+delete_branch_on_merge = true
+merge_commit_title = "PR_TITLE"
+merge_commit_message = "PR_BODY"
+
+[github.labels]
+deprecated = [
+    "bug",
+    "documentation",
+    "duplicate",
+    "enhancement",
+    "good first issue",
+    "help wanted",
+    "invalid",
+    "question",
+    "wontfix",
+]
+items = [
+    { name = "type:feat", color = "1d76db", description = "New behaviour or capability" },
+    { name = "type:fix", color = "d73a4a", description = "Something is broken" },
+    { name = "type:chore", color = "8b949e", description = "Tooling, CI, housekeeping, dependencies" },
+    { name = "type:docs", color = "0075ca", description = "Documentation, guides, copy, ADRs" },
+    { name = "type:refactor", color = "5319e7", description = "Restructure without changing behaviour" },
+    { name = "type:spike", color = "fbca04", description = "Time-boxed research that answers a question" },
+    { name = "area:ui", color = "2ea44f", description = "Components, layout, and user interface" },
+    { name = "area:content", color = "0e8a16", description = "Copy, projects, resume, and markdown content" },
+    { name = "area:design", color = "f143ab", description = "Visual design, theme, typography, styling" },
+    { name = "area:tooling", color = "2ea44f", description = "Build tools, CI/CD, deployment, automation" },
+    { name = "area:seo-a11y", color = "0e8a16", description = "SEO, performance, metadata, accessibility" },
+    { name = "epic", color = "b60205", description = "A closeable outcome made of stories or tasks" },
+    { name = "accessibility", color = "f143ab", description = "Barrier affecting people with disabilities" },
+]
+
+[github.milestones]
+renames = { "v0" = "v0.1.0", "v1" = "v0.2.0" }
+items = [
+    { title = "v0.1.0", description = "Bootstrap the project, tooling, rules, and walking skeleton", state = "open" },
+    { title = "v0.2.0", description = "MVP release and live deployment", state = "open" },
+]
+
+[github.issues.rules]
+cycle = true
+labels = true
+membership = false
+milestone = true
+parent = false
+references = false
+release = true
+text = false
