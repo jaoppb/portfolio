@@ -1,0 +1,37 @@
+{
+	"$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+	"entry": ["docs/adr/fixtures/boundary-spike/src/entry.ts"],
+	"boundaries": {
+		"zones": [
+			{
+				"name": "shared",
+				"patterns": [
+					"docs/adr/fixtures/boundary-spike/src/shared/**",
+					"packages/shared/**",
+					"src/shared/**"
+				]
+			},
+			{
+				"name": "components-ui",
+				"patterns": [
+					"docs/adr/fixtures/boundary-spike/src/components/ui/**",
+					"packages/ui/**",
+					"src/components/ui/**"
+				]
+			},
+			{
+				"name": "features",
+				"autoDiscover": [
+					"docs/adr/fixtures/boundary-spike/src/features",
+					"apps/web/src/features"
+				]
+			}
+		],
+		"rules": [
+			{
+				"from": "features",
+				"allow": ["shared", "components-ui"]
+			}
+		]
+	}
+}
