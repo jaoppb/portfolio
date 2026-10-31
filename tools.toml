@@ -11,6 +11,7 @@ merge_commit_title = "PR_TITLE"
 merge_commit_message = "PR_BODY"
 
 [github.labels]
+renames = { "epic" = "type:epic" }
 deprecated = [
     "bug",
     "documentation",
@@ -34,7 +35,7 @@ items = [
     { name = "area:design", color = "f143ab", description = "Visual design, theme, typography, styling" },
     { name = "area:tooling", color = "2ea44f", description = "Build tools, CI/CD, deployment, automation" },
     { name = "area:seo-a11y", color = "0e8a16", description = "SEO, performance, metadata, accessibility" },
-    { name = "epic", color = "b60205", description = "A closeable outcome made of stories or tasks" },
+    { name = "type:epic", color = "b60205", description = "A closeable outcome made of stories or tasks" },
     { name = "accessibility", color = "f143ab", description = "Barrier affecting people with disabilities" },
 ]
 

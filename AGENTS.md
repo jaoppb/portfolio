@@ -13,7 +13,7 @@ This repository is João Pedro's personal portfolio website and project showcase
   - `v0.2.0`: MVP release and launch.
   - `v0.3.0`, `v1.0.0`, etc.: Iterations, new sections, and post-launch improvements.
 - **Labels.**
-  - Exactly one `type:` label on every non-epic issue: `feat`, `fix`, `chore`, `docs`, `refactor`, or `spike`. Epics carry the `epic` label.
+  - Exactly one `type:` label on every issue: `type:feat`, `type:fix`, `type:chore`, `type:docs`, `type:refactor`, `type:spike`, or `type:epic`.
   - At least one `area:` label: `area:ui`, `area:content`, `area:design`, `area:tooling`, or `area:seo-a11y`.
 - **Creation and Triage.** File issues using the corresponding template from `.github/ISSUE_TEMPLATE/`. Upon creation or triage:
   - Set the appropriate `area:` label.
@@ -38,7 +38,7 @@ This repository is João Pedro's personal portfolio website and project showcase
 
 | Issue workflow rule | Enforcer | Status |
 |---------------------|----------|--------|
-| Labels (`type:*`, `area:*`, `epic`) and SemVer milestones on open issues | `just issues-check` (`jaoppb/tools`) | Enforced |
+| Labels (`type:*`, `area:*`) and SemVer milestones on open issues | `just issues-check` (`jaoppb/tools`) | Enforced |
 | Repository settings, label taxonomy, and milestones drift | `just repo-check` (`jaoppb/tools`) | Enforced |
 | Form structure | `.github/ISSUE_TEMPLATE/*.yml` with `blank_issues_enabled: false` | Enforced |
 | Merge method (merge commit only) | GitHub repository settings & PR review | Enforced |
