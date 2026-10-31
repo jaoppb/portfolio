@@ -5,7 +5,7 @@ labels: ["type:docs"]
 body:
   - type: markdown
     attributes:
-      value: "After filing, set the area label, milestone (v0, v1, etc.), priority (P0-P3), effort (1-13 Fibonacci), and parent epic if applicable. See AGENTS.md."
+      value: "After filing, set the area label, milestone (v0.1.0, v0.2.0, etc.), priority (P0-P3), effort (1-13 Fibonacci), and parent epic if applicable. See AGENTS.md."
   - type: textarea
     id: goal
     attributes:

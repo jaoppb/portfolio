@@ -1,6 +1,6 @@
 # Issue Workflow Guide
 
-This document describes the issue organization, taxonomy, and development lifecycle for the Portfolio repository, adapted and simplified from [`jaoppb/cosmo`](https://github.com/jaoppb/cosmo). The core rules are defined in [AGENTS.md](../../AGENTS.md).
+This document describes the issue organization, taxonomy, and development lifecycle for the Portfolio repository, adapted and simplified from [`jaoppb/cosmo`](https://github.com/jaoppb/cosmo) and powered by [`jaoppb/tools`](https://github.com/jaoppb/tools). The canonical rules are defined in [AGENTS.md](../../AGENTS.md).
 
 ---
 
@@ -44,10 +44,10 @@ Work is organized into:
 
 ## 3. Milestones
 
-Every open issue must belong to a release milestone:
-- **`v0`**: Project bootstrap (tooling, issue workflow, base repository setup, walking skeleton).
-- **`v1`**: MVP launch (initial portfolio live on custom domain, core sections, responsive layout).
-- **`v1.1`+**: Post-launch iterations, content additions, interactive demos.
+Every open issue must belong to a release milestone following SemVer:
+- **`v0.1.0`**: Project bootstrap (tooling, issue workflow, base repository setup, walking skeleton).
+- **`v0.2.0`**: MVP launch (initial portfolio live on custom domain, core sections, responsive layout).
+- **`v0.3.0`+, `v1.0.0`**: Post-launch iterations, content additions, interactive demos.
 
 ---
 
@@ -87,13 +87,22 @@ Effort is measured in Fibonacci points: `1`, `2`, `3`, `5`, `8`, `13`.
 
 ## 6. Tooling and Auditing
 
+The workflow tooling is distributed via Nix Flake from [`jaoppb/tools`](https://github.com/jaoppb/tools) and configured in `tools.toml`.
+
 - **Auditing Open Issues**:
   ```bash
   just issues-check
   ```
-  Runs `scripts/issues-check.py` to check that every open issue has a valid `type:*` (or `epic`), at least one `area:*`, and a milestone.
+  Runs `issues-check` against repository rules and open issues.
 
-- **Provisioning Labels (One-time setup)**:
+- **Checking Repository Drift**:
   ```bash
-  ./scripts/setup-labels.sh
+  just repo-check
   ```
+  Verifies that GitHub repository settings, labels, and milestones match `tools.toml`.
+
+- **Reconciling Repository Configuration**:
+  ```bash
+  just repo-sync
+  ```
+  Applies settings, label changes/pruning, and milestone renames to GitHub.
