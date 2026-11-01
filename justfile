@@ -34,8 +34,8 @@ repo-bootstrap: repo-sync
 lint:
     pnpm exec biome lint .
 
-# Format all files across workspace with Biome
-format:
+# Format all files across workspace with Biome and Terraform
+format: tf-fmt
     pnpm exec biome format --write .
 
 # Check architectural boundaries and import cycles
@@ -46,6 +46,26 @@ architecture:
 dead-code:
     pnpm exec fallow dead-code
 
-# Verify architecture, dead code, formatting, linting, and imports across workspace
-check: architecture dead-code
+# Check formatting and validate Terraform configurations
+tf-check:
+    terraform fmt -check -recursive terraform/
+    terraform -chdir=terraform/bootstrap init -backend=false -input=false
+    terraform -chdir=terraform/bootstrap validate
+    terraform -chdir=terraform init -backend=false -input=false
+    terraform -chdir=terraform validate
+
+# Format all Terraform configurations across terraform/
+tf-fmt:
+    terraform fmt -recursive terraform/
+
+# Run Terraform commands in terraform/ (e.g. just tf init, just tf plan, just tf apply)
+tf *args:
+    terraform -chdir=terraform {{args}}
+
+# Run Terraform commands in terraform/bootstrap (e.g. just tf-bootstrap init, just tf-bootstrap apply)
+tf-bootstrap *args:
+    terraform -chdir=terraform/bootstrap {{args}}
+
+# Verify architecture, dead code, formatting, linting, imports, and Terraform configurations
+check: architecture dead-code tf-check
     pnpm exec biome check .

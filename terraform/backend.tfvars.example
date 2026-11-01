@@ -1,0 +1,6 @@
+# Example S3 backend configuration for Cloudflare R2
+# Usage: terraform init -backend-config=backend.tfvars
+# Alternatively, pass -backend-config="endpoints.s3=https://<account_id>.r2.cloudflarestorage.com"
+endpoints = {
+  s3 = "https://<cloudflare_account_id>.r2.cloudflarestorage.com"
+}
