@@ -1,6 +1,6 @@
 {
 	"$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-	"entry": ["docs/adr/fixtures/boundary-spike/src/entry.ts"],
+	"entry": ["docs/adr/fixtures/boundary-spike/src/entry.ts", "apps/web/src/app/**"],
 	"boundaries": {
 		"zones": [
 			{
@@ -8,7 +8,7 @@
 				"patterns": [
 					"docs/adr/fixtures/boundary-spike/src/shared/**",
 					"packages/shared/**",
-					"src/shared/**"
+					"apps/*/src/shared/**"
 				]
 			},
 			{
@@ -16,7 +16,7 @@
 				"patterns": [
 					"docs/adr/fixtures/boundary-spike/src/components/ui/**",
 					"packages/ui/**",
-					"src/components/ui/**"
+					"apps/*/src/components/ui/**"
 				]
 			},
 			{
