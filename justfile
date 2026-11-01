@@ -38,6 +38,14 @@ lint:
 format:
     pnpm exec biome format --write .
 
-# Verify formatting, linting, and imports across workspace with Biome
-check:
+# Check architectural boundaries and import cycles
+architecture:
+    pnpm exec fallow architecture
+
+# Check for unused exports and dead code
+dead-code:
+    pnpm exec fallow dead-code
+
+# Verify architecture, dead code, formatting, linting, and imports across workspace
+check: architecture dead-code
     pnpm exec biome check .
