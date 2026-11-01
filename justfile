@@ -49,27 +49,22 @@ dead-code:
 # Check formatting and validate Terraform configurations
 tf-check:
     terraform fmt -check -recursive terraform/
-    terraform -chdir=terraform/bootstrap init -backend=false
+    terraform -chdir=terraform/bootstrap init -backend=false -input=false
     terraform -chdir=terraform/bootstrap validate
-    terraform -chdir=terraform init -backend=false
+    terraform -chdir=terraform init -backend=false -input=false
     terraform -chdir=terraform validate
 
 # Format all Terraform configurations across terraform/
 tf-fmt:
     terraform fmt -recursive terraform/
 
-# Run Terraform commands in terraform/ (e.g. just tf plan, just tf apply)
+# Run Terraform commands in terraform/ (e.g. just tf init, just tf plan, just tf apply)
 tf *args:
     terraform -chdir=terraform {{args}}
 
-# Initialize main Terraform configuration with optional backend configuration
-tf-init *args:
-    terraform -chdir=terraform init {{args}}
-
-# Initialize and provision remote state R2 bucket
+# Run Terraform commands in terraform/bootstrap (e.g. just tf-bootstrap init, just tf-bootstrap apply)
 tf-bootstrap *args:
-    terraform -chdir=terraform/bootstrap init
-    terraform -chdir=terraform/bootstrap apply {{args}}
+    terraform -chdir=terraform/bootstrap {{args}}
 
 # Verify architecture, dead code, formatting, linting, imports, and Terraform configurations
 check: architecture dead-code tf-check
