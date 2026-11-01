@@ -1,0 +1,6 @@
+# Example Terraform variables
+# Copy to terraform.tfvars or set TF_VAR_cloudflare_account_id
+cloudflare_account_id = "your-cloudflare-account-id"
+project_name          = "jaoppb-portfolio"
+domain_name           = "jaoppb.com"
+production_branch     = "main"
