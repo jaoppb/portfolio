@@ -8,6 +8,9 @@ node_modules
 # Build and test outputs
 dist
 coverage
+.next
+out
+*.tsbuildinfo
 
 # Environment & local files
 .env.local
