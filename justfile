@@ -62,6 +62,10 @@ tf-fmt:
 tf *args:
     terraform -chdir=terraform {{args}}
 
+# Initialize main Terraform configuration with optional backend configuration
+tf-init *args:
+    terraform -chdir=terraform init {{args}}
+
 # Initialize and provision remote state R2 bucket
 tf-bootstrap *args:
     terraform -chdir=terraform/bootstrap init
