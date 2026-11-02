@@ -91,12 +91,13 @@ jobs:
 
   deploy-preview:
     name: Deploy Preview
-    if: github.event_name == 'pull_request' && secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != ''
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: preview
     permissions:
       contents: read
+      issues: write
       pull-requests: write
       deployments: write
     steps:
@@ -137,6 +138,11 @@ jobs:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
           NO_COLOR: "1"
         run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "Cloudflare credentials not available. Skipping preview deployment."
+            exit 0
+          fi
+
           DEPLOY_OUTPUT=$(npx --yes wrangler@4 pages deploy apps/web/out \
             --project-name=jaoppb-portfolio \
             --branch="$BRANCH_NAME" \
