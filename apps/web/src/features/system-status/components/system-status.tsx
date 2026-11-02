@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
+import { enDictionary } from "@/shared/dictionaries/en";
+import type { Dictionary } from "@/shared/dictionaries/types";
 
 export interface SystemStatusProps {
 	version?: string;
-	framework?: string;
-	target?: string;
+	status?: Dictionary["systemStatus"];
 }
 
 export function SystemStatus({
 	version = "0.1.0",
-	framework = "Next.js 16",
-	target = "Cloudflare Pages (output: export)",
+	status = enDictionary.systemStatus,
 }: SystemStatusProps) {
 	return (
 		<section
@@ -22,11 +22,9 @@ export function SystemStatus({
 						id="system-status-heading"
 						className="text-base font-semibold tracking-tight text-foreground"
 					>
-						Architecture & Skeleton Status
+						{status.title}
 					</h2>
-					<p className="mt-1 text-sm text-muted">
-						Pure static export configuration and feature-first boundary verification.
-					</p>
+					<p className="mt-1 text-sm text-muted">{status.description}</p>
 				</div>
 				<div className="flex items-center gap-2">
 					<span
@@ -34,7 +32,7 @@ export function SystemStatus({
 						className="inline-block h-2 w-2 rounded-full bg-emerald-500"
 					/>
 					<span className="font-mono text-xs font-medium uppercase tracking-wider text-foreground">
-						Operational
+						{status.operational}
 					</span>
 				</div>
 			</div>
@@ -42,23 +40,23 @@ export function SystemStatus({
 			<dl className="mt-6 grid grid-cols-1 gap-4 border-t border-border pt-4 sm:grid-cols-3">
 				<div>
 					<dt className="text-xs font-medium uppercase tracking-wider text-muted">
-						Target
+						{status.target}
 					</dt>
 					<dd className="mt-1 font-mono text-sm tabular-nums text-foreground">
-						{target}
+						{status.targetValue}
 					</dd>
 				</div>
 				<div>
 					<dt className="text-xs font-medium uppercase tracking-wider text-muted">
-						Framework
+						{status.framework}
 					</dt>
 					<dd className="mt-1 font-mono text-sm tabular-nums text-foreground">
-						{framework}
+						{status.frameworkValue}
 					</dd>
 				</div>
 				<div>
 					<dt className="text-xs font-medium uppercase tracking-wider text-muted">
-						Milestone
+						{status.milestone}
 					</dt>
 					<dd className="mt-1 font-mono text-sm tabular-nums text-foreground">
 						v{version}
@@ -68,10 +66,10 @@ export function SystemStatus({
 
 			<div className="mt-6 flex items-center gap-3">
 				<Button variant="secondary" size="sm">
-					Documentation
+					{status.documentation}
 				</Button>
 				<Button variant="outline" size="sm">
-					Source Specs
+					{status.sourceSpecs}
 				</Button>
 			</div>
 		</section>
