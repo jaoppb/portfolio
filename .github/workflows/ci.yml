@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Biome check
+        run: pnpm exec biome check .
+
+      - name: Check architectural boundaries
+        run: pnpm exec fallow architecture
+
+      - name: Check for dead code
+        run: pnpm exec fallow dead-code
+
+      - name: Check Terraform formatting and configuration
+        run: |
+          terraform fmt -check -recursive terraform/
+          terraform -chdir=terraform/bootstrap init -backend=false -input=false
+          terraform -chdir=terraform/bootstrap validate
+          terraform -chdir=terraform init -backend=false -input=false
+          terraform -chdir=terraform validate
+
+  test:
+    name: Test & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run TypeScript typecheck
+        run: pnpm typecheck
+
+      - name: Run Vitest unit & accessibility tests
+        run: pnpm test
+
+  build:
+    name: Static Export Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: apps/web/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/web/src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build static export
+        run: pnpm build
+
+      - name: Verify static export output
+        run: |
+          if [ ! -f apps/web/out/index.html ]; then
+            echo "Build failed to generate apps/web/out/index.html"
+            exit 1
+          fi
+
+  ci:
+    name: CI
+    needs: [lint, test, build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate CI status
+        run: |
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Test: ${{ needs.test.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          if [ "${{ needs.lint.result }}" != "success" ] || \
+             [ "${{ needs.test.result }}" != "success" ] || \
+             [ "${{ needs.build.result }}" != "success" ]; then
+            echo "CI pipeline failed. Please check the individual job results above."
+            exit 1
+          fi
+          echo "All CI pipeline checks passed successfully."
