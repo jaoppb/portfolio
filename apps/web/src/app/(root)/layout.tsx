@@ -15,8 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang="en">
 			<head>
-				<meta httpEquiv="refresh" content={`0; url=${siteConfig.url}/en`} />
-				<link rel="canonical" href={`${siteConfig.url}/en`} />
+				<meta httpEquiv="refresh" content="0; url=/en" />
 			</head>
 			<body className="bg-background text-foreground antialiased">{children}</body>
 		</html>

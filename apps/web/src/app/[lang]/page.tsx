@@ -18,16 +18,19 @@ export async function generateMetadata({
 
 	const url = `${siteConfig.url}/${locale}`;
 
+	const languages: Record<string, string> = {
+		"x-default": `${siteConfig.url}/${siteConfig.defaultLocale}`,
+	};
+	for (const loc of siteConfig.locales) {
+		languages[loc] = `${siteConfig.url}/${loc}`;
+	}
+
 	return {
 		title: dict.meta.title,
 		description: dict.meta.description,
 		alternates: {
 			canonical: url,
-			languages: {
-				en: `${siteConfig.url}/en`,
-				pt: `${siteConfig.url}/pt`,
-				"x-default": `${siteConfig.url}/en`,
-			},
+			languages,
 		},
 		openGraph: {
 			title: dict.meta.title,
@@ -52,7 +55,7 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 	const dict = await getDictionary(locale);
 
 	return (
-		<main id="main-content" tabIndex={-1} className="flex flex-col gap-10 outline-none">
+		<div className="flex flex-col gap-10">
 			<section id="overview" aria-labelledby="hero-title" className="space-y-4">
 				<h2
 					id="hero-title"
@@ -66,21 +69,8 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 			</section>
 
 			<section id="architecture">
-				<SystemStatus
-					target={dict.systemStatus.targetValue}
-					framework={dict.systemStatus.frameworkValue}
-					labels={{
-						title: dict.systemStatus.title,
-						description: dict.systemStatus.description,
-						operational: dict.systemStatus.operational,
-						target: dict.systemStatus.target,
-						framework: dict.systemStatus.framework,
-						milestone: dict.systemStatus.milestone,
-						documentation: dict.systemStatus.documentation,
-						sourceSpecs: dict.systemStatus.sourceSpecs,
-					}}
-				/>
+				<SystemStatus status={dict.systemStatus} />
 			</section>
-		</main>
+		</div>
 	);
 }

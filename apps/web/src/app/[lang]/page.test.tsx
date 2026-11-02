@@ -30,11 +30,11 @@ describe("LocalizedPage", () => {
 		expect(ptMeta.openGraph?.locale).toBe("pt_BR");
 	});
 
-	it("renders English page content and landmarks", async () => {
+	it("renders English page content and headings", async () => {
 		const Page = await LocalizedPage({
 			params: Promise.resolve({ lang: "en" }),
 		});
-		const { container } = render(Page);
+		const { container } = render(<main>{Page}</main>);
 
 		expect(
 			screen.getByRole("heading", {
@@ -50,19 +50,15 @@ describe("LocalizedPage", () => {
 			}),
 		).toBeInTheDocument();
 
-		const main = screen.getByRole("main");
-		expect(main).toHaveAttribute("id", "main-content");
-		expect(main).toHaveAttribute("tabindex", "-1");
-
 		const results = await axe(container);
 		expect(results).toHaveNoViolations();
 	});
 
-	it("renders Portuguese page content and landmarks", async () => {
+	it("renders Portuguese page content and headings", async () => {
 		const Page = await LocalizedPage({
 			params: Promise.resolve({ lang: "pt" }),
 		});
-		const { container } = render(Page);
+		const { container } = render(<main>{Page}</main>);
 
 		expect(
 			screen.getByRole("heading", {

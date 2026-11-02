@@ -1,40 +1,16 @@
 import { Button } from "@/components/ui/button";
-
-export interface SystemStatusLabels {
-	title?: string;
-	description?: string;
-	operational?: string;
-	target?: string;
-	framework?: string;
-	milestone?: string;
-	documentation?: string;
-	sourceSpecs?: string;
-}
+import { enDictionary } from "@/shared/dictionaries/en";
+import type { Dictionary } from "@/shared/dictionaries/types";
 
 export interface SystemStatusProps {
 	version?: string;
-	framework?: string;
-	target?: string;
-	labels?: SystemStatusLabels;
+	status?: Dictionary["systemStatus"];
 }
 
 export function SystemStatus({
 	version = "0.1.0",
-	framework = "Next.js 16",
-	target = "Cloudflare Pages (output: export)",
-	labels,
+	status = enDictionary.systemStatus,
 }: SystemStatusProps) {
-	const title = labels?.title ?? "Architecture & Skeleton Status";
-	const description =
-		labels?.description ??
-		"Pure static export configuration and feature-first boundary verification.";
-	const operational = labels?.operational ?? "Operational";
-	const targetLabel = labels?.target ?? "Target";
-	const frameworkLabel = labels?.framework ?? "Framework";
-	const milestoneLabel = labels?.milestone ?? "Milestone";
-	const documentation = labels?.documentation ?? "Documentation";
-	const sourceSpecs = labels?.sourceSpecs ?? "Source Specs";
-
 	return (
 		<section
 			aria-labelledby="system-status-heading"
@@ -46,9 +22,9 @@ export function SystemStatus({
 						id="system-status-heading"
 						className="text-base font-semibold tracking-tight text-foreground"
 					>
-						{title}
+						{status.title}
 					</h2>
-					<p className="mt-1 text-sm text-muted">{description}</p>
+					<p className="mt-1 text-sm text-muted">{status.description}</p>
 				</div>
 				<div className="flex items-center gap-2">
 					<span
@@ -56,7 +32,7 @@ export function SystemStatus({
 						className="inline-block h-2 w-2 rounded-full bg-emerald-500"
 					/>
 					<span className="font-mono text-xs font-medium uppercase tracking-wider text-foreground">
-						{operational}
+						{status.operational}
 					</span>
 				</div>
 			</div>
@@ -64,23 +40,23 @@ export function SystemStatus({
 			<dl className="mt-6 grid grid-cols-1 gap-4 border-t border-border pt-4 sm:grid-cols-3">
 				<div>
 					<dt className="text-xs font-medium uppercase tracking-wider text-muted">
-						{targetLabel}
+						{status.target}
 					</dt>
 					<dd className="mt-1 font-mono text-sm tabular-nums text-foreground">
-						{target}
+						{status.targetValue}
 					</dd>
 				</div>
 				<div>
 					<dt className="text-xs font-medium uppercase tracking-wider text-muted">
-						{frameworkLabel}
+						{status.framework}
 					</dt>
 					<dd className="mt-1 font-mono text-sm tabular-nums text-foreground">
-						{framework}
+						{status.frameworkValue}
 					</dd>
 				</div>
 				<div>
 					<dt className="text-xs font-medium uppercase tracking-wider text-muted">
-						{milestoneLabel}
+						{status.milestone}
 					</dt>
 					<dd className="mt-1 font-mono text-sm tabular-nums text-foreground">
 						v{version}
@@ -90,10 +66,10 @@ export function SystemStatus({
 
 			<div className="mt-6 flex items-center gap-3">
 				<Button variant="secondary" size="sm">
-					{documentation}
+					{status.documentation}
 				</Button>
 				<Button variant="outline" size="sm">
-					{sourceSpecs}
+					{status.sourceSpecs}
 				</Button>
 			</div>
 		</section>

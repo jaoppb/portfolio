@@ -42,7 +42,7 @@ export default async function LocalizedLayout({
 									<li>
 										<a
 											href="#overview"
-											className="text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+											className="text-muted transition-colors motion-reduce:transition-none hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
 										>
 											{dict.nav.overview}
 										</a>
@@ -50,7 +50,7 @@ export default async function LocalizedLayout({
 									<li>
 										<a
 											href="#architecture"
-											className="text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+											className="text-muted transition-colors motion-reduce:transition-none hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
 										>
 											{dict.nav.architecture}
 										</a>
@@ -65,7 +65,9 @@ export default async function LocalizedLayout({
 						</div>
 					</header>
 
-					<div className="flex-1 py-10">{children}</div>
+					<main id="main-content" tabIndex={-1} className="flex-1 py-10 outline-none">
+						{children}
+					</main>
 
 					<footer className="border-t border-border pt-6 text-xs text-muted">
 						<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">

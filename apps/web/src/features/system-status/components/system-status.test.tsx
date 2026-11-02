@@ -1,16 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { ptDictionary } from "@/shared/dictionaries/pt";
 import { SystemStatus } from "./system-status";
 
 describe("SystemStatus feature component", () => {
 	it("renders architecture status details and headings", () => {
-		render(
-			<SystemStatus
-				version="0.1.0"
-				framework="Next.js 16"
-				target="Cloudflare Pages (output: export)"
-			/>,
-		);
+		render(<SystemStatus version="0.1.0" />);
 
 		expect(
 			screen.getByRole("heading", { name: /architecture & skeleton status/i }),
@@ -25,5 +20,18 @@ describe("SystemStatus feature component", () => {
 		render(<SystemStatus />);
 		expect(screen.getByRole("button", { name: /documentation/i })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /source specs/i })).toBeInTheDocument();
+	});
+
+	it("renders localized translations when status dictionary slice is provided", () => {
+		render(<SystemStatus status={ptDictionary.systemStatus} version="0.1.0" />);
+
+		expect(
+			screen.getByRole("heading", {
+				name: /status de arquitetura e skeleton/i,
+			}),
+		).toBeInTheDocument();
+		expect(screen.getByText(/operacional/i)).toBeInTheDocument();
+		expect(screen.getByText(/especificações/i)).toBeInTheDocument();
+		expect(screen.getByText(/documentação/i)).toBeInTheDocument();
 	});
 });

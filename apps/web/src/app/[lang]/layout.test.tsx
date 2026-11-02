@@ -9,14 +9,10 @@ describe("LocalizedLayout", () => {
 		expect(params).toEqual([{ lang: "en" }, { lang: "pt" }]);
 	});
 
-	it("renders header, navigation, main skip link, and footer landmarks", async () => {
+	it("renders header, navigation, main skip link, main container, and footer landmarks", async () => {
 		const Layout = await LocalizedLayout({
 			params: Promise.resolve({ lang: "en" }),
-			children: (
-				<main id="main-content">
-					<div data-testid="child-content">Child content</div>
-				</main>
-			),
+			children: <div data-testid="child-content">Child content</div>,
 		});
 
 		const { container } = render(Layout);
@@ -30,6 +26,12 @@ describe("LocalizedLayout", () => {
 		expect(screen.getByRole("banner")).toBeInTheDocument();
 		expect(screen.getByRole("navigation", { name: /main navigation/i })).toBeInTheDocument();
 		expect(screen.getByRole("navigation", { name: /language switcher/i })).toBeInTheDocument();
+
+		const main = screen.getByRole("main");
+		expect(main).toBeInTheDocument();
+		expect(main).toHaveAttribute("id", "main-content");
+		expect(main).toHaveAttribute("tabindex", "-1");
+
 		expect(screen.getByRole("contentinfo")).toBeInTheDocument();
 		expect(screen.getByTestId("child-content")).toBeInTheDocument();
 
@@ -40,7 +42,7 @@ describe("LocalizedLayout", () => {
 	it("renders localized labels in Portuguese", async () => {
 		const Layout = await LocalizedLayout({
 			params: Promise.resolve({ lang: "pt" }),
-			children: <main id="main-content">Conteúdo</main>,
+			children: <div>Conteúdo</div>,
 		});
 
 		render(Layout);
