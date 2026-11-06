@@ -1,6 +1,6 @@
 # Deploy credentials
 
-How the Cloudflare Pages deploy is isolated from the rest of the account ([#24](https://github.com/jaoppb/portfolio/issues/24)). The deploy workflow is `.github/workflows/deploy.yml`. The Terraform pipeline and its broader credentials are described in [terraform-pipeline.md](terraform-pipeline.md).
+How the Cloudflare Pages deploy is isolated from the rest of the account ([#24](https://github.com/jaoppb/portfolio/issues/24)). The deploy workflows are `.github/workflows/deploy-production.yml` and `.github/workflows/deploy-preview.yml`. The Terraform pipeline and its broader credentials are described in [terraform-pipeline.md](terraform-pipeline.md).
 
 ## 1. Environments and secrets
 
@@ -8,14 +8,14 @@ Deploy secrets live only in environments. No deploy credential exists at reposit
 
 | Environment | Used by | Branch rule | Approval | Secrets |
 |---|---|---|---|---|
-| `production` | `deploy.yml` job `deploy-production` | `main` only | None | `CLOUDFLARE_API_TOKEN` (Pages-only), `CLOUDFLARE_ACCOUNT_ID` |
-| `preview` | `deploy.yml` job `deploy-preview` | Any | None | `CLOUDFLARE_API_TOKEN` (Pages-only, separate token), `CLOUDFLARE_ACCOUNT_ID` |
+| `production` | `deploy-production.yml` job `deploy-production` | `main` only | None | `CLOUDFLARE_API_TOKEN` (Pages-only), `CLOUDFLARE_ACCOUNT_ID` |
+| `preview` | `deploy-preview.yml` job `deploy-preview` | Any | None | `CLOUDFLARE_API_TOKEN` (Pages-only, separate token), `CLOUDFLARE_ACCOUNT_ID` |
 
 Neither environment holds the Terraform apply token (DNS and R2 scopes). That token lives in `terraform-apply`, and the read-only plan token lives in `terraform-plan`.
 
 Rules that keep the credentials contained:
 
-- `deploy.yml` stays on the `pull_request` trigger. Never use `pull_request_target` for deploys: it runs with secrets in the context of the base branch while checking out untrusted code.
+- `deploy-preview.yml` stays on the `pull_request` trigger. Never use `pull_request_target` for deploys: it runs with secrets in the context of the base branch while checking out untrusted code.
 - Fork pull requests get no environment secrets, so the preview step skips itself when the token is empty.
 - The `preview` job runs the pull request's own code (`pnpm install`, `pnpm exec wrangler`) with the preview token, so any same-repository branch author can read that token. This is accepted: the token is Pages-only, separate from production, and expires in 90 days. Only grant write access to people you trust.
 - Actions setting "Require approval for all outside collaborators" is enabled, so a workflow run from an outside contributor waits for a maintainer.

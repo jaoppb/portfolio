@@ -30,7 +30,7 @@ Both Terraform environments are created in the repository settings. Secrets are 
 | `AWS_ACCESS_KEY_ID` | R2 S3 key ID, read-only on the state bucket |
 | `AWS_SECRET_ACCESS_KEY` | R2 S3 secret, read-only on the state bucket |
 
-**`terraform-apply`** (must have the repository owner as required reviewer, otherwise apply runs without approval). Only the Terraform apply job uses this environment. `deploy.yml` uses its own `production` and `preview` environments, which hold only a Pages-only token (see [deploy-credentials.md](deploy-credentials.md)), so deploys do not wait for this approval and cannot read the apply token.
+**`terraform-apply`** (must have the repository owner as required reviewer, otherwise apply runs without approval). Only the Terraform apply job uses this environment. `deploy-production.yml` and `deploy-preview.yml` use their own `production` and `preview` environments, which hold only a Pages-only token (see [deploy-credentials.md](deploy-credentials.md)), so deploys do not wait for this approval and cannot read the apply token.
 
 | Secret | Value |
 |---|---|
@@ -65,7 +65,7 @@ Create the tokens in the dashboard under My Profile, API Tokens.
 2. **Create the tokens and R2 keys** from section 3.
 3. **Set the secrets** from section 2 in `terraform-plan` and `terraform-apply`, and add the repository owner as required reviewer of `terraform-apply`.
 4. **Open a pull request touching `terraform/**`** (or this workflow) and check that the plan comment appears.
-5. **Run the first apply before the first production deploy.** `deploy.yml` runs `wrangler pages deploy` against the project `jaoppb-portfolio`, and Terraform creates that project, so the deploy fails until the first apply has succeeded. The apply runs on a push to `main` that touches `terraform/**` or the workflow file, so merging the pull request that adds the pipeline starts it. Approve the `terraform-apply` deployment. Every later change to the workflow file also asks for an approval, and the apply is then a no-op if nothing changed.
+5. **Run the first apply before the first production deploy.** `deploy-production.yml` runs `wrangler pages deploy` against the project `jaoppb-portfolio`, and Terraform creates that project, so the deploy fails until the first apply has succeeded. The apply runs on a push to `main` that touches `terraform/**` or the workflow file, so merging the pull request that adds the pipeline starts it. Approve the `terraform-apply` deployment. Every later change to the workflow file also asks for an approval, and the apply is then a no-op if nothing changed.
 6. **Then run the deploy.** Follow the cutover steps in [cloudflare-import.md](cloudflare-import.md#6-cutover-decided-in-25): the site is down until the deploy finishes.
 
 After the first apply the ordering problem does not come back, because the Pages project exists.
