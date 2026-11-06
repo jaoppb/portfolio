@@ -2,7 +2,9 @@ packages:
     - "apps/*"
     - "packages/*"
 allowBuilds:
+    esbuild: false
     lefthook: true
+    workerd: false
 minimumReleaseAgeExclude:
     - "@fallow-cli/darwin-arm64@3.38.1"
     - "@fallow-cli/darwin-x64@3.38.1"
