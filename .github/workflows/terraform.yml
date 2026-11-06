@@ -1,0 +1,192 @@
+name: Terraform
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+  # Manual apply from main. Used for the first apply, which is not triggered by a push.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+
+jobs:
+  plan:
+    name: Plan
+    # Fork PRs get no environment secrets, so the plan cannot run for them.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    # Read-only credentials, no approval gate. Apply credentials never reach this job.
+    environment:
+      name: terraform-plan
+    permissions:
+      contents: read
+      pull-requests: write
+    concurrency:
+      group: terraform-plan-${{ github.head_ref }}
+      cancel-in-progress: true
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check required secrets
+        run: |
+          missing=0
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret $name is not set in the terraform-plan environment. See docs/workflows/terraform-pipeline.md."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform init
+        working-directory: terraform
+        run: |
+          terraform init -lockfile=readonly \
+            -backend-config="endpoints={s3=\"https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com\"}"
+
+      - name: Terraform plan
+        id: plan
+        continue-on-error: true
+        working-directory: terraform
+        run: terraform plan -no-color -lock-timeout=60s 2>&1 | tee "$RUNNER_TEMP/plan.txt"
+
+      - name: Update pull request plan comment
+        if: always() && steps.plan.outcome != 'skipped'
+        uses: actions/github-script@v7
+        env:
+          PLAN_OUTCOME: ${{ steps.plan.outcome }}
+          PLAN_FILE: ${{ runner.temp }}/plan.txt
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- terraform-plan -->';
+            const ok = process.env.PLAN_OUTCOME === 'success';
+            const limit = 60000;
+            let plan = fs.existsSync(process.env.PLAN_FILE)
+              ? fs.readFileSync(process.env.PLAN_FILE, 'utf8')
+              : '(no plan output)';
+            if (plan.length > limit) {
+              plan = '... (truncated, see the workflow run for the full output)\n' + plan.slice(plan.length - limit);
+            }
+            const shortSha = (process.env.COMMIT_SHA || '').substring(0, 7);
+            const body = [
+              marker,
+              `### ${ok ? '📋' : '❌'} Terraform plan ${ok ? '' : 'failed'}`.trim(),
+              '',
+              '```',
+              plan,
+              '```',
+              '',
+              `- **Commit**: \`${shortSha}\``,
+              `- **Run**: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              '*Plan only. Changes are applied from `main` after approval of the `production` environment.*',
+            ].join('\n');
+
+            const issue_number = context.payload.pull_request.number;
+            const { owner, repo } = context.repo;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100,
+            });
+            const existing = comments.find((c) => c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
+      - name: Fail if plan failed
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+  apply:
+    name: Apply
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Full-power credentials. The job waits for the approval rule of the production environment.
+    environment:
+      name: production
+    permissions:
+      contents: read
+    # Never cancel a running apply. A newer run waits for it to finish.
+    concurrency:
+      group: terraform-apply
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.TF_CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check required secrets
+        run: |
+          missing=0
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Secret for $name is not set in the production environment (TF_CLOUDFLARE_API_TOKEN for the Cloudflare token). See docs/workflows/terraform-pipeline.md."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform init
+        working-directory: terraform
+        run: |
+          terraform init -lockfile=readonly \
+            -backend-config="endpoints={s3=\"https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com\"}"
+
+      - name: Terraform apply
+        working-directory: terraform
+        run: terraform apply -auto-approve -no-color -lock-timeout=60s 2>&1 | tee "$RUNNER_TEMP/apply.txt"
+
+      - name: Publish Job Summary
+        if: always()
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          {
+            echo "### 🏗️ Terraform apply"
+            echo ""
+            echo "- **Commit**: \`$COMMIT_SHA\`"
+            echo ""
+            if [ -f "$RUNNER_TEMP/apply.txt" ]; then
+              echo '```'
+              tail -n 200 "$RUNNER_TEMP/apply.txt"
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
