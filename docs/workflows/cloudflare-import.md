@@ -19,11 +19,11 @@ Runbook for [#25](https://github.com/jaoppb/portfolio/issues/25). It records wha
 | R2 bucket `portfolio` (2025) | Yes | Out of scope, not in Terraform. |
 | Pages project `jaoppb-portfolio` | No | Created by the first apply. |
 | Pages domains `jaoppb.com`, `www.jaoppb.com` | No | Created by the first apply. |
-| DNS apex `A jaoppb.com` | Yes, conflicts | Delete before the first apply (see section 6). |
-| DNS `CNAME www` | Yes, conflicts | Delete before the first apply (see section 6). |
+| DNS apex `A jaoppb.com` | Yes, conflicted | Deleted on 2026-11-06 (see section 6). |
+| DNS `CNAME www` | Yes, conflicted | Deleted on 2026-11-06 (see section 6). |
 | `r2` CNAME, DMARC, DKIM, SPF, `_vercel` TXT | Yes | Not managed by Terraform. Leave untouched. |
 
-Nothing needed `terraform import`. The remote state is empty, and `terraform plan` shows `5 to add, 0 to change, 0 to destroy`. The plan does not check DNS conflicts, so the apply fails until the two conflicting records are deleted.
+Nothing needed `terraform import`. The remote state is empty, and `terraform plan` shows `5 to add, 0 to change, 0 to destroy`. The plan does not check DNS conflicts, so the apply would have failed on the apex and `www` records. They were deleted on 2026-11-06 and the plan was re-run: still `5 to add, 0 to change, 0 to destroy`, with nothing left in the zone to conflict.
 
 ## 3. DNS export (rollback reference)
 
@@ -95,7 +95,7 @@ terraform plan -var cloudflare_account_id=<account_id>
 Decision: cut over in one apply and accept downtime. `jaoppb.com` currently serves from the apex A record (`216.198.79.1`, with a `_vercel` verification record, so most likely Vercel).
 
 1. Save section 3 (done).
-2. The repository owner deletes `A jaoppb.com` and `CNAME www` in the Cloudflare dashboard. Automation does not delete live DNS records.
+2. Delete `A jaoppb.com` and `CNAME www` (done on 2026-11-06 with the owner's explicit approval, by record ID after checking each one matched the export). The site has been down since.
 3. Run the first apply (#23). It creates the Pages project, both Pages domains and the proxied CNAMEs.
 4. Run the deploy workflow so the project gets a build.
 5. Check `https://jaoppb.com` and `https://www.jaoppb.com`.
