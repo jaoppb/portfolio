@@ -7,7 +7,7 @@ How Cloudflare infrastructure changes are planned and applied from GitHub Action
 | Trigger | Job | Environment | Credentials |
 |---|---|---|---|
 | Pull request touching `terraform/**` (or the workflow file) | `plan`: `terraform plan`, result posted as a single PR comment that is updated on every push | `terraform-plan` (no approval) | Read-only |
-| Push to `main` touching `terraform/**` | `apply`: `terraform apply -auto-approve` | `production` (approval required) | Full access |
+| Push to `main` touching `terraform/**` or the workflow file | `apply`: `terraform apply -auto-approve` | `production` (approval required) | Full access |
 
 - The `apply` job plans and applies in one step. The approver sees the plan comment from the pull request, not the exact change set of the run. If the plan on `main` differs from the PR comment (a stale plan, or a manual change in Cloudflare), the approver cannot tell before approving. Review the PR comment, and re-check the run log if `main` moved in between.
 - Plan runs for a branch cancel each other, so only the latest push is planned. Applies are serialized in the `terraform-apply` concurrency group and are never cancelled. A newer apply waits for the running one.
@@ -65,7 +65,7 @@ Create the tokens in the dashboard under My Profile, API Tokens.
 2. **Create the tokens and R2 keys** from section 3.
 3. **Set the secrets** from section 2 in `terraform-plan` and `production`, and add the repository owner as required reviewer of `production`.
 4. **Open a pull request touching `terraform/**`** (or this workflow) and check that the plan comment appears.
-5. **Run the first apply before the first production deploy.** `deploy.yml` runs `wrangler pages deploy` against the project `jaoppb-portfolio`, and Terraform creates that project, so the deploy fails until the first apply has succeeded. The apply only runs on a push to `main` that touches `terraform/**`, so merging the workflow alone does not start it. Merge a change under `terraform/**` and approve the `production` deployment.
+5. **Run the first apply before the first production deploy.** `deploy.yml` runs `wrangler pages deploy` against the project `jaoppb-portfolio`, and Terraform creates that project, so the deploy fails until the first apply has succeeded. The apply runs on a push to `main` that touches `terraform/**` or the workflow file, so merging the pull request that adds the pipeline starts it. Approve the `production` deployment. Every later change to the workflow file also asks for an approval, and the apply is then a no-op if nothing changed.
 6. **Then run the deploy.** Follow the cutover steps in [cloudflare-import.md](cloudflare-import.md#6-cutover-decided-in-25): the site is down until the deploy finishes.
 
 After the first apply the ordering problem does not come back, because the Pages project exists.

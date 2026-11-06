@@ -12,6 +12,7 @@ on:
       - main
     paths:
       - "terraform/**"
+      - ".github/workflows/terraform.yml"
 
 permissions:
   contents: read
