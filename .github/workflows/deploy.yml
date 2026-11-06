@@ -31,23 +31,23 @@ jobs:
       deployments: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6
         with:
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 22
           cache: "pnpm"
 
       - name: Restore Next.js cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/web/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/web/src/**') }}
@@ -67,7 +67,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           NO_COLOR: "1"
         run: |
-          DEPLOY_OUTPUT=$(npx --yes wrangler@4 pages deploy apps/web/out \
+          DEPLOY_OUTPUT=$(pnpm exec wrangler pages deploy apps/web/out \
             --project-name=jaoppb-portfolio \
             --branch=main \
             --commit-dirty=true)
@@ -102,21 +102,21 @@ jobs:
       deployments: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6
         with:
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 22
           cache: "pnpm"
 
       - name: Restore Next.js cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/web/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/web/src/**') }}
@@ -143,7 +143,7 @@ jobs:
             exit 0
           fi
 
-          DEPLOY_OUTPUT=$(npx --yes wrangler@4 pages deploy apps/web/out \
+          DEPLOY_OUTPUT=$(pnpm exec wrangler pages deploy apps/web/out \
             --project-name=jaoppb-portfolio \
             --branch="$BRANCH_NAME" \
             --commit-hash="$COMMIT_SHA" \
@@ -159,7 +159,7 @@ jobs:
 
       - name: Update Pull Request Preview Comment
         if: steps.deploy.outputs.preview_url != ''
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.preview_url }}
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}

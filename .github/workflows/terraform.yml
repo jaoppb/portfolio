@@ -44,7 +44,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Check required secrets
         run: |
@@ -58,7 +58,7 @@ jobs:
           exit "$missing"
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4
         with:
           terraform_wrapper: false
 
@@ -76,7 +76,7 @@ jobs:
 
       - name: Update pull request plan comment
         if: always() && steps.plan.outcome != 'skipped'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         env:
           PLAN_OUTCOME: ${{ steps.plan.outcome }}
           PLAN_FILE: ${{ runner.temp }}/plan.txt
@@ -105,7 +105,7 @@ jobs:
               `- **Commit**: \`${shortSha}\``,
               `- **Run**: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
               '',
-              '*Plan only. Changes are applied from `main` after approval of the `production` environment.*',
+              '*Plan only. Changes are applied from `main` after approval of the `terraform-apply` environment.*',
             ].join('\n');
 
             const issue_number = context.payload.pull_request.number;
@@ -128,9 +128,9 @@ jobs:
     name: Apply
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    # Full-power credentials. The job waits for the approval rule of the production environment.
+    # Full-power credentials. The job waits for the approval rule of the terraform-apply environment.
     environment:
-      name: production
+      name: terraform-apply
     permissions:
       contents: read
     # Never cancel a running apply. A newer run waits for it to finish.
@@ -145,21 +145,21 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Check required secrets
         run: |
           missing=0
           for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY; do
             if [ -z "${!name}" ]; then
-              echo "::error::Secret for $name is not set in the production environment (TF_CLOUDFLARE_API_TOKEN for the Cloudflare token). See docs/workflows/terraform-pipeline.md."
+              echo "::error::Secret for $name is not set in the terraform-apply environment (TF_CLOUDFLARE_API_TOKEN for the Cloudflare token). See docs/workflows/terraform-pipeline.md."
               missing=1
             fi
           done
           exit "$missing"
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4
         with:
           terraform_wrapper: false
 
