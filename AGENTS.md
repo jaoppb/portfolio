@@ -35,6 +35,7 @@ This repository is João Pedro's personal portfolio website and project showcase
   - Pull request title: `type: subject (#issue)`.
   - Closing keywords: Use `Closes #issue` in the PR body and the branch's final commit. Use `Refs #issue` for parent epics or intermediate commits.
   - Merge method: **Merge commit only**. Rebase and squash are disabled; every commit reaches `main`.
+- **GitHub Actions versions.** Every `uses:` reference in `.github/workflows/` must point to the latest available major version (`@vX`) when added or modified, and must be upgraded when a new major is released. Review the release's breaking changes (inputs, runtime, defaults) before upgrading. If actions are later pinned to commit SHAs (#24), the format becomes the full SHA with a trailing `# vX` comment so the major stays visible.
 
 | Issue workflow rule | Enforcer | Status |
 |---------------------|----------|--------|
@@ -42,6 +43,7 @@ This repository is João Pedro's personal portfolio website and project showcase
 | Repository settings, label taxonomy, and milestones drift | `just repo-check` (`jaoppb/tools`) | Enforced |
 | Form structure | `.github/ISSUE_TEMPLATE/*.yml` with `blank_issues_enabled: false` | Enforced |
 | Merge method (merge commit only) | GitHub repository settings & PR review | Enforced |
+| GitHub Actions on latest major | PR review (automated check: #30) | Manual (planned) |
 
 ## 2. Agent skills
 
