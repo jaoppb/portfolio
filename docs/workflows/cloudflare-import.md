@@ -97,7 +97,7 @@ Decision: cut over in one apply and accept downtime. `jaoppb.com` currently serv
 1. Save section 3 (done).
 2. Delete `A jaoppb.com` and `CNAME www` (done on 2026-11-06 with the owner's explicit approval, by record ID after checking each one matched the export). The site has been down since.
 3. Run the first apply (#23). It creates the Pages project, both Pages domains and the proxied CNAMEs.
-4. Run the deploy workflow so the project gets a build.
+4. Run the `Deploy Production` workflow so the project gets a build.
 5. Check `https://jaoppb.com` and `https://www.jaoppb.com`.
 
 The site is down from step 2 until step 4 finishes, and custom-domain validation can add delay. Rollback is manual: remove the Terraform-created CNAMEs and recreate the two records from section 3.

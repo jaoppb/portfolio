@@ -1,0 +1,64 @@
+name: Deploy Production
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches:
+      - main
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-production:
+    name: Deploy Production
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://jaoppb.com
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Build site
+        uses: ./.github/actions/build-site
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NO_COLOR: "1"
+        run: |
+          DEPLOY_OUTPUT=$(pnpm exec wrangler pages deploy apps/web/out \
+            --project-name=jaoppb-portfolio \
+            --branch=main \
+            --commit-dirty=true)
+          echo "$DEPLOY_OUTPUT"
+
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -o 'https://[^ ]*\.pages\.dev' | head -n 1)
+          echo "deployment_url=${DEPLOY_URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish Job Summary
+        env:
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment_url }}
+          COMMIT_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          echo "### 🚀 Cloudflare Pages Production Deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Production URL**: [https://jaoppb.com](https://jaoppb.com)" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$DEPLOY_URL" ]; then
+            echo "- **Pages Deployment URL**: [$DEPLOY_URL]($DEPLOY_URL)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "- **Commit**: \`$COMMIT_SHA\`" >> "$GITHUB_STEP_SUMMARY"
