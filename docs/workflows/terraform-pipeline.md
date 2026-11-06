@@ -31,15 +31,14 @@ Both environments are created in the repository settings. Secrets are set per en
 | `AWS_ACCESS_KEY_ID` | R2 S3 key ID, read-only on the state bucket |
 | `AWS_SECRET_ACCESS_KEY` | R2 S3 secret, read-only on the state bucket |
 
-**`production`** (must have the repository owner as required reviewer, otherwise apply runs without approval). `deploy.yml` also uses this environment, so every production deploy waits for the same approval. It already holds `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` for `deploy.yml`. Add:
+**`production`** (must have the repository owner as required reviewer, otherwise apply runs without approval). `deploy.yml` also uses this environment, so every production deploy waits for the same approval. It already holds `CLOUDFLARE_API_TOKEN` for `deploy.yml`. Add:
 
 | Secret | Value |
 |---|---|
 | `TF_CLOUDFLARE_API_TOKEN` | Cloudflare token with the apply scopes (section 3). Mapped to `CLOUDFLARE_API_TOKEN` inside the job. |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID. Also read by `deploy.yml`. |
 | `AWS_ACCESS_KEY_ID` | R2 S3 key ID, read and write on the state bucket |
 | `AWS_SECRET_ACCESS_KEY` | R2 S3 secret, read and write on the state bucket |
-
-`CLOUDFLARE_ACCOUNT_ID` in `production` is shared with `deploy.yml`.
 
 The deploy token (`CLOUDFLARE_API_TOKEN` in `production`) stays limited to Cloudflare Pages Edit. Do not widen it: the deploy job installs npm dependencies and runs `wrangler`, and it should not hold DNS or zone rights.
 
