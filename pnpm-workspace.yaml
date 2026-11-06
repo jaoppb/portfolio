@@ -1,6 +1,7 @@
 packages:
     - "apps/*"
     - "packages/*"
+# esbuild and workerd (wrangler) install scripts stay off: their binaries ship in platform packages.
 allowBuilds:
     esbuild: false
     lefthook: true

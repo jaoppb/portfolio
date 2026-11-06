@@ -60,9 +60,9 @@ Read-only, from a scratch directory so the repository stays clean:
 
 ```bash
 export CLOUDFLARE_ACCOUNT_ID=<account_id>
-npx wrangler whoami
-npx wrangler pages project list
-npx wrangler r2 bucket list
+pnpm exec wrangler whoami
+pnpm exec wrangler pages project list
+pnpm exec wrangler r2 bucket list
 
 export CLOUDFLARE_API_TOKEN=<read-only token>
 # cf-terraforming needs an initialised directory with the provider (~> 4.0)

@@ -17,6 +17,7 @@ Rules that keep the credentials contained:
 
 - `deploy.yml` stays on the `pull_request` trigger. Never use `pull_request_target` for deploys: it runs with secrets in the context of the base branch while checking out untrusted code.
 - Fork pull requests get no environment secrets, so the preview step skips itself when the token is empty.
+- The `preview` job runs the pull request's own code (`pnpm install`, `pnpm exec wrangler`) with the preview token, so any same-repository branch author can read that token. This is accepted: the token is Pages-only, separate from production, and expires in 90 days. Only grant write access to people you trust.
 - Actions setting "Require approval for all outside collaborators" is enabled, so a workflow run from an outside contributor waits for a maintainer.
 - Every `uses:` is pinned to a commit SHA (section 4) and `wrangler` is an exact version in `package.json`.
 
