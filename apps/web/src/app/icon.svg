@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>João Pedro</title>
+  <style>
+    .tile { fill: #0c0e13; }
+    .mark { fill: none; stroke: #f7f8fa; stroke-width: 6; stroke-linejoin: miter; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #f7f8fa; }
+      .mark { stroke: #0c0e13; }
+    }
+  </style>
+  <rect class="tile" width="64" height="64" rx="14"/>
+  <path class="mark" d="M25 17v21a8 8 0 0 1-8 8h-2"/>
+  <path class="mark" d="M36 46V17h8a8.5 8.5 0 0 1 0 17h-8"/>
+</svg>

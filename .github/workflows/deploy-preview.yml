@@ -30,6 +30,10 @@ jobs:
 
       - name: Build site
         uses: ./.github/actions/build-site
+        env:
+          # Previews are not on the production domain and must never be indexed (#43).
+          NEXT_PUBLIC_SITE_URL: https://example.com
+          NEXT_PUBLIC_ROBOTS_NOINDEX: "1"
 
       - name: Deploy Preview to Cloudflare Pages
         id: deploy
