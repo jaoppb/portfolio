@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
+import { siteConfig } from "@/shared/config/site";
 import LocalizedPage, { generateMetadata, generateStaticParams } from "./page";
 
 describe("LocalizedPage", () => {
@@ -14,11 +15,11 @@ describe("LocalizedPage", () => {
 			params: Promise.resolve({ lang: "en" }),
 		});
 		expect(enMeta.title).toBe("João Pedro — Software Engineer");
-		expect(enMeta.alternates?.canonical).toBe("https://joaopedro.dev/en");
+		expect(enMeta.alternates?.canonical).toBe(`${siteConfig.url}/en`);
 		expect(enMeta.alternates?.languages).toEqual({
-			en: "https://joaopedro.dev/en",
-			pt: "https://joaopedro.dev/pt",
-			"x-default": "https://joaopedro.dev/en",
+			en: `${siteConfig.url}/en`,
+			pt: `${siteConfig.url}/pt`,
+			"x-default": `${siteConfig.url}/en`,
 		});
 		expect(enMeta.openGraph?.locale).toBe("en_US");
 
@@ -26,7 +27,7 @@ describe("LocalizedPage", () => {
 			params: Promise.resolve({ lang: "pt" }),
 		});
 		expect(ptMeta.title).toBe("João Pedro — Engenheiro de Software");
-		expect(ptMeta.alternates?.canonical).toBe("https://joaopedro.dev/pt");
+		expect(ptMeta.alternates?.canonical).toBe(`${siteConfig.url}/pt`);
 		expect(ptMeta.openGraph?.locale).toBe("pt_BR");
 	});
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Section } from "@/components/ui/section";
 import { About } from "@/features/about/components/about";
 import { Hero } from "@/features/hero/components/hero";
+import { PersonJsonLd } from "@/features/seo/components/person-json-ld";
 import { SystemStatus } from "@/features/system-status/components/system-status";
 import { siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
@@ -59,6 +60,7 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 
 	return (
 		<div>
+			<PersonJsonLd locale={locale} dict={dict} />
 			<Hero hero={dict.hero} />
 			<About about={dict.about} />
 			<Section id="architecture" rule>

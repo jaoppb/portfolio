@@ -33,6 +33,10 @@ jobs:
 
       - name: Build site
         uses: ./.github/actions/build-site
+        env:
+          NEXT_PUBLIC_SITE_URL: https://jaoppb.com
+          # Launch switch: remove this line at launch (#47) to make the site indexable.
+          NEXT_PUBLIC_ROBOTS_NOINDEX: "1"
 
       - name: Deploy to Cloudflare Pages
         id: deploy

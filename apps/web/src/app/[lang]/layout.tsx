@@ -1,12 +1,18 @@
+import type { Metadata } from "next";
 import type * as React from "react";
 import { fontMono, fontSans } from "@/app/fonts";
 import "@/app/globals.css";
 import { SkipLink } from "@/components/ui/skip-link";
 import { Footer } from "@/features/shell/components/footer";
 import { Header } from "@/features/shell/components/header";
-import { siteConfig } from "@/shared/config/site";
+import { robotsMetadata, siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
 import { cn } from "@/shared/utils/cn";
+
+export const metadata: Metadata = {
+	metadataBase: new URL(siteConfig.url),
+	robots: robotsMetadata,
+};
 
 export async function generateStaticParams() {
 	return siteConfig.locales.map((lang) => ({ lang }));
