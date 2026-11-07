@@ -4,14 +4,14 @@ import type { Locale } from "@/shared/config/site";
 import type { Dictionary } from "@/shared/dictionaries/types";
 import { navItems } from "../nav-items";
 
-export interface SiteHeaderProps {
+export interface HeaderProps {
 	locale: Locale;
 	dict: Dictionary;
 	/** Prefix for in-page anchors; empty for same-page links, `/<locale>/` on other pages. */
 	hrefBase?: string;
 }
 
-export function SiteHeader({ locale, dict, hrefBase = "" }: SiteHeaderProps) {
+export function Header({ locale, dict, hrefBase = "" }: HeaderProps) {
 	return (
 		<header className="border-b border-border">
 			<div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 px-5 py-3 md:px-10 md:py-4 lg:px-16">

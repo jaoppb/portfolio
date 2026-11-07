@@ -4,11 +4,11 @@ import { axe } from "vitest-axe";
 import { siteConfig } from "@/shared/config/site";
 import { enDictionary } from "@/shared/dictionaries/en";
 import { ptDictionary } from "@/shared/dictionaries/pt";
-import { SiteFooter } from "./site-footer";
+import { Footer } from "./footer";
 
-describe("SiteFooter", () => {
+describe("Footer", () => {
 	it("renders contentinfo with copyright, external source link and back to top", async () => {
-		const { container } = render(<SiteFooter dict={enDictionary} />);
+		const { container } = render(<Footer dict={enDictionary} />);
 
 		expect(screen.getByRole("contentinfo")).toBeInTheDocument();
 		expect(screen.getByText("© 2026 João Pedro")).toBeInTheDocument();
@@ -24,7 +24,7 @@ describe("SiteFooter", () => {
 	});
 
 	it("renders Portuguese labels and honours hrefBase", () => {
-		render(<SiteFooter dict={ptDictionary} hrefBase="/pt/" />);
+		render(<Footer dict={ptDictionary} hrefBase="/pt/" />);
 		expect(screen.getByRole("link", { name: /^Voltar ao topo/ })).toHaveAttribute(
 			"href",
 			"/pt/#top",

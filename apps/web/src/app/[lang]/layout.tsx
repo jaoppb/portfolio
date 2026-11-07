@@ -2,8 +2,8 @@ import type * as React from "react";
 import { fontMono, fontSans } from "@/app/fonts";
 import "@/app/globals.css";
 import { SkipLink } from "@/components/ui/skip-link";
-import { SiteFooter } from "@/features/shell/components/site-footer";
-import { SiteHeader } from "@/features/shell/components/site-header";
+import { Footer } from "@/features/shell/components/footer";
+import { Header } from "@/features/shell/components/header";
 import { siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
 import { cn } from "@/shared/utils/cn";
@@ -28,7 +28,7 @@ export default async function LocalizedLayout({
 			<body className="min-h-screen bg-background text-foreground antialiased">
 				<div id="top" className="flex min-h-screen flex-col">
 					<SkipLink href="#main-content">{dict.a11y.skipLink}</SkipLink>
-					<SiteHeader locale={locale} dict={dict} />
+					<Header locale={locale} dict={dict} />
 
 					<main
 						id="main-content"
@@ -38,7 +38,7 @@ export default async function LocalizedLayout({
 						{children}
 					</main>
 
-					<SiteFooter dict={dict} />
+					<Footer dict={dict} />
 				</div>
 			</body>
 		</html>

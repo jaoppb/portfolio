@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 import { enDictionary } from "@/shared/dictionaries/en";
 import { ptDictionary } from "@/shared/dictionaries/pt";
-import { SiteHeader } from "./site-header";
+import { Header } from "./header";
 
-describe("SiteHeader", () => {
+describe("Header", () => {
 	it("renders banner, wordmark link to top, labelled nav and language switcher", async () => {
-		const { container } = render(<SiteHeader locale="en" dict={enDictionary} />);
+		const { container } = render(<Header locale="en" dict={enDictionary} />);
 
 		expect(screen.getByRole("banner")).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute("href", "#top");
@@ -31,7 +31,7 @@ describe("SiteHeader", () => {
 	});
 
 	it("keeps DOM order wordmark, nav, language switcher", () => {
-		render(<SiteHeader locale="en" dict={enDictionary} />);
+		render(<Header locale="en" dict={enDictionary} />);
 		const names = screen.getAllByRole("link").map((l) => l.textContent);
 		expect(names).toEqual([
 			"João Pedro",
@@ -45,7 +45,7 @@ describe("SiteHeader", () => {
 	});
 
 	it("renders Portuguese labels", () => {
-		render(<SiteHeader locale="pt" dict={ptDictionary} />);
+		render(<Header locale="pt" dict={ptDictionary} />);
 		const nav = screen.getByRole("navigation", { name: "Navegação principal" });
 		expect(within(nav).getByRole("link", { name: "Experiência" })).toHaveAttribute(
 			"href",
@@ -55,7 +55,7 @@ describe("SiteHeader", () => {
 	});
 
 	it("prefixes hrefs with hrefBase for cross-page use", () => {
-		render(<SiteHeader locale="en" dict={enDictionary} hrefBase="/en/" />);
+		render(<Header locale="en" dict={enDictionary} hrefBase="/en/" />);
 		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/en/#about");
 		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute(
 			"href",

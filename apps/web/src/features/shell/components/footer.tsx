@@ -2,13 +2,13 @@ import { Link } from "@/components/ui/link";
 import { siteConfig } from "@/shared/config/site";
 import type { Dictionary } from "@/shared/dictionaries/types";
 
-export interface SiteFooterProps {
+export interface FooterProps {
 	dict: Dictionary;
 	/** Prefix for in-page anchors; empty for same-page links, `/<locale>/` on other pages. */
 	hrefBase?: string;
 }
 
-export function SiteFooter({ dict, hrefBase = "" }: SiteFooterProps) {
+export function Footer({ dict, hrefBase = "" }: FooterProps) {
 	return (
 		<footer className="border-t border-border">
 			<div className="mx-auto flex max-w-7xl flex-col gap-y-1 px-5 py-6 sm:flex-row sm:items-center sm:justify-between md:px-10 lg:px-16">
