@@ -38,7 +38,7 @@ describe("LocalizedPage", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				level: 2,
+				level: 1,
 				name: /engineering robust, verifiable systems/i,
 			}),
 		).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe("LocalizedPage", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				level: 2,
+				level: 1,
 				name: /engenharia de sistemas robustos e verificáveis/i,
 			}),
 		).toBeInTheDocument();

@@ -8,10 +8,13 @@ export interface Dictionary {
 		skipLink: string;
 		mainNavigation: string;
 		languageSwitcher: string;
+		opensInNewTab: string;
 	};
 	nav: {
-		overview: string;
-		architecture: string;
+		about: string;
+		projects: string;
+		experience: string;
+		contact: string;
 	};
 	hero: {
 		name: string;
@@ -33,6 +36,7 @@ export interface Dictionary {
 	};
 	footer: {
 		copyright: string;
-		milestoneNotice: string;
+		sourceCode: string;
+		backToTop: string;
 	};
 }

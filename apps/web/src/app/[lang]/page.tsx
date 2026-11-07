@@ -57,12 +57,12 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 	return (
 		<div className="flex flex-col gap-10">
 			<section id="overview" aria-labelledby="hero-title" className="space-y-4">
-				<h2
+				<h1
 					id="hero-title"
 					className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
 				>
 					{dict.hero.headline}
-				</h2>
+				</h1>
 				<p className="max-w-2xl text-base leading-relaxed text-muted">
 					{dict.hero.description}
 				</p>

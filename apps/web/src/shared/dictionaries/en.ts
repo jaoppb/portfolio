@@ -11,10 +11,13 @@ export const enDictionary: Dictionary = {
 		skipLink: "Skip to main content",
 		mainNavigation: "Main navigation",
 		languageSwitcher: "Language switcher",
+		opensInNewTab: "(opens in a new tab)",
 	},
 	nav: {
-		overview: "Overview",
-		architecture: "Architecture",
+		about: "About",
+		projects: "Projects",
+		experience: "Experience",
+		contact: "Contact",
 	},
 	hero: {
 		name: "João Pedro",
@@ -36,7 +39,8 @@ export const enDictionary: Dictionary = {
 		sourceSpecs: "Source Specs",
 	},
 	footer: {
-		copyright: "© 2026 João Pedro. All rights reserved.",
-		milestoneNotice: "Milestone v0.1.0 · Walking Skeleton",
+		copyright: "© 2026 João Pedro",
+		sourceCode: "Source code",
+		backToTop: "Back to top",
 	},
 };

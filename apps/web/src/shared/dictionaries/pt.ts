@@ -11,10 +11,13 @@ export const ptDictionary: Dictionary = {
 		skipLink: "Pular para o conteúdo principal",
 		mainNavigation: "Navegação principal",
 		languageSwitcher: "Alternador de idioma",
+		opensInNewTab: "(abre em nova aba)",
 	},
 	nav: {
-		overview: "Visão Geral",
-		architecture: "Arquitetura",
+		about: "Sobre",
+		projects: "Projetos",
+		experience: "Experiência",
+		contact: "Contato",
 	},
 	hero: {
 		name: "João Pedro",
@@ -37,7 +40,8 @@ export const ptDictionary: Dictionary = {
 		sourceSpecs: "Especificações",
 	},
 	footer: {
-		copyright: "© 2026 João Pedro. Todos os direitos reservados.",
-		milestoneNotice: "Marco v0.1.0 · Walking Skeleton",
+		copyright: "© 2026 João Pedro",
+		sourceCode: "Código-fonte",
+		backToTop: "Voltar ao topo",
 	},
 };
