@@ -31,7 +31,7 @@ export function SiteHeader({ locale, dict, hrefBase = "" }: SiteHeaderProps) {
 							<li key={item.id}>
 								<a
 									href={`${hrefBase}#${item.id}`}
-									className="block rounded-sm p-2 text-sm font-medium text-foreground transition-colors duration-(--duration-base) ease-standard hover:underline hover:underline-offset-4 focus-ring"
+									className="block rounded-sm p-2 text-sm font-medium text-foreground hover:underline hover:underline-offset-4 focus-ring"
 								>
 									{dict.nav[item.label]}
 								</a>
