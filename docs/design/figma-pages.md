@@ -4,7 +4,7 @@ Source of truth for the portfolio's page and section designs (issue #36, epic #3
 
 - **Figma file:** <https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio>
 - **Pages added:** `Pages` (page components plus every full-page frame) and `Annotations` (interactive states and rules). Existing pages: `Foundations`, `Components`, `Contrast`.
-- **Node links** use the form `?node-id=<id with : replaced by ->`. A frame name is the stable handle if ids change.
+- **Verified against Figma on 2026-11-07** (all node ids resolved by the review). **Node links** use the form `?node-id=<id with : replaced by ->`. A frame name is the stable handle if ids change.
 
 ## Decisions
 
@@ -21,7 +21,7 @@ Source of truth for the portfolio's page and section designs (issue #36, epic #3
 | Tablet | 768 | Header inline, two-column project and skills grids. |
 | Desktop | 1280 | Fluid, side padding `space/16`; content is 1152 wide at 1280. Above 1280, centre the layout (no larger max width is designed). |
 
-Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The 768 frame is the design for 768 to 1023, and the 1280 frame for 1024 and up (no frame exists at 1024; behaviour there follows the 1280 frame).
+Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The 768 frame is the design for 768 to 1023, and the 1280 frame for 1024 and up (no frame exists at 1024; behaviour there follows the 1280 frame). The mobile layout applies fluidly from 320 to 767 (only 375 and the 320 stress check are drawn).
 
 | Property | Mobile | Tablet | Desktop |
 |---|---|---|---|
@@ -37,7 +37,7 @@ Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The
 | Skills grid | 1 column | 2 columns | 4 columns |
 | About | stacked | stacked | two columns (heading 320, text fill) |
 
-Sections are separated by a 1px `color/border` rule at the top of each section (and the header's bottom, the footer's top); there are no section background changes. Paragraph measure is capped at 576 (about 60 to 70 characters at `text/base`); the hero headline is capped at 800 (desktop) or 700.
+Sections are separated by a single 1px `color/border` rule: the header owns the rule above `Hero` (its bottom edge, so `Hero` has no top rule), every other section has a top rule, and the footer has a top rule; there are no section background changes. Paragraph measure is capped at 576 (about 60 to 70 characters at `text/base`); the hero headline is capped at 800 (desktop) or 700.
 
 ## Page components (page `Pages`)
 
@@ -70,7 +70,7 @@ Every home frame contains the same child frames, in this order and with these na
 | `Skills` | #41 | `Section heading`, 4 `Skill group`s: mono label and a plain list, one item per line (no pills, no bars). | 4, 2, then 1 columns. |
 | `Contact` | #42 | `Section heading` with lead, 3 `Contact row`s (email, GitHub, LinkedIn; label 72 wide), two CV buttons labelled with file type and language (primary and outline). | Rows cap at 576 on tablet and desktop, fill on mobile. CV buttons wrap. |
 | `Footer` | #38 | Copyright, `Source code` and `Back to top` links. Hairline above. | Mobile stacks. |
-| `404` | #44 | `Header`, `Not found` (mono eyebrow, `h1`, message, primary `Button` back to home), `Footer`. Frame heights are viewport-like (800, 1024, 812). | Headline 5xl, 4xl on mobile. |
+| `404` | #44 | `Header`, `Not found` (mono eyebrow, `h1`, message, primary `Button` back to home), `Footer`. Frame heights are viewport-like (800, 1024, 812). | Headline `text/5xl` at 1280 and 768, `text/4xl` at 375. |
 
 ## Frame index
 
@@ -177,6 +177,8 @@ Summary for implementers:
 
 - Strings are placeholders in en and pt; pt is the length stress case (its strings are longer). Portuguese role titles and the about text use gender-neutral forms (for example "Engenharia de Software Sênior").
 - Dates, years and the `40%` figure are illustrative.
+- Mono 12px (`text/mono/xs`) is used for secondary metadata (card year and tech line, skill group labels, language switcher). This is a deliberate exception to the skill's `text-sm` for dense metadata: it is the foundations' mono scale, `muted` text on it is at least 7:1 (Light and Dark) and the content is never the only carrier of information. Revisit if real content needs it larger.
+- Focus rings in the Figma swatches are drawn tight, as in the foundations; the 2px offset is described in text only (`Annotations / Rules`), not drawn.
 - Arrows in link labels (`↗`, `↑`) are text glyphs, not icons. No icon set is designed.
 - In the card, the `Link` instances have their left padding set to 0 so link text aligns with the card text; in code the link's focus ring should still extend 2px beyond the text.
 - The `Nav link` labels (Medium, `text/sm`) and the `Section heading` titles (Bold) carry weight overrides without a bound text style.
@@ -198,9 +200,9 @@ Result: **pass**, with one item specified rather than drawn.
 |---|---|---|
 | Typography follows a clear hierarchy with proper leading and tracking | Pass | Only `text/*` styles from the foundations scale (leading and tracking come with the styles); one `h1` per page, `h2` per section; measure capped at 576 (about 60 to 70 characters). |
 | Numbers, dates and metrics use tabular numerals | Specified | Dates, years and percentages are mono or annotated for `tabular-nums` (`Annotations / Rules`); Figma text styles cannot express it. |
-| Colour contrast passes WCAG AA for both themes | Pass | Every text and UI pairing on the pages is one already computed in the foundations Contrast tables (ratios below are copied from there; recompute there if a primitive changes): `foreground`, `muted` and `accent` on `background` and `surface` (muted 7.13:1 and 7.58:1 Light, 11.73:1 and 10.59:1 Dark; accent 7.26:1 and 7.72:1 Light, 9.9:1 and 8.94:1 Dark), `accent-foreground` on `accent` (7.72:1, 9.9:1), `border-strong` and `focus-ring` as UI. Disabled and `Tag` are not used. No new pairing was introduced. |
+| Colour contrast passes WCAG AA for both themes | Pass | Every text and UI pairing on the pages is one already computed in the foundations Contrast tables (ratios below are copied from there; recompute there if a primitive changes): `foreground`, `muted` and `accent` on `background` and `surface` (muted 7.13:1 and 7.58:1 Light, 11.73:1 and 10.59:1 Dark; accent 7.26:1 and 7.72:1 Light, 9.9:1 and 8.94:1 Dark), `accent-foreground` on `accent` (7.72:1, 9.9:1; the 90% opacity primary hover is the foundations additional pairing, 6.15:1 and 8.19:1), `border-strong` and `focus-ring` as UI. Disabled and `Tag` are not used. No new pairing was introduced. |
 | Interactive states (hover, focus-visible, active) are explicitly styled with accessible focus rings | Pass | `Annotations` frames show default, hover and focus for nav links, buttons, text links and the card in Light and Dark; the focus ring is `focus-ring` at 5.25:1 (Light) and 6.83:1 (Dark) on `background`. Ring offset is annotated (the Figma swatches draw it tight, as in the foundations). Active equals hover. Target size follows WCAG 2.2 SC 2.5.8 (24px, or spaced). |
 | All transitions respect `prefers-reduced-motion` | Pass | Reduced-motion behaviour annotated (durations 0, instant anchor scroll); the only motion specified is colour change on hover, focus and active. |
-| No horizontal scrolling at 320 to 375 | Pass | Scripted bounds check on all frames, including `Stress 320` in pt, Light and Dark; fixed width elements are the 72 wide contact label and the 200 wide date column (desktop and tablet only). |
+| No horizontal scrolling at 320 to 375 | Pass | Scripted bounds check on all frames, including `Stress 320` in pt, Light and Dark; fixed width elements are the 72 wide contact label (all widths; long contact values wrap inside the row) and the 200 wide date column (desktop and tablet only). |
 | No forbidden AI-slop tropes | Pass | No gradients, glass, glow or shadows; solid surfaces with 1px hairlines; no pills or badges (`Tag` unused, radius `radius/sm` on controls and cards); skills are a plain list; one accent used only for the primary button, links and the active language. No continuous motion. |
 
