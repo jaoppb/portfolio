@@ -36,7 +36,7 @@ export function resolveSiteUrl(env: SiteUrlEnv): string {
 	return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
 }
 
-/** Preview deploys set `NEXT_PUBLIC_ROBOTS_NOINDEX=1` so they are never indexed. */
+/** Preview and pre-launch production deploys set `NEXT_PUBLIC_ROBOTS_NOINDEX=1` so they are never indexed. */
 export function isNoindex(env: SiteUrlEnv): boolean {
 	return env.NEXT_PUBLIC_ROBOTS_NOINDEX === "1";
 }
