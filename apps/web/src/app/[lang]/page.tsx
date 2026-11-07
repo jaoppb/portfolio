@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PersonJsonLd } from "@/features/seo/components/person-json-ld";
 import { SystemStatus } from "@/features/system-status/components/system-status";
 import { siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
@@ -56,6 +57,7 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 
 	return (
 		<div className="flex flex-col gap-10">
+			<PersonJsonLd locale={locale} dict={dict} />
 			<section id="overview" aria-labelledby="hero-title" className="space-y-4">
 				<h1
 					id="hero-title"

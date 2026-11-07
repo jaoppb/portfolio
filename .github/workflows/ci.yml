@@ -117,6 +117,8 @@ jobs:
 
       - name: Build static export
         run: pnpm build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://example.com
 
       - name: Verify static export output
         run: |
