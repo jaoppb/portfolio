@@ -9,7 +9,7 @@ Source of truth for the portfolio's page and section designs (issue #36, epic #3
 ## Decisions
 
 - **Theme follows the OS** (`prefers-color-scheme`). There is **no manual theme toggle** in v0.2.0 (moved to #59). Light and Dark are both fully designed: every frame has an explicit `Color` mode (Light or Dark).
-- **Single page per locale**, anchor navigation to `#about`, `#projects`, `#experience`, `#skills`, `#contact`. On mobile the nav links sit on a second header row and wrap; there is no menu button and no menu state.
+- **Single page per locale**, anchor navigation to `#about`, `#projects`, `#experience`, `#skills`, `#contact`. The nav has four links (About, Projects, Experience, Contact): `#skills` is an anchor without a nav link, and the Experience link scrolls to `#experience`. On mobile the nav links sit on a second header row and wrap; there is no menu button and no menu state.
 - **Typographic only.** The hero has no portrait or illustration, and project cards have **no image**: the optional image field of #40's data model is intentionally absent from the design (annotated on `Annotations / Project card`).
 - **Placeholder copy.** All strings, companies, project entries, links and the email address are placeholders until #39 to #42 supply real content (see [Content notes](#content-notes)).
 
@@ -21,7 +21,7 @@ Source of truth for the portfolio's page and section designs (issue #36, epic #3
 | Tablet | 768 | Header inline, two-column project and skills grids. |
 | Desktop | 1280 | Fluid, side padding `space/16`; content is 1152 wide at 1280. Above 1280, centre the layout (no larger max width is designed). |
 
-Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The 768 frame is the design for 768 to 1023, and the 1280 frame for 1024 and up.
+Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The 768 frame is the design for 768 to 1023, and the 1280 frame for 1024 and up (no frame exists at 1024; behaviour there follows the 1280 frame).
 
 | Property | Mobile | Tablet | Desktop |
 |---|---|---|---|
@@ -157,15 +157,21 @@ Frame names follow `Home / <viewport> / <Light|Dark> / <en|pt>`. The `Stress 320
 | `Annotations / Shell states` | [18:2](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-2) | Nav link default, hover, focus; language switcher; skip link. Light and Dark. |
 | `Annotations / Hero, contact and 404 actions` | [18:78](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-78) | Primary and outline buttons and text links in default, hover and focus. Light and Dark. |
 | `Annotations / Project card` | [18:164](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-164) | Card default and hover; why the card is not a link; no image. |
-| `Annotations / Rules` | [18:226](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-226) | Focus ring, focus order, hover, motion, reduced motion, landmarks, language switcher, tabular figures, lists, placeholder note. |
+| `Annotations / Rules` | [18:226](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-226) | Focus ring, focus order, hover, target size, motion, reduced motion, landmarks, language switcher, tabular figures, lists, placeholder note. |
 
 Summary for implementers:
 
+- **Target size:** targets at least 24px high or spaced 24px apart (WCAG 2.2 SC 2.5.8); wrapped text-link rows (project card, footer) have a 4px row gap.
 - **Focus:** `ring-2` in `color/focus-ring` with `ring-offset-2` in `color/background`, on every interactive element, keyboard focus only (`focus-visible`).
 - **Hover:** nav link gains an underline; text links go from `accent` to `foreground` and stay underlined; project card border goes to `border-strong`; active equals hover. Disabled is not used on any page.
 - **Motion:** only colour, background and border colour, only on hover, focus-visible and active; `duration/base` (160ms) with `cubic-bezier(0.16, 1, 0.3, 1)`. Nothing continuous or on load.
 - **Reduced motion:** the `Motion` `Reduced` mode (all durations 0), and in-page anchors scroll instantly. There is no other fallback.
 - **Tabular figures** on years, date ranges and percentages (not representable in Figma text styles).
+
+## 404 notes (for #44)
+
+- The 404 reuses the shell, but its nav and footer links must be cross-page (for example `/<locale>/#about`), not same-page anchors. `Back to top` is shown for shell parity; #44 may drop it on a one-screen page.
+- Both en and pt 404 frames are designed. How a static export picks the locale for the 404 page is an open question for #44 (the design does not decide it).
 
 ## Content notes
 
@@ -173,12 +179,13 @@ Summary for implementers:
 - Dates, years and the `40%` figure are illustrative.
 - Arrows in link labels (`↗`, `↑`) are text glyphs, not icons. No icon set is designed.
 - In the card, the `Link` instances have their left padding set to 0 so link text aligns with the card text; in code the link's focus ring should still extend 2px beyond the text.
+- The `Nav link` labels (Medium, `text/sm`) and the `Section heading` titles (Bold) carry weight overrides without a bound text style.
 - Hero `Intro` and 404 `Message` use `text/lg` with the Regular weight override (the `lg` style is Medium); section `h2`s override the foundations style size per viewport. Foundations allow weight overrides on text nodes.
 - Missing in foundations, built here as page components (no new tokens): nav link, header and footer bars, section heading, timeline entry, skill group, contact row, project card. #59 (manual theme toggle) will need its own foundations component.
 
 ## Verification
 
-- Layout: every visible node of the 14 home frames and 12 404 frames lies inside its parent's bounds (scripted check on bounding boxes, run after the last edit), including the 320 stress frames in pt, Light and Dark. The first run caught a clipped LinkedIn link at 320 in the contact row; the label column was narrowed to 72 and the check re-run clean.
+- Layout: every visible node of the 14 home frames and 12 404 frames lies inside its parent's bounds (scripted check on bounding boxes, run after the last edit), including the 320 stress frames in pt, Light and Dark. Parent-bounds clipping was checked too, not only the frame edge.
 - Fonts used: Inter (Regular, Medium, Bold) and JetBrains Mono (Regular, Medium) only. Fills are solid only: no gradients, no images.
 - Variables: every frame fill and stroke on `Pages` and `Annotations` is bound to a `color/*` variable (Figma sections that only organise frames are unbound); spacing and gaps are bound to `space/*`. Text uses `text/*` styles except the weight overrides above and the foundations components' own labels.
 - The Figma screenshot renderer substitutes fonts, so typography was not judged from screenshots.
@@ -191,10 +198,9 @@ Result: **pass**, with one item specified rather than drawn.
 |---|---|---|
 | Typography follows a clear hierarchy with proper leading and tracking | Pass | Only `text/*` styles from the foundations scale (leading and tracking come with the styles); one `h1` per page, `h2` per section; measure capped at 576 (about 60 to 70 characters). |
 | Numbers, dates and metrics use tabular numerals | Specified | Dates, years and percentages are mono or annotated for `tabular-nums` (`Annotations / Rules`); Figma text styles cannot express it. |
-| Colour contrast passes WCAG AA for both themes | Pass | Every text and UI pairing on the pages is one already computed in the foundations Contrast tables: `foreground`, `muted` and `accent` on `background` and `surface` (muted 7.13:1 and 7.58:1 Light, 11.73:1 and 10.59:1 Dark; accent 7.26:1 and 7.72:1 Light, 9.9:1 and 8.94:1 Dark), `accent-foreground` on `accent` (7.72:1, 9.9:1), `border-strong` and `focus-ring` as UI. Disabled and `Tag` are not used. No new pairing was introduced. |
-| Interactive states (hover, focus-visible, active) are explicitly styled with accessible focus rings | Pass | `Annotations` frames show default, hover and focus for nav links, buttons, text links and the card in Light and Dark; the focus ring is `focus-ring` at 5.25:1 (Light) and 6.83:1 (Dark) on `background`. Active equals hover. |
+| Colour contrast passes WCAG AA for both themes | Pass | Every text and UI pairing on the pages is one already computed in the foundations Contrast tables (ratios below are copied from there; recompute there if a primitive changes): `foreground`, `muted` and `accent` on `background` and `surface` (muted 7.13:1 and 7.58:1 Light, 11.73:1 and 10.59:1 Dark; accent 7.26:1 and 7.72:1 Light, 9.9:1 and 8.94:1 Dark), `accent-foreground` on `accent` (7.72:1, 9.9:1), `border-strong` and `focus-ring` as UI. Disabled and `Tag` are not used. No new pairing was introduced. |
+| Interactive states (hover, focus-visible, active) are explicitly styled with accessible focus rings | Pass | `Annotations` frames show default, hover and focus for nav links, buttons, text links and the card in Light and Dark; the focus ring is `focus-ring` at 5.25:1 (Light) and 6.83:1 (Dark) on `background`. Ring offset is annotated (the Figma swatches draw it tight, as in the foundations). Active equals hover. Target size follows WCAG 2.2 SC 2.5.8 (24px, or spaced). |
 | All transitions respect `prefers-reduced-motion` | Pass | Reduced-motion behaviour annotated (durations 0, instant anchor scroll); the only motion specified is colour change on hover, focus and active. |
 | No horizontal scrolling at 320 to 375 | Pass | Scripted bounds check on all frames, including `Stress 320` in pt, Light and Dark; fixed width elements are the 72 wide contact label and the 200 wide date column (desktop and tablet only). |
 | No forbidden AI-slop tropes | Pass | No gradients, glass, glow or shadows; solid surfaces with 1px hairlines; no pills or badges (`Tag` unused, radius `radius/sm` on controls and cards); skills are a plain list; one accent used only for the primary button, links and the active language. No continuous motion. |
 
-Earlier review rounds against this table are recorded in the pull request description.
