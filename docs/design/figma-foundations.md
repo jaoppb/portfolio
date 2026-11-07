@@ -18,6 +18,7 @@ Source of truth for the portfolio's visual design (issue #35, epic #34). Consume
 | `color/<role>` | `--color-<role>` |
 | `font/sans`, `font/mono` | `--font-sans`, `--font-mono` |
 | `size/<step>` | `--text-<step>` |
+| (weight, per text style) | not tokenised; use font-weight utilities, or `--text-<step>--font-weight` if #37 wants it |
 | `line-height/<step>` | `--text-<step>--line-height` (Figma stores px; emit as rem or a unitless ratio, consistently) |
 | `space/<n>` | `--spacing-<n>` (Tailwind's own `--spacing` is a single 4px multiplier; recommendation for #37: rely on it and treat `space/*` as documentation, to avoid two sources of truth) |
 | `radius/<name>` | `--radius-<name>` (`xs`/`sm`/`md`/`lg` override the Tailwind v4 defaults of the same name with identical values; `none`/`full` are new keys) |
@@ -86,7 +87,7 @@ The primitive hex values below are the single source for every colour in this do
 | `color/focus-ring` | `blue/600` (#2360DB) | `blue/400` (#6199F9) | `--color-focus-ring` |
 | `color/destructive` | `red/700` (#B42318) | `red/300` (#FF9E94) | `--color-destructive` |
 
-Roles (hover fills must differ visibly from the default fill; that is why Dark `border` is `neutral/700` and not `muted-bg`'s `neutral/800`): `background` page, `surface` cards/raised areas, `foreground` primary text, `muted` secondary text, `muted-bg` subtle fills/code blocks, `border` decorative hairline, `border-strong` interactive control outline (3:1), `accent` single accent (links, primary fill), `accent-foreground` text on accent, `focus-ring` focus outline, `destructive` error/critical.
+Roles (hover fills must be perceptibly different from the default fill, not WCAG-mandated: Light steps are deliberately subtle, e.g. ghost/outline hover `muted-bg` on `background` is 1.07:1, secondary hover `border` on `muted-bg` is 1.13:1; Dark `border` is `neutral/700` and not `muted-bg`'s `neutral/800` so the hover and card hairline stay visible. Secondary and ghost buttons have no border and are identified by their label text, which is compliant with WCAG 1.4.11; only the outline button needs the 3:1 `border-strong`): `background` page, `surface` cards/raised areas, `foreground` primary text, `muted` secondary text, `muted-bg` subtle fills/code blocks, `border` decorative hairline, `border-strong` interactive control outline (3:1), `accent` single accent (links, primary fill), `accent-foreground` text on accent, `focus-ring` focus outline, `destructive` error/critical.
 
 Mapping to the current `globals.css` tokens: `background`, `foreground`, `muted`, `muted-bg`, `border`, `accent`, `accent-foreground` keep their names; **values change** (the palette is redesigned). New: `surface`, `border-strong`, `focus-ring`, `destructive`.
 
@@ -94,7 +95,7 @@ Changes #37 must apply to the existing components: the outline button border mov
 
 ### Type
 
-`font/sans` = `Inter` and `font/mono` = `JetBrains Mono`. Steps are Tailwind-aligned; WEB syntax is `var(--text-<step>)` / `var(--text-<step>--line-height)`.
+`font/sans` = `Inter` and `font/mono` = `JetBrains Mono`. Steps are Tailwind-aligned except `2xs` (11px), which is custom and already exists in `globals.css`; `base` body copy is 24/16 = 1.5 (`leading-normal`), a deliberate deviation from `leading-relaxed` for denser content; WEB syntax is `var(--text-<step>)` / `var(--text-<step>--line-height)`.
 
 | Step | `size/*` px | `line-height/*` px | Tracking | Weight in text style |
 |---|---|---|---|---|
@@ -127,7 +128,7 @@ Text styles: `text/<step>` (sans, all steps) and `text/mono/{2xs,xs,sm,base}` (m
 | `duration/base` | 160 ms | 0 |
 | `duration/slow` | 250 ms | 0 |
 
-Easing (not a Figma variable; name it `--ease-standard` in CSS): `cubic-bezier(0.16, 1, 0.3, 1)`. The `Reduced` mode is the `prefers-reduced-motion: reduce` equivalent: jump to the end state (duration 0; a subtle crossfade is the only allowed alternative and is not designed here). Motion only on hover, focus-visible and active; no continuous animation.
+Easing (not a Figma variable; name it `--ease-standard` in CSS): `cubic-bezier(0.16, 1, 0.3, 1)`. The `Reduced` mode is the `prefers-reduced-motion: reduce` equivalent: jump to the end state (duration 0; a subtle crossfade is the only allowed alternative and is not designed here). In code: redefine `--duration-*` to `0ms` under `@media (prefers-reduced-motion: reduce)`; `duration/<name>` has no generated Tailwind utility, so use `duration-(--duration-base)` or plain CSS. Motion only on hover, focus-visible and active; no continuous animation.
 
 ## Components (page `Components`)
 
@@ -143,7 +144,7 @@ All bind fills, strokes, padding and radius to variables and text to text styles
 | `Language switcher` | `Active` = EN / PT | `components/ui/language-switcher.tsx` |
 | `Skip link` | `State` = Focused (hidden until keyboard focus) | `components/ui/skip-link.tsx` |
 
-Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in Figma; implement as `ring-2` + `ring-offset-2` in `color/background`, always). Links are always underlined (WCAG 1.4.1: `accent` vs `foreground` is only 2.5:1 light / 1.8:1 dark, so colour alone does not identify a link); hover switches the colour to `foreground`. Active (pressed) is intentionally the same as hover (no separate variant); Disabled: 50% opacity (exempt from contrast requirements per WCAG 1.4.3). A `Dark preview` frame on the page shows instances in Dark mode.
+Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in Figma; implement as `ring-2` + `ring-offset-2` in `color/background`, always). Links are always underlined (WCAG 1.4.1: `accent` vs `foreground` is only 2.5:1 light / 1.8:1 dark, so colour alone does not identify a link); hover switches the colour to `foreground`. Active (pressed) is intentionally the same as hover (no separate variant); Disabled: 50% opacity (exempt from contrast requirements per WCAG 1.4.3; it is the only intentional low-contrast state, the label must stay legible and disabled must never be the sole carrier of information). A `Dark preview` frame on the page shows instances in Dark mode.
 
 ### Component to colour role
 
@@ -161,7 +162,7 @@ Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in 
 
 ## Contrast (WCAG 2.x)
 
-Ratios are computed from the hex values above with the WCAG relative-luminance formula, not estimated. Targets: primary text AAA (7:1), other text AA (4.5:1), UI components and the focus ring 3:1. `color/border` is a decorative hairline and exempt. UI rows report `pass` (WCAG 1.4.11 has no AAA level). The same table is on the Figma `Contrast` page.
+Ratios are computed from the hex values above with the WCAG relative-luminance formula, not estimated. Targets: primary text AAA (7:1), other text AA (4.5:1), UI components and the focus ring 3:1. `color/border` is a decorative hairline and exempt. UI rows report `pass` (WCAG 1.4.11 has no AAA level). Both tables (main and additional pairings) are on the Figma `Contrast` page; the `accent` UI rows repeat the text rows' values and are kept only because the UI threshold is different.
 
 | Mode | Pair | Kind | Ratio | Needs | Result |
 |---|---|---|---|---|---|
