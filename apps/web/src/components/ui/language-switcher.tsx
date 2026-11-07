@@ -28,9 +28,9 @@ export function LanguageSwitcher({ currentLocale, ariaLabel, className }: Langua
 							hrefLang={locale}
 							aria-current={isActive ? "page" : undefined}
 							className={cn(
-								"rounded px-1.5 py-0.5 uppercase transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground",
+								"rounded px-2 py-1 uppercase transition-colors duration-(--duration-base) ease-standard focus-ring",
 								isActive
-									? "bg-accent font-semibold text-accent-foreground"
+									? "bg-accent font-medium text-accent-foreground"
 									: "text-muted hover:text-foreground",
 							)}
 						>

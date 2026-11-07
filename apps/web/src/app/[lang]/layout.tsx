@@ -30,7 +30,7 @@ export default async function LocalizedLayout({
 						<SkipLink href="#main-content">{dict.a11y.skipLink}</SkipLink>
 
 						<div>
-							<h1 className="text-lg font-semibold tracking-tight text-foreground">
+							<h1 className="text-lg font-medium text-foreground">
 								{dict.hero.name}
 							</h1>
 							<p className="font-mono text-xs text-muted">{dict.hero.role}</p>
@@ -42,7 +42,7 @@ export default async function LocalizedLayout({
 									<li>
 										<a
 											href="#overview"
-											className="text-muted transition-colors motion-reduce:transition-none hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+											className="text-muted transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
 										>
 											{dict.nav.overview}
 										</a>
@@ -50,7 +50,7 @@ export default async function LocalizedLayout({
 									<li>
 										<a
 											href="#architecture"
-											className="text-muted transition-colors motion-reduce:transition-none hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+											className="text-muted transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
 										>
 											{dict.nav.architecture}
 										</a>

@@ -22,7 +22,7 @@ The portfolio reflects the work of a discerning software engineer. It prioritize
 ### Typography & Hierarchy
 - **Type scale**: Use a disciplined, proportional typographic scale. Avoid arbitrary font sizes.
 - **Headings**: Headings should be tight (`tracking-tight` or `tracking-tighter`), confident, and distinctly weighted. Keep line height snug on large titles (`leading-tight` or `leading-none`).
-- **Body copy**: Prioritize readability with comfortable measure (55–75 characters per line), balanced line height (`leading-relaxed`), and legible font sizes (`text-base` or `text-sm` for dense metadata).
+- **Body copy**: Prioritize readability with comfortable measure (55–75 characters per line), balanced line height (`leading-normal`, 1.5, for UI and dense content; `leading-relaxed` for long-form prose), and legible font sizes (`text-base` or `text-sm` for dense metadata).
 - **Tabular figures**: Use `font-variant-numeric: tabular-nums` (or `tabular-nums` in Tailwind) for numbers, dates, timestamps, git commits, and benchmark metrics to prevent jitter and maintain alignment.
 - **No font cacophony**: Limit font families to a maximum of two (a refined sans-serif for UI/body and an intentional monospace for code/metrics).
 

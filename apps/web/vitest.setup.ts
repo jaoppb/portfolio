@@ -13,9 +13,7 @@ declare module "vitest" {
 	}
 }
 
-vi.mock("next/font/local", () => ({
-	default: () => ({
-		className: "mock-font",
-		variable: "--font-mock",
-	}),
-}));
+// next/font is compiled away by Next.js; stub it so modules importing fonts load under Vitest.
+const mockFont = () => ({ className: "mock-font", variable: "--font-mock" });
+
+vi.mock("next/font/google", () => ({ Inter: mockFont, JetBrains_Mono: mockFont }));

@@ -10,7 +10,7 @@ const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
 	primary: "bg-accent text-accent-foreground hover:opacity-90 active:opacity-100",
 	secondary: "bg-muted-bg text-foreground hover:bg-border active:opacity-90",
 	outline:
-		"border border-border bg-transparent text-foreground hover:bg-muted-bg active:opacity-90",
+		"border border-border-strong bg-transparent text-foreground hover:bg-muted-bg active:opacity-90",
 	ghost: "bg-transparent text-foreground hover:bg-muted-bg active:opacity-90",
 };
 
@@ -35,9 +35,7 @@ export function Button({
 			disabled={disabled}
 			className={cn(
 				"inline-flex items-center justify-center font-medium rounded-sm select-none",
-				"transition-colors duration-150 ease-out",
-				"motion-reduce:transition-none",
-				"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+				"transition-colors duration-(--duration-base) ease-standard focus-ring",
 				"disabled:pointer-events-none disabled:opacity-50",
 				variantStyles[variant],
 				sizeStyles[size],
