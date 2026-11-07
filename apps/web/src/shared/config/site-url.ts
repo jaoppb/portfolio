@@ -17,7 +17,7 @@ export function resolveSiteUrl(env: SiteUrlEnv): string {
 	const raw = env.NEXT_PUBLIC_SITE_URL?.trim();
 
 	if (!raw) {
-		if (env.CI && env.NODE_ENV === "production") {
+		if (env.CI === "true" && env.NODE_ENV === "production") {
 			throw new Error("NEXT_PUBLIC_SITE_URL must be set for CI and production builds.");
 		}
 		return DEV_FALLBACK_URL;
