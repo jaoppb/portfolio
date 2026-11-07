@@ -20,11 +20,26 @@ const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
 	lg: "h-12 px-6 text-base",
 };
 
+export function buttonStyles({
+	variant = "primary",
+	size = "md",
+	className,
+}: Pick<ButtonProps, "variant" | "size" | "className"> = {}) {
+	return cn(
+		"inline-flex items-center justify-center font-medium rounded-sm select-none",
+		"transition-colors duration-(--duration-base) ease-standard focus-ring",
+		"disabled:pointer-events-none disabled:opacity-50",
+		variantStyles[variant],
+		sizeStyles[size],
+		className,
+	);
+}
+
 export function Button({
 	children,
 	className,
-	variant = "primary",
-	size = "md",
+	variant,
+	size,
 	disabled,
 	type = "button",
 	...props
@@ -33,14 +48,7 @@ export function Button({
 		<button
 			type={type}
 			disabled={disabled}
-			className={cn(
-				"inline-flex items-center justify-center font-medium rounded-sm select-none",
-				"transition-colors duration-(--duration-base) ease-standard focus-ring",
-				"disabled:pointer-events-none disabled:opacity-50",
-				variantStyles[variant],
-				sizeStyles[size],
-				className,
-			)}
+			className={buttonStyles({ variant, size, className })}
 			{...props}
 		>
 			{children}

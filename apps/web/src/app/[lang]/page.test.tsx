@@ -39,9 +39,14 @@ describe("LocalizedPage", () => {
 		expect(
 			screen.getByRole("heading", {
 				level: 1,
-				name: /engineering robust, verifiable systems/i,
+				name: /full stack engineer focused on architecture and cloud/i,
 			}),
 		).toBeInTheDocument();
+
+		expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+		expect(screen.getByRole("heading", { level: 2, name: "About" })).toBeInTheDocument();
+		expect(container.querySelector("#about")).not.toBeNull();
+		expect(container.querySelector("#hero")).not.toBeNull();
 
 		expect(
 			screen.getByRole("heading", {
@@ -63,9 +68,12 @@ describe("LocalizedPage", () => {
 		expect(
 			screen.getByRole("heading", {
 				level: 1,
-				name: /engenharia de sistemas robustos e verificáveis/i,
+				name: /engenheiro full stack com foco em arquitetura e cloud/i,
 			}),
 		).toBeInTheDocument();
+
+		expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+		expect(screen.getByRole("heading", { level: 2, name: "Sobre" })).toBeInTheDocument();
 
 		expect(
 			screen.getByRole("heading", {

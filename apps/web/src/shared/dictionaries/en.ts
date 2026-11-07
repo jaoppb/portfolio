@@ -22,9 +22,15 @@ export const enDictionary: Dictionary = {
 	hero: {
 		name: "João Pedro",
 		role: "Software Engineer",
-		headline: "Engineering robust, verifiable systems.",
-		description:
-			"Personal portfolio and project showcase. Built with Next.js App Router, pure static export architecture, and strict accessibility standards.",
+		headline: "Full stack engineer focused on architecture and cloud.",
+		intro: "I build web interfaces in React and Next.js and low-latency Node.js services, and run the cloud infrastructure behind them with AWS and Terraform. I favour scalable, maintainable, cost-effective solutions for high-traffic environments.",
+		ctaProjects: "View projects",
+		ctaContact: "Get in touch",
+	},
+	about: {
+		title: "About",
+		p1: "I work at Hotmart in Belo Horizonte on high-traffic web and backend systems for lead generation and GMV: Node.js APIs with Clean Architecture and DDD, DynamoDB modelling for unpredictable campaign traffic, and infrastructure as code with Terraform and GitHub Actions.",
+		p2: "I am studying Software Engineering at PUC Minas and build projects that run within strict hardware and budget limits, such as PUCMaps on AWS and Styx in Rust. My team depende.sh took 1st place in the Minas Gerais Programming Marathon (Greater BH).",
 	},
 	systemStatus: {
 		title: "Architecture & Skeleton Status",
