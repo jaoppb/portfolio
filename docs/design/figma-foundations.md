@@ -18,9 +18,9 @@ Source of truth for the portfolio's visual design (issue #35, epic #34). Consume
 | `color/<role>` | `--color-<role>` |
 | `font/sans`, `font/mono` | `--font-sans`, `--font-mono` |
 | `size/<step>` | `--text-<step>` |
-| `line-height/<step>` | `--text-<step>--line-height` |
-| `space/<n>` | `--spacing-<n>` (note: Tailwind's own `--spacing` is a single 4px multiplier; #37 decides whether to emit the steps or rely on it, since `n x 4px` is identical) |
-| `radius/<name>` | `--radius-<name>` (overrides the Tailwind v4 defaults of the same name, values below match them) |
+| `line-height/<step>` | `--text-<step>--line-height` (Figma stores px; emit as rem or a unitless ratio, consistently) |
+| `space/<n>` | `--spacing-<n>` (Tailwind's own `--spacing` is a single 4px multiplier; recommendation for #37: rely on it and treat `space/*` as documentation, to avoid two sources of truth) |
+| `radius/<name>` | `--radius-<name>` (`xs`/`sm`/`md`/`lg` override the Tailwind v4 defaults of the same name with identical values; `none`/`full` are new keys) |
 | `duration/<name>` | `--duration-<name>` (custom, not a Tailwind theme namespace) |
 
 Tracking is stored in the text styles as a percentage of the font size; in CSS use `em` (-1% = `-0.01em`, `--text-<step>--letter-spacing` in `@theme`). Light/Dark delivery in code is #37's call; the current `globals.css` approach (raw `--*` properties redefined under `@media (prefers-color-scheme: dark)`, aliased into `@theme`) keeps working with these names.
@@ -79,18 +79,18 @@ The primitive hex values below are the single source for every colour in this do
 | `color/foreground` | `neutral/950` (#0C0E13) | `neutral/50` (#F7F8FA) | `--color-foreground` |
 | `color/muted` | `neutral/600` (#4D5465) | `neutral/300` (#C5CAD3) | `--color-muted` |
 | `color/muted-bg` | `neutral/100` (#EEF0F4) | `neutral/800` (#242934) | `--color-muted-bg` |
-| `color/border` | `neutral/200` (#E0E3E9) | `neutral/800` (#242934) | `--color-border` |
+| `color/border` | `neutral/200` (#E0E3E9) | `neutral/700` (#363C4A) | `--color-border` |
 | `color/border-strong` | `neutral/500` (#6F7686) | `neutral/500` (#6F7686) | `--color-border-strong` |
 | `color/accent` | `blue/700` (#1B4BB5) | `blue/300` (#93BBFD) | `--color-accent` |
 | `color/accent-foreground` | `white` (#FFFFFF) | `neutral/950` (#0C0E13) | `--color-accent-foreground` |
 | `color/focus-ring` | `blue/600` (#2360DB) | `blue/400` (#6199F9) | `--color-focus-ring` |
 | `color/destructive` | `red/700` (#B42318) | `red/300` (#FF9E94) | `--color-destructive` |
 
-Roles: `background` page, `surface` cards/raised areas, `foreground` primary text, `muted` secondary text, `muted-bg` subtle fills/code blocks, `border` decorative hairline, `border-strong` interactive control outline (3:1), `accent` single accent (links, primary fill), `accent-foreground` text on accent, `focus-ring` focus outline, `destructive` error/critical.
+Roles (hover fills must differ visibly from the default fill; that is why Dark `border` is `neutral/700` and not `muted-bg`'s `neutral/800`): `background` page, `surface` cards/raised areas, `foreground` primary text, `muted` secondary text, `muted-bg` subtle fills/code blocks, `border` decorative hairline, `border-strong` interactive control outline (3:1), `accent` single accent (links, primary fill), `accent-foreground` text on accent, `focus-ring` focus outline, `destructive` error/critical.
 
 Mapping to the current `globals.css` tokens: `background`, `foreground`, `muted`, `muted-bg`, `border`, `accent`, `accent-foreground` keep their names; **values change** (the palette is redesigned). New: `surface`, `border-strong`, `focus-ring`, `destructive`.
 
-Changes #37 must apply to the existing components: the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with a 2px offset (mandatory on accent-filled controls, where the ring against the fill is only about 1.4:1); the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px).
+Changes #37 must apply to the existing components: the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with `ring-offset-2` in `color/background` on every control, including the language switcher and skip link, which currently have no offset (it is essential on accent fills, where the ring against the fill is only about 1.4:1); `button.test.tsx` asserts `border-border` on the outline button and must be updated; the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px).
 
 ### Type
 
@@ -127,7 +127,7 @@ Text styles: `text/<step>` (sans, all steps) and `text/mono/{2xs,xs,sm,base}` (m
 | `duration/base` | 160 ms | 0 |
 | `duration/slow` | 250 ms | 0 |
 
-Easing (not a Figma variable): `cubic-bezier(0.16, 1, 0.3, 1)`. The `Reduced` mode is the `prefers-reduced-motion: reduce` equivalent: jump to the end state (duration 0; a subtle crossfade is the only allowed alternative and is not designed here). Motion only on hover, focus-visible and active; no continuous animation.
+Easing (not a Figma variable; name it `--ease-standard` in CSS): `cubic-bezier(0.16, 1, 0.3, 1)`. The `Reduced` mode is the `prefers-reduced-motion: reduce` equivalent: jump to the end state (duration 0; a subtle crossfade is the only allowed alternative and is not designed here). Motion only on hover, focus-visible and active; no continuous animation.
 
 ## Components (page `Components`)
 
@@ -143,7 +143,7 @@ All bind fills, strokes, padding and radius to variables and text to text styles
 | `Language switcher` | `Active` = EN / PT | `components/ui/language-switcher.tsx` |
 | `Skip link` | `State` = Focused (hidden until keyboard focus) | `components/ui/skip-link.tsx` |
 
-Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in Figma; implement with a 2px offset in `color/background`, mandatory on accent-filled controls). Links are always underlined (WCAG 1.4.1: `accent` vs `foreground` is only 2.5:1 light / 1.8:1 dark, so colour alone does not identify a link); hover switches the colour to `foreground`. Disabled: 50% opacity (exempt from contrast requirements per WCAG 1.4.3). A `Dark preview` frame on the page shows instances in Dark mode.
+Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in Figma; implement as `ring-2` + `ring-offset-2` in `color/background`, always). Links are always underlined (WCAG 1.4.1: `accent` vs `foreground` is only 2.5:1 light / 1.8:1 dark, so colour alone does not identify a link); hover switches the colour to `foreground`. Active (pressed) is intentionally the same as hover (no separate variant); Disabled: 50% opacity (exempt from contrast requirements per WCAG 1.4.3). A `Dark preview` frame on the page shows instances in Dark mode.
 
 ### Component to colour role
 
@@ -154,7 +154,7 @@ Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in 
 | Button outline | none (hover: `muted-bg`) | `foreground` | `border-strong`, focus: `focus-ring` |
 | Button ghost | none (hover: `muted-bg`) | `foreground` | focus: `focus-ring` |
 | Link | none | `accent` (hover: `foreground`), underlined | focus: `focus-ring` |
-| Tag | none | tone: `muted` / `accent` / `destructive` | 1px, same colour as the text |
+| Tag (11px mono, intentional: all tones pass AA, most AAA) | none | tone: `muted` / `accent` / `destructive` | 1px, same colour as the text |
 | Card | `surface` | title `foreground`, body and meta `muted` | `border` (hover: `border-strong`) |
 | Language switcher | active: `accent` | active: `accent-foreground`; inactive: `muted` (hover: `foreground`) | focus: `focus-ring` |
 | Skip link | `accent` | `accent-foreground` | `focus-ring` |
@@ -200,7 +200,7 @@ Ratios are computed from the hex values above with the WCAG relative-luminance f
 | Dark | `color/focus-ring` on `color/background` | ui | 6.83:1 | 3 | pass |
 | Dark | `color/focus-ring` on `color/surface` | ui | 6.17:1 | 3 | pass |
 | Dark | `color/accent` on `color/background` | ui | 9.9:1 | 3 | pass |
-| Dark | `color/border` on `color/background` | decor | 1.33:1 | — | n/a |
+| Dark | `color/border` on `color/background` | decor | 1.75:1 | — | n/a |
 
 Additional pairings (component states):
 
@@ -212,11 +212,11 @@ Additional pairings (component states):
 | Light | `color/destructive` on `color/muted-bg` | text | 5.76:1 | 4.5 | AA |
 | Light | `color/border` on `color/surface` | decor | 1.29:1 | — | n/a |
 | Light | `color/accent-foreground` at 90% opacity on `color/accent` at 90% opacity | text | 6.15:1 | 4.5 | AA |
-| Dark | `color/foreground` on `color/border` | text | 13.71:1 | 4.5 | AAA |
+| Dark | `color/foreground` on `color/border` | text | 10.39:1 | 4.5 | AAA |
 | Dark | `color/focus-ring` on `color/muted-bg` | ui | 5.16:1 | 3 | pass |
 | Dark | `color/border-strong` on `color/muted-bg` | ui | 3.2:1 | 3 | pass |
 | Dark | `color/destructive` on `color/muted-bg` | text | 7.33:1 | 4.5 | AAA |
-| Dark | `color/border` on `color/surface` | decor | 1.2:1 | — | n/a |
+| Dark | `color/border` on `color/surface` | decor | 1.58:1 | — | n/a |
 | Dark | `color/accent-foreground` at 90% opacity on `color/accent` at 90% opacity | text | 8.19:1 | 4.5 | AAA |
 
 ## Checks before editing
