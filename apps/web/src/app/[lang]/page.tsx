@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { Section } from "@/components/ui/section";
+import { About } from "@/features/about/components/about";
+import { Hero } from "@/features/hero/components/hero";
 import { SystemStatus } from "@/features/system-status/components/system-status";
 import { siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
@@ -55,22 +58,12 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 	const dict = await getDictionary(locale);
 
 	return (
-		<div className="flex flex-col gap-10">
-			<section id="overview" aria-labelledby="hero-title" className="space-y-4">
-				<h1
-					id="hero-title"
-					className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
-				>
-					{dict.hero.headline}
-				</h1>
-				<p className="max-w-2xl text-base leading-relaxed text-muted">
-					{dict.hero.description}
-				</p>
-			</section>
-
-			<section id="architecture">
+		<div>
+			<Hero hero={dict.hero} />
+			<About about={dict.about} />
+			<Section id="architecture" rule>
 				<SystemStatus status={dict.systemStatus} />
-			</section>
+			</Section>
 		</div>
 	);
 }

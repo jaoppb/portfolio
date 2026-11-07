@@ -20,7 +20,14 @@ export interface Dictionary {
 		name: string;
 		role: string;
 		headline: string;
-		description: string;
+		intro: string;
+		ctaProjects: string;
+		ctaContact: string;
+	};
+	about: {
+		title: string;
+		p1: string;
+		p2: string;
 	};
 	systemStatus: {
 		title: string;

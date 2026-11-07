@@ -33,7 +33,7 @@ export default async function LocalizedLayout({
 					<main
 						id="main-content"
 						tabIndex={-1}
-						className="mx-auto w-full max-w-7xl flex-1 px-5 py-10 outline-none md:px-10 lg:px-16"
+						className="mx-auto w-full max-w-7xl flex-1 px-5 outline-none md:px-10 lg:px-16"
 					>
 						{children}
 					</main>

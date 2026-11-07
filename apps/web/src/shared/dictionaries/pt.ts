@@ -22,9 +22,15 @@ export const ptDictionary: Dictionary = {
 	hero: {
 		name: "João Pedro",
 		role: "Engenheiro de Software",
-		headline: "Engenharia de sistemas robustos e verificáveis.",
-		description:
-			"Portfólio pessoal e vitrine de projetos. Construído com Next.js App Router, arquitetura pura de exportação estática e padrões rigorosos de acessibilidade.",
+		headline: "Engenheiro full stack com foco em arquitetura e cloud.",
+		intro: "Crio interfaces web em React e Next.js e serviços Node.js de baixa latência, e cuido da infraestrutura cloud por trás deles com AWS e Terraform. Priorizo soluções escaláveis, de fácil manutenção e com ótimo custo-benefício em ambientes de alto tráfego.",
+		ctaProjects: "Ver projetos",
+		ctaContact: "Entrar em contato",
+	},
+	about: {
+		title: "Sobre",
+		p1: "Trabalho na Hotmart, em Belo Horizonte, com web e backend de alto tráfego para geração de leads e GMV: APIs Node.js com Clean Architecture e DDD, modelagem no DynamoDB para picos imprevisíveis de tráfego de campanhas e infraestrutura como código com Terraform e GitHub Actions.",
+		p2: "Estudo Engenharia de Software na PUC Minas e crio projetos que operam dentro de limites rígidos de hardware e orçamento, como o PUCMaps na AWS e o Styx em Rust. Minha equipe depende.sh ficou em 1º lugar na Maratona Mineira de Programação (Grande BH).",
 	},
 	systemStatus: {
 		title: "Status de Arquitetura e Skeleton",
