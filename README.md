@@ -38,7 +38,7 @@ Run from the repository root. `build`, `test` and `typecheck` run in every works
 | `pnpm test` | Vitest in each package |
 | `pnpm build` | Static export of the site (`apps/web/out`) |
 
-Run a script in the site only with `pnpm --filter web <script>`, for example `dev`, `test:watch` or `start`.
+Run a script in the site only with `pnpm --filter web <script>`, for example `dev` or `test:watch`.
 
 ## just recipes
 

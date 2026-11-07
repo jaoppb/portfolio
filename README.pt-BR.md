@@ -38,7 +38,7 @@ Execute na raiz do repositório. `build`, `test` e `typecheck` rodam em todos os
 | `pnpm test` | Vitest em cada pacote |
 | `pnpm build` | Exportação estática do site (`apps/web/out`) |
 
-Para rodar um script só no site, use `pnpm --filter web <script>`, por exemplo `dev`, `test:watch` ou `start`.
+Para rodar um script só no site, use `pnpm --filter web <script>`, por exemplo `dev` ou `test:watch`.
 
 ## Receitas do just
 
