@@ -41,7 +41,7 @@ Tracking is stored in the text styles as a percentage of the font size; in CSS u
 
 ### Primitives (hex)
 
-The primitive hex values below are the single source for every colour in this document. Only the steps referenced by the semantic mapping are used by components; the rest of each ramp is reserved for future hover/pressed states and must not be used directly.
+The primitive hex values below are the single source for every colour in this document. #37 emits only the primitives referenced by the Color mapping (not whole ramps). Only the steps referenced by the semantic mapping are used by components; the rest of each ramp is reserved for future hover/pressed states and must not be used directly.
 
 | Figma name | Hex | WEB syntax |
 |---|---|---|
@@ -91,11 +91,11 @@ Roles (hover fills must be perceptibly different from the default fill, not WCAG
 
 Mapping to the current `globals.css` tokens: `background`, `foreground`, `muted`, `muted-bg`, `border`, `accent`, `accent-foreground` keep their names; **values change** (the palette is redesigned). New: `surface`, `border-strong`, `focus-ring`, `destructive`.
 
-Changes #37 must apply to the existing components: the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with `ring-offset-2` in `color/background` on every control, including the language switcher and skip link, which currently have no offset (it is essential on accent fills, where the ring against the fill is only about 1.4:1); `button.test.tsx` asserts `border-border` on the outline button and must be updated; the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px).
+Changes #37 must apply to the existing components: the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with `ring-offset-2` in `color/background` on every control, including the language switcher and skip link, which currently have no offset (it is essential on accent fills, where the ring against the fill is only about 1.4:1); `button.test.tsx` asserts `border-border` on the outline button and must be updated; the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px); `system-status.tsx` uses `bg-emerald-500`, a colour with no role in this palette (no `success` role is defined, to keep a single accent): #37 should render that status as a `Tag`/text using existing roles.
 
 ### Type
 
-`font/sans` = `Inter` and `font/mono` = `JetBrains Mono`. Steps are Tailwind-aligned except `2xs` (11px), which is custom and already exists in `globals.css`; `base` body copy is 24/16 = 1.5 (`leading-normal`), a deliberate deviation from `leading-relaxed` for denser content; WEB syntax is `var(--text-<step>)` / `var(--text-<step>--line-height)`.
+`font/sans` = `Inter` and `font/mono` = `JetBrains Mono`. Steps are Tailwind-aligned except `2xs` (11px), which is custom and already exists in `globals.css`; `base` body copy is line-height 24 / size 16 = 1.5 (`leading-normal`), a deliberate deviation from the skill's `leading-relaxed` for denser content (#37 should reconcile the skill text or approve it); WEB syntax is `var(--text-<step>)` / `var(--text-<step>--line-height)`.
 
 | Step | `size/*` px | `line-height/*` px | Tracking | Weight in text style |
 |---|---|---|---|---|
