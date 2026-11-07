@@ -37,7 +37,7 @@ Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The
 | Skills grid | 1 column | 2 columns | 4 columns |
 | About | stacked | stacked | two columns (heading 320, text fill) |
 
-Sections are separated by a single 1px `color/border` rule: the header owns the rule above `Hero` (its bottom edge, so `Hero` has no top rule), every other section has a top rule, and the footer has a top rule; there are no section background changes. Text measure is capped at 576 (about 60 to 70 characters at `text/base`) on the hero intro, About paragraphs, section leads and experience highlights (card summaries are narrower by construction); wider columns hold shorter text; the hero headline is capped at 800 (desktop) or 700.
+Sections are separated by a single 1px `color/border` rule: the header owns the rule above `Hero` (its bottom edge, so `Hero` has no top rule), every other section has a top rule, and the footer has a top rule; each `Timeline entry`, `Skill group` and `Contact row` also has its own 1px top rule (the first one included); there are no section background changes. Text measure is capped at 576 (about 60 to 70 characters at `text/base`) on the hero intro, About paragraphs, section leads and experience highlights (card summaries are narrower by construction); where a column is constrained the measure is below 55 (tablet highlights are 464 wide, mobile columns are narrower) and the design accepts that; wider columns hold shorter text; the hero headline is capped at 800 (desktop) or 700.
 
 ## Page components (page `Pages`)
 
@@ -54,7 +54,7 @@ All bind fills, strokes, padding, gaps and radius to variables, and text to text
 | `Skill group` | [13:56](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-56) | `Style` = default | #41 |
 | `Contact row` | [13:61](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-61) | `Style` = default | #42 |
 
-Foundations components used as instances: `Button` (primary, outline; md), `Link`, `Language switcher` (EN or PT active), `Skip link`.
+Foundations components used as instances: `Button` (primary, outline; md), `Link`, `Language switcher` (EN or PT active), `Skip link` (on `Annotations` only).
 
 ## Sections
 
@@ -66,7 +66,7 @@ Every home frame contains the same child frames, in this order and with these na
 | `Hero` | #39 | Mono eyebrow, `h1`, intro (`text/lg`, Regular, `muted`), actions: primary `Button` (View projects) and outline `Button` (Get in touch). | Headline steps down 5xl, 4xl, 3xl. Buttons wrap. |
 | `About` | #39 | `Section heading` (title only) and two paragraphs. | Two columns on desktop, stacked below. |
 | `Projects` | #40 | `Section heading` with lead, grid of 4 `Project card`s: year (mono), title, summary, tech line (mono), two text links (Repository, Live demo). | Rows keep equal card height. Link labels are longer in pt and wrap inside the card. |
-| `Experience` | #41 | `Section heading`, list of 3 `Timeline entry`: dates (mono, 200 wide in row layout), role, company, two highlights. Each entry has a 1px top rule (including the first), no rail. Each `Skill group` and `Contact row` likewise has a 1px top rule. | Dates move above the role on mobile. |
+| `Experience` | #41 | `Section heading`, list of 3 `Timeline entry`: dates (mono, 200 wide in row layout), role, company, two highlights. Each entry has a 1px top rule (including the first), no rail. | Dates move above the role on mobile. |
 | `Skills` | #41 | `Section heading`, 4 `Skill group`s: mono label and a plain list, one item per line (no pills, no bars). | 4, 2, then 1 columns. |
 | `Contact` | #42 | `Section heading` with lead, 3 `Contact row`s (email, GitHub, LinkedIn; label 72 wide), two CV buttons labelled with file type and language (primary and outline). | Rows cap at 576 on tablet and desktop, fill on mobile. CV buttons wrap. |
 | `Footer` | #38 | Copyright, `Source code` and `Back to top` links. Hairline above. | Mobile stacks. |
@@ -180,7 +180,7 @@ Summary for implementers:
 - Focus rings in the Figma swatches are drawn tight, as in the foundations; the 2px offset is described in text only (`Annotations / Rules`), not drawn.
 - Arrows in link labels (`↗`, `↑`) are text glyphs, not icons. No icon set is designed.
 - In the card, the `Link` instances have their left padding set to 0 so link text aligns with the card text; in code the link's focus ring should still extend 2px beyond the text.
-- Text without a bound text style on the pages: the `Nav link` labels (Inter Medium 14), hero `Intro` and 404 `Message` (the `text/lg` size, line height and tracking with the Regular weight; the style itself is Medium), plus the labels inside the foundations components.
+- Text without a bound text style on the pages: the `Nav link` labels (Inter Medium 14), hero `Intro` and 404 `Message` (the `text/lg` size, line height and tracking with the Regular weight; the style itself is Medium), the `Rule name` labels on `Annotations / Rules`, plus the labels inside the foundations components.
 - Section `h2`s bind a different text style per viewport (`text/2xl` or `text/3xl`). Foundations allow weight overrides on text nodes.
 - Missing in foundations, built here as page components (no new tokens): nav link, header and footer bars, section heading, timeline entry, skill group, contact row, project card. #59 (manual theme toggle) will need its own foundations component.
 
