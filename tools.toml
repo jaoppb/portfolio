@@ -44,6 +44,7 @@ renames = { "v0" = "v0.1.0", "v1" = "v0.2.0" }
 items = [
     { title = "v0.1.0", description = "Bootstrap the project, tooling, rules, and walking skeleton", state = "open" },
     { title = "v0.2.0", description = "MVP release and live deployment", state = "open" },
+    { title = "v0.3.0", description = "Post-launch iterations: project detail pages, blog, analytics, and automation", state = "open" },
 ]
 
 [github.issues.rules]
