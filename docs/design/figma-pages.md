@@ -37,7 +37,7 @@ Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The
 | Skills grid | 1 column | 2 columns | 4 columns |
 | About | stacked | stacked | two columns (heading 320, text fill) |
 
-Sections are separated by a single 1px `color/border` rule: the header owns the rule above `Hero` (its bottom edge, so `Hero` has no top rule), every other section has a top rule, and the footer has a top rule; there are no section background changes. Paragraph measure is capped at 576 (about 60 to 70 characters at `text/base`); the hero headline is capped at 800 (desktop) or 700.
+Sections are separated by a single 1px `color/border` rule: the header owns the rule above `Hero` (its bottom edge, so `Hero` has no top rule), every other section has a top rule, and the footer has a top rule; there are no section background changes. Text measure is capped at 576 (about 60 to 70 characters at `text/base`) on the hero intro, About paragraphs, section leads and experience highlights (card summaries are narrower by construction); wider columns hold shorter text; the hero headline is capped at 800 (desktop) or 700.
 
 ## Page components (page `Pages`)
 
@@ -66,14 +66,13 @@ Every home frame contains the same child frames, in this order and with these na
 | `Hero` | #39 | Mono eyebrow, `h1`, intro (`text/lg`, Regular, `muted`), actions: primary `Button` (View projects) and outline `Button` (Get in touch). | Headline steps down 5xl, 4xl, 3xl. Buttons wrap. |
 | `About` | #39 | `Section heading` (title only) and two paragraphs. | Two columns on desktop, stacked below. |
 | `Projects` | #40 | `Section heading` with lead, grid of 4 `Project card`s: year (mono), title, summary, tech line (mono), two text links (Repository, Live demo). | Rows keep equal card height. Link labels are longer in pt and wrap inside the card. |
-| `Experience` | #41 | `Section heading`, list of 3 `Timeline entry`: dates (mono, 200 wide in row layout), role, company, two highlights. Hairline between entries, no rail. | Dates move above the role on mobile. |
+| `Experience` | #41 | `Section heading`, list of 3 `Timeline entry`: dates (mono, 200 wide in row layout), role, company, two highlights. Each entry has a 1px top rule (including the first), no rail. Each `Skill group` and `Contact row` likewise has a 1px top rule. | Dates move above the role on mobile. |
 | `Skills` | #41 | `Section heading`, 4 `Skill group`s: mono label and a plain list, one item per line (no pills, no bars). | 4, 2, then 1 columns. |
 | `Contact` | #42 | `Section heading` with lead, 3 `Contact row`s (email, GitHub, LinkedIn; label 72 wide), two CV buttons labelled with file type and language (primary and outline). | Rows cap at 576 on tablet and desktop, fill on mobile. CV buttons wrap. |
 | `Footer` | #38 | Copyright, `Source code` and `Back to top` links. Hairline above. | Mobile stacks. |
-| `404` | #44 | `Header`, `Not found` (mono eyebrow, `h1`, message, primary `Button` back to home), `Footer`. Frame heights are viewport-like (800, 1024, 812). | Headline `text/5xl` at 1280 and 768, `text/4xl` at 375. |
+| `404` | #44 | `Header`, `Not found` (mono eyebrow, `h1`, message, primary `Button` back to home), `Footer`. Frame heights are viewport-like (800, 1024, 812). | Headline `text/5xl` at 1280 and 768, `text/4xl` at 375. `Not found` vertical padding is `space/24` at 1280 and 768 and `space/16` at 375 (larger than the home sections at 768 because the page is a single block). |
 
 ## Frame index
-
 
 ### Desktop 1280 ([section](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=15-29))
 
@@ -163,7 +162,7 @@ Summary for implementers:
 
 - **Target size:** targets at least 24px high or spaced 24px apart (WCAG 2.2 SC 2.5.8); wrapped text-link rows (project card, footer) have a 4px row gap.
 - **Focus:** `ring-2` in `color/focus-ring` with `ring-offset-2` in `color/background`, on every interactive element, keyboard focus only (`focus-visible`).
-- **Hover:** nav link gains an underline; text links go from `accent` to `foreground` and stay underlined; project card border goes to `border-strong`; active equals hover. Disabled is not used on any page.
+- **Hover:** nav link gains an underline; text links go from `accent` to `foreground` and stay underlined; project card border goes to `border-strong`; active equals hover. Disabled is not used on any page, so it is not annotated.
 - **Motion:** only colour, background and border colour, only on hover, focus-visible and active; `duration/base` (160ms) with `cubic-bezier(0.16, 1, 0.3, 1)`. Nothing continuous or on load.
 - **Reduced motion:** the `Motion` `Reduced` mode (all durations 0), and in-page anchors scroll instantly. There is no other fallback.
 - **Tabular figures** on years, date ranges and percentages (not representable in Figma text styles).
@@ -175,14 +174,14 @@ Summary for implementers:
 
 ## Content notes
 
-- Strings are placeholders in en and pt; pt is the length stress case (its strings are longer). Portuguese role titles and the about text use gender-neutral forms (for example "Engenharia de Software Sênior").
+- Strings are placeholders in en and pt; pt is the length stress case (its strings are longer); the 320 stress frames are pt only, a deliberate narrowing of "en and pt on every frame" because pt is the worst case. Portuguese role titles and the about text use gender-neutral forms (for example "Engenharia de Software Sênior").
 - Dates, years and the `40%` figure are illustrative.
 - Mono 12px (`text/mono/xs`) is used for secondary metadata (card year and tech line, skill group labels, language switcher). This is a deliberate exception to the skill's `text-sm` for dense metadata: it is the foundations' mono scale, `muted` text on it is at least 7:1 (Light and Dark) and the content is never the only carrier of information. Revisit if real content needs it larger.
 - Focus rings in the Figma swatches are drawn tight, as in the foundations; the 2px offset is described in text only (`Annotations / Rules`), not drawn.
 - Arrows in link labels (`↗`, `↑`) are text glyphs, not icons. No icon set is designed.
 - In the card, the `Link` instances have their left padding set to 0 so link text aligns with the card text; in code the link's focus ring should still extend 2px beyond the text.
-- The `Nav link` labels (Medium, `text/sm`) and the `Section heading` titles (Bold) carry weight overrides without a bound text style.
-- Hero `Intro` and 404 `Message` use `text/lg` with the Regular weight override (the `lg` style is Medium); section `h2`s override the foundations style size per viewport. Foundations allow weight overrides on text nodes.
+- Text without a bound text style on the pages: the `Nav link` labels (Inter Medium 14), hero `Intro` and 404 `Message` (the `text/lg` size, line height and tracking with the Regular weight; the style itself is Medium), plus the labels inside the foundations components.
+- Section `h2`s bind a different text style per viewport (`text/2xl` or `text/3xl`). Foundations allow weight overrides on text nodes.
 - Missing in foundations, built here as page components (no new tokens): nav link, header and footer bars, section heading, timeline entry, skill group, contact row, project card. #59 (manual theme toggle) will need its own foundations component.
 
 ## Verification
