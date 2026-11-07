@@ -3,10 +3,9 @@
 Source of truth for the portfolio's visual design (issue #35, epic #34). Consumers: **#36** (page designs) reads the variables and components in Figma; **#37** (tokens in code) transcribes the names below into CSS custom properties / Tailwind `@theme`, including the font swap and the redesigned palette.
 
 - **Figma file:** <https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio>
-- **Font comparison board:** <https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=4-303> (page `Fonts`; chosen pair marked)
-- **Pages:** `Foundations`, `Fonts`, `Components`, `Contrast`.
+- **Pages:** `Foundations`, `Components`, `Contrast`.
 
-> **Font choice: Inter + JetBrains Mono** (picked by the owner on the font board; both SIL OFL 1.1). The text styles and the `font/sans` / `font/mono` variables hold them. IBM Plex and Geist remain on the board as the compared alternatives; switching later means changing the two string values in the `Type` collection. Loading in code (#37): `next/font/google` (`Inter`, `JetBrains_Mono`), self-hosted at build time and compatible with `output: 'export'`. The previous Adwaita Sans / Mono fonts (`apps/web/src/app/fonts.ts`) are **not** carried over; #37 replaces them.
+> **Font choice: Inter + JetBrains Mono** (picked by the owner; both SIL OFL 1.1). The text styles and the `font/sans` / `font/mono` variables hold them. Switching later means changing the two string values in the `Type` collection. Loading in code (#37): `next/font/google` (`Inter`, `JetBrains_Mono`), self-hosted at build time and compatible with `output: 'export'`. The previous Adwaita Sans / Mono fonts (`apps/web/src/app/fonts.ts`) are **not** carried over; #37 replaces them.
 
 ## Naming rules (stable contract)
 
