@@ -17,8 +17,8 @@ function declarations(block: string): Map<string, string> {
 	return map;
 }
 
-function between(source: string, start: string): string {
-	const from = source.indexOf(start);
+function between(source: string, start: string, pattern?: RegExp): string {
+	const from = pattern ? source.search(pattern) : source.indexOf(start);
 	if (from === -1) throw new Error(`globals.css is missing "${start}"`);
 	const open = source.indexOf("{", from);
 	let depth = 0;
@@ -30,12 +30,12 @@ function between(source: string, start: string): string {
 	throw new Error(`globals.css has an unbalanced block after "${start}"`);
 }
 
-const primitives = declarations(between(css, ":root"));
-const light = declarations(between(css, "@theme"));
+const primitives = declarations(between(css, ":root", /^\s*:root\s*\{/m));
+const light = declarations(between(css, "@theme static"));
 const dark = declarations(between(css, "@media (prefers-color-scheme: dark)"));
 
 function resolve(role: string, mode: Mode): string {
-	const value = (mode === "dark" ? dark.get(role) : undefined) ?? light.get(role);
+	const value = (mode === "dark" ? dark : light).get(role);
 	if (!value) throw new Error(`No ${mode} value for --${role}`);
 	const alias = /^var\(--([a-z0-9-]+)\)$/.exec(value);
 	if (!alias) return value;

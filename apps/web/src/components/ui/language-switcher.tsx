@@ -28,7 +28,7 @@ export function LanguageSwitcher({ currentLocale, ariaLabel, className }: Langua
 							hrefLang={locale}
 							aria-current={isActive ? "page" : undefined}
 							className={cn(
-								"rounded px-2 py-1 uppercase transition-colors duration-(--duration-base) ease-standard focus-ring",
+								"rounded-sm px-2 py-1 uppercase transition-colors duration-(--duration-base) ease-standard focus-ring",
 								isActive
 									? "bg-accent font-medium text-accent-foreground"
 									: "text-muted hover:text-foreground",

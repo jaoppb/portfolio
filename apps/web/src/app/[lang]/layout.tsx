@@ -42,7 +42,7 @@ export default async function LocalizedLayout({
 									<li>
 										<a
 											href="#overview"
-											className="text-muted transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
+											className="text-muted underline underline-offset-4 transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
 										>
 											{dict.nav.overview}
 										</a>
@@ -50,7 +50,7 @@ export default async function LocalizedLayout({
 									<li>
 										<a
 											href="#architecture"
-											className="text-muted transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
+											className="text-muted underline underline-offset-4 transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
 										>
 											{dict.nav.architecture}
 										</a>

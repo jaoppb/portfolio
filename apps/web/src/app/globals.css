@@ -9,6 +9,8 @@
 
 @layer base {
 	:root {
+		color-scheme: light dark;
+
 		--white: #ffffff;
 		--neutral-50: #f7f8fa;
 		--neutral-100: #eef0f4;
