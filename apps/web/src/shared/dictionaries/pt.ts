@@ -32,6 +32,12 @@ export const ptDictionary: Dictionary = {
 		p1: "Trabalho na Hotmart, em Belo Horizonte, com web e backend de alto tráfego para geração de leads e GMV: APIs Node.js com Clean Architecture e DDD, modelagem no DynamoDB para picos imprevisíveis de tráfego de campanhas e infraestrutura como código com Terraform e GitHub Actions.",
 		p2: "Estudo Engenharia de Software na PUC Minas e crio projetos que operam dentro de limites rígidos de hardware e orçamento, como o PUCMaps na AWS e o Styx em Rust. Minha equipe depende.sh ficou em 1º lugar na Maratona Mineira de Programação (Grande BH).",
 	},
+	projects: {
+		title: "Projetos",
+		lead: "Projetos de código aberto em Rust e TypeScript, de ferramentas de sistemas a este site.",
+		repository: "Repositório",
+		liveDemo: "Demonstração",
+	},
 	systemStatus: {
 		title: "Status de Arquitetura e Skeleton",
 		description:

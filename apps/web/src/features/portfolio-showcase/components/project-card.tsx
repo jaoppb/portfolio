@@ -1,0 +1,46 @@
+import { Link } from "@/components/ui/link";
+import type { Project } from "../projects";
+
+export interface ProjectCardLabels {
+	repository: string;
+	liveDemo: string;
+	newTab: string;
+}
+
+export interface ProjectCardProps {
+	project: Project;
+	labels: ProjectCardLabels;
+}
+
+export function ProjectCard({ project, labels }: ProjectCardProps) {
+	const { title, summary, year, tech, links } = project;
+	const linkItems = [
+		{ href: links.repository, label: labels.repository },
+		...(links.demo ? [{ href: links.demo, label: labels.liveDemo }] : []),
+	];
+
+	return (
+		<li className="flex">
+			<article className="flex w-full min-w-0 flex-col gap-2 rounded-sm border border-border bg-surface p-6 transition-colors duration-(--duration-base) ease-standard hover:border-border-strong">
+				<p className="font-mono text-xs tabular-nums text-muted">{year}</p>
+				<h3 className="text-lg font-medium tracking-tight text-foreground">{title}</h3>
+				<p className="text-sm text-muted">{summary}</p>
+				<p className="font-mono text-xs text-muted">{tech.join(" · ")}</p>
+				<div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+					{linkItems.map(({ href, label }) => (
+						<Link
+							key={href}
+							href={href}
+							external
+							newTabLabel={labels.newTab}
+							className="pl-0"
+						>
+							{label} <span aria-hidden="true">↗</span>
+							<span className="sr-only">, {title}</span>
+						</Link>
+					))}
+				</div>
+			</article>
+		</li>
+	);
+}

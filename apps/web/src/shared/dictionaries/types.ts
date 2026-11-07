@@ -29,6 +29,12 @@ export interface Dictionary {
 		p1: string;
 		p2: string;
 	};
+	projects: {
+		title: string;
+		lead: string;
+		repository: string;
+		liveDemo: string;
+	};
 	systemStatus: {
 		title: string;
 		description: string;
