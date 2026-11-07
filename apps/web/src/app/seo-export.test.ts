@@ -107,8 +107,8 @@ describe("static export: preview (NEXT_PUBLIC_ROBOTS_NOINDEX=1)", () => {
 		expect(out.read("robots.txt")).toBe("User-Agent: *\nDisallow: /\n\n");
 	});
 
-	it("does not emit sitemap.xml", () => {
-		expect(out.has("sitemap.xml")).toBe(false);
+	it("publishes an empty sitemap with no URLs", () => {
+		expect(out.read("sitemap.xml")).not.toContain("<loc>");
 	});
 
 	it.each(["en.html", "pt.html", "index.html"])("%s carries noindex, nofollow", (file) => {
