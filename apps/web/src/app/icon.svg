@@ -8,7 +8,7 @@
       .mark { stroke: #0c0e13; }
     }
   </style>
-  <rect class="tile" rx="14"/>
+  <rect class="tile" width="64" height="64" rx="14"/>
   <path class="mark" d="M25 17v21a8 8 0 0 1-8 8h-2"/>
   <path class="mark" d="M36 46V17h8a8.5 8.5 0 0 1 0 17h-8"/>
 </svg>
