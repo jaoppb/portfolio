@@ -10,7 +10,20 @@ Source of truth for the portfolio's visual design (issue #35, epic #34). Consume
 
 ## Naming rules (stable contract)
 
-- Variable names are slash-separated and lowercase. The CSS name is derived mechanically and is also stored in each variable's WEB code syntax in Figma.
+- Variable names are slash-separated and lowercase. The CSS custom property for every variable is listed in the table below and is also stored as each variable's WEB code syntax in Figma.
+
+| Figma variable | CSS custom property |
+|---|---|
+| `<primitive>` e.g. `neutral/50`, `white` | `--neutral-50`, `--white` |
+| `color/<role>` | `--color-<role>` |
+| `font/sans`, `font/mono` | `--font-sans`, `--font-mono` |
+| `size/<step>` | `--text-<step>` |
+| `line-height/<step>` | `--text-<step>--line-height` |
+| `space/<n>` | `--spacing-<n>` (note: Tailwind's own `--spacing` is a single 4px multiplier; #37 decides whether to emit the steps or rely on it, since `n x 4px` is identical) |
+| `radius/<name>` | `--radius-<name>` (overrides the Tailwind v4 defaults of the same name, values below match them) |
+| `duration/<name>` | `--duration-<name>` (custom, not a Tailwind theme namespace) |
+
+Tracking is stored in the text styles as a percentage of the font size; in CSS use `em` (-1% = `-0.01em`, `--text-<step>--letter-spacing` in `@theme`). Light/Dark delivery in code is #37's call; the current `globals.css` approach (raw `--*` properties redefined under `@media (prefers-color-scheme: dark)`, aliased into `@theme`) keeps working with these names.
 - Components bind **only** to semantic variables (`Color`, `Type`, `Spacing`, `Radius`, `Motion`), never to `Primitives`.
 - Do not rename a variable once #36/#37 consume it; add new names instead.
 
@@ -26,6 +39,8 @@ Source of truth for the portfolio's visual design (issue #35, epic #34). Consume
 | `Motion` | `Standard`, `Reduced` | `duration/fast`, `duration/base`, `duration/slow` |
 
 ### Primitives (hex)
+
+The primitive hex values below are the single source for every colour in this document. Only the steps referenced by the semantic mapping are used by components; the rest of each ramp is reserved for future hover/pressed states and must not be used directly.
 
 | Figma name | Hex | WEB syntax |
 |---|---|---|
@@ -75,6 +90,8 @@ Roles: `background` page, `surface` cards/raised areas, `foreground` primary tex
 
 Mapping to the current `globals.css` tokens: `background`, `foreground`, `muted`, `muted-bg`, `border`, `accent`, `accent-foreground` keep their names; **values change** (the palette is redesigned). New: `surface`, `border-strong`, `focus-ring`, `destructive`.
 
+Changes #37 must apply to the existing components: the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with a 2px offset (mandatory on accent-filled controls, where the ring against the fill is only about 1.4:1); the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px).
+
 ### Type
 
 `font/sans` = `Inter` and `font/mono` = `JetBrains Mono`. Steps are Tailwind-aligned; WEB syntax is `var(--text-<step>)` / `var(--text-<step>--line-height)`.
@@ -92,15 +109,15 @@ Mapping to the current `globals.css` tokens: `background`, `foreground`, `muted`
 | `4xl` | 36 | 40 | -2.5% | Bold |
 | `5xl` | 48 | 48 | -3% | Bold |
 
-Text styles: `text/<step>` (sans, all steps) and `text/mono/{2xs,xs,sm,base}` (mono, Regular, tracking 0). Styles bind `fontFamily`, `fontSize` and `lineHeight` to the variables. Only the weights Regular, Medium and Bold are used, so a font swap never needs a missing style name. Components that need a medium weight on a Regular style (button labels, links) override the weight on the text node. Use tabular figures (`font-variant-numeric: tabular-nums`) for numbers, dates and metrics (not representable in Figma styles). Body measure: 55-75 characters.
+Text styles: `text/<step>` (sans, all steps) and `text/mono/{2xs,xs,sm,base}` (mono, Regular, tracking 0). Styles bind `fontFamily`, `fontSize` and `lineHeight` to the variables. Only the weights Regular, Medium and Bold are used (code's `font-semibold` becomes Medium or Bold), so a font swap never needs a missing style name. Components that need a medium weight on a Regular style (button labels, links) override the weight on the text node. Use tabular figures (`font-variant-numeric: tabular-nums`) for numbers, dates and metrics (not representable in Figma styles). Body measure: 55-75 characters.
 
 ### Spacing (4px base)
 
-`space/0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24` = `n x 4` px (`space/6` = 24px). WEB: `var(--spacing-<n>)`.
+`space/0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24` = `n x 4` px (`space/6` = 24px). The scale is deliberately sparse (no 7, 9, 11, 13-15, 17-19, 21-23); the 8px rhythm uses the even steps. WEB: `var(--spacing-<n>)`.
 
 ### Radius
 
-`radius/none` 0, `radius/sm` 2, `radius/md` 4, `radius/lg` 8, `radius/full` 9999. Default for controls is `radius/sm`. No pills (`radius/full` only for circular elements).
+`radius/none` 0, `radius/xs` 2, `radius/sm` 4, `radius/md` 6, `radius/lg` 8, `radius/full` 9999. These deliberately equal Tailwind v4's default `--radius-*` values, so existing `rounded-sm` (button), `rounded` (language switcher) and `rounded-md` (skip link) keep rendering the same. Default for controls is `radius/sm`. No pills (`radius/full` only for circular elements).
 
 ### Motion
 
@@ -110,7 +127,7 @@ Text styles: `text/<step>` (sans, all steps) and `text/mono/{2xs,xs,sm,base}` (m
 | `duration/base` | 160 ms | 0 |
 | `duration/slow` | 250 ms | 0 |
 
-Easing (not a Figma variable): `cubic-bezier(0.16, 1, 0.3, 1)`. The `Reduced` mode is the `prefers-reduced-motion: reduce` equivalent: jump to the end state (or a subtle crossfade). Motion only on hover, focus-visible and active; no continuous animation.
+Easing (not a Figma variable): `cubic-bezier(0.16, 1, 0.3, 1)`. The `Reduced` mode is the `prefers-reduced-motion: reduce` equivalent: jump to the end state (duration 0; a subtle crossfade is the only allowed alternative and is not designed here). Motion only on hover, focus-visible and active; no continuous animation.
 
 ## Components (page `Components`)
 
@@ -126,11 +143,25 @@ All bind fills, strokes, padding and radius to variables and text to text styles
 | `Language switcher` | `Active` = EN / PT | `components/ui/language-switcher.tsx` |
 | `Skip link` | `State` = Focused (hidden until keyboard focus) | `components/ui/skip-link.tsx` |
 
-Focus state: 2px `color/focus-ring` outline outside the element. Disabled: 50% opacity (exempt from contrast requirements per WCAG 1.4.3). A `Dark preview` frame on the page shows instances in Dark mode.
+Focus state: 2px `color/focus-ring` outline outside the element (drawn tight in Figma; implement with a 2px offset in `color/background`, mandatory on accent-filled controls). Links are always underlined (WCAG 1.4.1: `accent` vs `foreground` is only 2.5:1 light / 1.8:1 dark, so colour alone does not identify a link); hover switches the colour to `foreground`. Disabled: 50% opacity (exempt from contrast requirements per WCAG 1.4.3). A `Dark preview` frame on the page shows instances in Dark mode.
+
+### Component to colour role
+
+| Component | Fill | Text | Border / ring |
+|---|---|---|---|
+| Button primary | `accent` (hover: 90% opacity) | `accent-foreground` | focus: `focus-ring` |
+| Button secondary | `muted-bg` (hover: `border`) | `foreground` | focus: `focus-ring` |
+| Button outline | none (hover: `muted-bg`) | `foreground` | `border-strong`, focus: `focus-ring` |
+| Button ghost | none (hover: `muted-bg`) | `foreground` | focus: `focus-ring` |
+| Link | none | `accent` (hover: `foreground`), underlined | focus: `focus-ring` |
+| Tag | none | tone: `muted` / `accent` / `destructive` | 1px, same colour as the text |
+| Card | `surface` | title `foreground`, body and meta `muted` | `border` (hover: `border-strong`) |
+| Language switcher | active: `accent` | active: `accent-foreground`; inactive: `muted` (hover: `foreground`) | focus: `focus-ring` |
+| Skip link | `accent` | `accent-foreground` | `focus-ring` |
 
 ## Contrast (WCAG 2.x)
 
-Ratios are computed from the hex values above with the WCAG relative-luminance formula, not estimated. Targets: primary text AAA (7:1), other text AA (4.5:1), UI components and the focus ring 3:1. `color/border` is a decorative hairline and exempt. The same table is on the Figma `Contrast` page.
+Ratios are computed from the hex values above with the WCAG relative-luminance formula, not estimated. Targets: primary text AAA (7:1), other text AA (4.5:1), UI components and the focus ring 3:1. `color/border` is a decorative hairline and exempt. UI rows report `pass` (WCAG 1.4.11 has no AAA level). The same table is on the Figma `Contrast` page.
 
 | Mode | Pair | Kind | Ratio | Needs | Result |
 |---|---|---|---|---|---|
@@ -146,11 +177,11 @@ Ratios are computed from the hex values above with the WCAG relative-luminance f
 | Light | `color/accent-foreground` on `color/accent` | text | 7.72:1 | 4.5 | AAA |
 | Light | `color/destructive` on `color/background` | text | 6.19:1 | 4.5 | AA |
 | Light | `color/destructive` on `color/surface` | text | 6.57:1 | 4.5 | AA |
-| Light | `color/border-strong` on `color/background` | ui | 4.29:1 | 3 | AA |
-| Light | `color/border-strong` on `color/surface` | ui | 4.55:1 | 3 | AA |
-| Light | `color/focus-ring` on `color/background` | ui | 5.25:1 | 3 | AA |
-| Light | `color/focus-ring` on `color/surface` | ui | 5.57:1 | 3 | AA |
-| Light | `color/accent` on `color/background` | ui | 7.26:1 | 3 | AA |
+| Light | `color/border-strong` on `color/background` | ui | 4.29:1 | 3 | pass |
+| Light | `color/border-strong` on `color/surface` | ui | 4.55:1 | 3 | pass |
+| Light | `color/focus-ring` on `color/background` | ui | 5.25:1 | 3 | pass |
+| Light | `color/focus-ring` on `color/surface` | ui | 5.57:1 | 3 | pass |
+| Light | `color/accent` on `color/background` | ui | 7.26:1 | 3 | pass |
 | Light | `color/border` on `color/background` | decor | 1.21:1 | — | n/a |
 | Dark | `color/foreground` on `color/background` | text | 18.17:1 | 7 | AAA |
 | Dark | `color/foreground` on `color/surface` | text | 16.4:1 | 7 | AAA |
@@ -164,13 +195,30 @@ Ratios are computed from the hex values above with the WCAG relative-luminance f
 | Dark | `color/accent-foreground` on `color/accent` | text | 9.9:1 | 4.5 | AAA |
 | Dark | `color/destructive` on `color/background` | text | 9.72:1 | 4.5 | AAA |
 | Dark | `color/destructive` on `color/surface` | text | 8.77:1 | 4.5 | AAA |
-| Dark | `color/border-strong` on `color/background` | ui | 4.24:1 | 3 | AA |
-| Dark | `color/border-strong` on `color/surface` | ui | 3.83:1 | 3 | AA |
-| Dark | `color/focus-ring` on `color/background` | ui | 6.83:1 | 3 | AA |
-| Dark | `color/focus-ring` on `color/surface` | ui | 6.17:1 | 3 | AA |
-| Dark | `color/accent` on `color/background` | ui | 9.9:1 | 3 | AA |
+| Dark | `color/border-strong` on `color/background` | ui | 4.24:1 | 3 | pass |
+| Dark | `color/border-strong` on `color/surface` | ui | 3.83:1 | 3 | pass |
+| Dark | `color/focus-ring` on `color/background` | ui | 6.83:1 | 3 | pass |
+| Dark | `color/focus-ring` on `color/surface` | ui | 6.17:1 | 3 | pass |
+| Dark | `color/accent` on `color/background` | ui | 9.9:1 | 3 | pass |
 | Dark | `color/border` on `color/background` | decor | 1.33:1 | — | n/a |
+
+Additional pairings (component states):
+
+| Mode | Pair | Kind | Ratio | Needs | Result |
+|---|---|---|---|---|---|
+| Light | `color/foreground` on `color/border` | text | 15.01:1 | 4.5 | AAA |
+| Light | `color/focus-ring` on `color/muted-bg` | ui | 4.89:1 | 3 | pass |
+| Light | `color/border-strong` on `color/muted-bg` | ui | 3.99:1 | 3 | pass |
+| Light | `color/destructive` on `color/muted-bg` | text | 5.76:1 | 4.5 | AA |
+| Light | `color/border` on `color/surface` | decor | 1.29:1 | — | n/a |
+| Light | `color/accent-foreground` at 90% opacity on `color/accent` at 90% opacity | text | 6.15:1 | 4.5 | AA |
+| Dark | `color/foreground` on `color/border` | text | 13.71:1 | 4.5 | AAA |
+| Dark | `color/focus-ring` on `color/muted-bg` | ui | 5.16:1 | 3 | pass |
+| Dark | `color/border-strong` on `color/muted-bg` | ui | 3.2:1 | 3 | pass |
+| Dark | `color/destructive` on `color/muted-bg` | text | 7.33:1 | 4.5 | AAA |
+| Dark | `color/border` on `color/surface` | decor | 1.2:1 | — | n/a |
+| Dark | `color/accent-foreground` at 90% opacity on `color/accent` at 90% opacity | text | 8.19:1 | 4.5 | AAA |
 
 ## Checks before editing
 
-Re-run the contrast computation whenever a Primitive or a semantic alias changes; every `text` row must stay >= 4.5:1 (primary text >= 7:1) and every `ui` row >= 3:1.
+Contrast ratio = (L1 + 0.05) / (L2 + 0.05), with L the WCAG relative luminance of the sRGB hex value (linearised channels, weights 0.2126 / 0.7152 / 0.0722), L1 the lighter colour. For the 90% opacity pairing, blend each colour over `color/background` first. The Primitives table above is the only input; the hex in parentheses elsewhere is a copy. Re-run the computation whenever a Primitive or a semantic alias changes; every `text` row must stay >= 4.5:1 (primary text >= 7:1) and every `ui` row >= 3:1.
