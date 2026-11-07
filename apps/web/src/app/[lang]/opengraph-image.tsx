@@ -22,6 +22,7 @@ const colors = {
 	accent: "#93bbfd",
 };
 
+// fallow-ignore-next-line unused-export -- Next.js metadata route convention, read by the framework
 export async function generateStaticParams() {
 	return siteConfig.locales.map((lang) => ({ lang }));
 }

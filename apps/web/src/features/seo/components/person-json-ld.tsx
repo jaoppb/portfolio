@@ -1,7 +1,7 @@
 import { type Locale, siteConfig } from "@/shared/config/site";
 import type { Dictionary } from "@/shared/dictionaries/types";
 
-export function buildPersonJsonLd(locale: Locale, dict: Dictionary) {
+function buildPersonJsonLd(locale: Locale, dict: Dictionary) {
 	return {
 		"@context": "https://schema.org",
 		"@type": "Person",
