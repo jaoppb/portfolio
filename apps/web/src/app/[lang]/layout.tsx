@@ -1,8 +1,9 @@
 import type * as React from "react";
 import { fontMono, fontSans } from "@/app/fonts";
 import "@/app/globals.css";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { SkipLink } from "@/components/ui/skip-link";
+import { SiteFooter } from "@/features/shell/components/site-footer";
+import { SiteHeader } from "@/features/shell/components/site-header";
 import { siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
 import { cn } from "@/shared/utils/cn";
@@ -25,58 +26,19 @@ export default async function LocalizedLayout({
 	return (
 		<html lang={locale} className={cn(fontSans.variable, fontMono.variable)}>
 			<body className="min-h-screen bg-background text-foreground antialiased">
-				<div className="mx-auto flex min-h-screen max-w-4xl flex-col px-6 py-12 sm:px-8">
-					<header className="relative flex items-center justify-between border-b border-border pb-6">
-						<SkipLink href="#main-content">{dict.a11y.skipLink}</SkipLink>
+				<div id="top" className="flex min-h-screen flex-col">
+					<SkipLink href="#main-content">{dict.a11y.skipLink}</SkipLink>
+					<SiteHeader locale={locale} dict={dict} />
 
-						<div>
-							<h1 className="text-lg font-medium text-foreground">
-								{dict.hero.name}
-							</h1>
-							<p className="font-mono text-xs text-muted">{dict.hero.role}</p>
-						</div>
-
-						<div className="flex items-center gap-6">
-							<nav aria-label={dict.a11y.mainNavigation}>
-								<ul className="flex items-center gap-6 text-sm">
-									<li>
-										<a
-											href="#overview"
-											className="text-muted underline underline-offset-4 transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
-										>
-											{dict.nav.overview}
-										</a>
-									</li>
-									<li>
-										<a
-											href="#architecture"
-											className="text-muted underline underline-offset-4 transition-colors duration-(--duration-base) ease-standard hover:text-foreground focus-ring"
-										>
-											{dict.nav.architecture}
-										</a>
-									</li>
-								</ul>
-							</nav>
-
-							<LanguageSwitcher
-								currentLocale={locale}
-								ariaLabel={dict.a11y.languageSwitcher}
-							/>
-						</div>
-					</header>
-
-					<main id="main-content" tabIndex={-1} className="flex-1 py-10 outline-none">
+					<main
+						id="main-content"
+						tabIndex={-1}
+						className="mx-auto w-full max-w-7xl flex-1 px-5 py-10 outline-none md:px-10 lg:px-16"
+					>
 						{children}
 					</main>
 
-					<footer className="border-t border-border pt-6 text-xs text-muted">
-						<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-							<p>{dict.footer.copyright}</p>
-							<p className="font-mono text-2xs tabular-nums">
-								{dict.footer.milestoneNotice}
-							</p>
-						</div>
-					</footer>
+					<SiteFooter dict={dict} />
 				</div>
 			</body>
 		</html>

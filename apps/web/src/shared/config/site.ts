@@ -4,6 +4,7 @@ export type Locale = (typeof locales)[number];
 export const siteConfig = {
 	name: "João Pedro",
 	url: process.env.NEXT_PUBLIC_SITE_URL || "https://joaopedro.dev",
+	repositoryUrl: "https://github.com/jaoppb/portfolio",
 	locales,
 	defaultLocale: "en" as Locale,
 };
