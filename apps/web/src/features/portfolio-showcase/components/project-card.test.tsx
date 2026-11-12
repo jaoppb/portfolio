@@ -34,6 +34,41 @@ describe("ProjectCard", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
+	it("keeps DOM order equal to visual order: title, year, summary, tech, links", () => {
+		render(
+			<ul>
+				<ProjectCard project={project} labels={labels} />
+			</ul>,
+		);
+
+		const ordered = [
+			screen.getByRole("heading", { level: 3, name: "Alloy" }),
+			screen.getByText("2026"),
+			screen.getByText("A modular web browser."),
+			screen.getByText("Rust · Rhai"),
+			screen.getByRole("link", { name: /^Repository/ }),
+		];
+		for (const [i, node] of ordered.slice(1).entries()) {
+			const previous = ordered[i] as HTMLElement;
+			expect(
+				previous.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING,
+			).toBeTruthy();
+		}
+	});
+
+	it("groups the tech line and links in a footer that sits at the card bottom", () => {
+		render(
+			<ul>
+				<ProjectCard project={project} labels={labels} />
+			</ul>,
+		);
+
+		const footer = screen.getByText("Rust · Rhai").parentElement as HTMLElement;
+		expect(footer).toContainElement(screen.getByRole("link", { name: /^Repository/ }));
+		expect(footer).toHaveClass("border-t");
+		expect(footer.previousElementSibling).toHaveClass("flex-1");
+	});
+
 	it("names the repository link with the project and opens a new tab safely", () => {
 		render(
 			<ul>
