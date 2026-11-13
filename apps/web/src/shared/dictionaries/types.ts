@@ -52,6 +52,14 @@ export interface Dictionary {
 		title: string;
 		groups: readonly { label: string; items: readonly string[] }[];
 	};
+	contact: {
+		title: string;
+		lead: string;
+		email: string;
+		github: string;
+		linkedin: string;
+		cv: Record<"en" | "pt", { view: string; download: string; downloadLabel: string }>;
+	};
 	systemStatus: {
 		title: string;
 		description: string;
