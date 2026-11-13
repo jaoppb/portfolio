@@ -38,6 +38,68 @@ export const enDictionary: Dictionary = {
 		repository: "Repository",
 		liveDemo: "Live demo",
 	},
+	experience: {
+		title: "Experience",
+		present: "Present",
+		entries: [
+			{
+				role: "Software Engineer I",
+				company: "Hotmart",
+				start: "2026-07",
+				highlights: [
+					"High-traffic web development (React/Next.js) and backend for lead generation and GMV.",
+					"Engineering low-latency Node.js APIs applying Clean Architecture and DDD.",
+					"DynamoDB data modeling supporting unpredictable campaign traffic spikes and CRM integrations.",
+					"Cloud infrastructure management via Terraform and CI/CD pipeline automation with GitHub Actions.",
+				],
+			},
+			{
+				role: "Software Engineer Intern",
+				company: "Hotmart",
+				start: "2025-10",
+				end: "2026-07",
+				highlights: [
+					"Implementation of Node microservices, AWS resources (Terraform), and front-end using Next.js.",
+				],
+			},
+		],
+	},
+	skills: {
+		title: "Skills",
+		groups: [
+			{
+				label: "Languages & Technologies",
+				items: [
+					"TypeScript",
+					"Node.js",
+					"React.js",
+					"Next.js",
+					"Rust",
+					"Python",
+					"Java",
+					"C/C++",
+					"Shell script",
+					"Tailwind CSS",
+				],
+			},
+			{
+				label: "Architecture & Cloud",
+				items: [
+					"AWS",
+					"Terraform",
+					"Clean Architecture",
+					"DDD",
+					"Microservices",
+					"CI/CD",
+					"GitHub Actions",
+				],
+			},
+			{
+				label: "Databases & Infra",
+				items: ["DynamoDB", "SQL", "PostgreSQL", "Docker", "Linux"],
+			},
+		],
+	},
 	systemStatus: {
 		title: "Architecture & Skeleton Status",
 		description: "Pure static export configuration and feature-first boundary verification.",

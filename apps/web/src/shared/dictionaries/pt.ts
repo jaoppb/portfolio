@@ -38,6 +38,68 @@ export const ptDictionary: Dictionary = {
 		repository: "Repositório",
 		liveDemo: "Demonstração",
 	},
+	experience: {
+		title: "Experiência",
+		present: "o momento",
+		entries: [
+			{
+				role: "Software Engineer I",
+				company: "Hotmart",
+				start: "2026-07",
+				highlights: [
+					"Desenvolvimento web de alto tráfego (React/Next.js) e backend para geração de leads e GMV.",
+					"Engenharia de APIs Node.js de baixa latência aplicando Clean Architecture e DDD.",
+					"Modelagem no DynamoDB suportando picos imprevisíveis de tráfego de campanhas e integrações de CRM.",
+					"Gestão de infraestrutura cloud via Terraform e automação de pipelines CI/CD com GitHub Actions.",
+				],
+			},
+			{
+				role: "Software Engineer Intern",
+				company: "Hotmart",
+				start: "2025-10",
+				end: "2026-07",
+				highlights: [
+					"Implementação de microsserviços Node, recursos AWS (Terraform) e front-end com Next.JS.",
+				],
+			},
+		],
+	},
+	skills: {
+		title: "Competências",
+		groups: [
+			{
+				label: "Linguagens & Tecnologias",
+				items: [
+					"TypeScript",
+					"Node.js",
+					"React.js",
+					"Next.js",
+					"Rust",
+					"Python",
+					"Java",
+					"C/C++",
+					"Shell script",
+					"Tailwind CSS",
+				],
+			},
+			{
+				label: "Arquitetura & Cloud",
+				items: [
+					"AWS",
+					"Terraform",
+					"Clean Architecture",
+					"DDD",
+					"Microsserviços",
+					"CI/CD",
+					"GitHub Actions",
+				],
+			},
+			{
+				label: "Banco de Dados & Infra",
+				items: ["DynamoDB", "SQL", "PostgreSQL", "Docker", "Linux"],
+			},
+		],
+	},
 	systemStatus: {
 		title: "Status de Arquitetura e Skeleton",
 		description:

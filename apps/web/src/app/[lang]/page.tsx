@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Section } from "@/components/ui/section";
 import { About } from "@/features/about/components/about";
+import { Experience } from "@/features/experience/components/experience";
+import { Skills } from "@/features/experience/components/skills";
 import { Hero } from "@/features/hero/components/hero";
 import { Projects } from "@/features/portfolio-showcase/components/projects";
 import { PersonJsonLd } from "@/features/seo/components/person-json-ld";
@@ -69,6 +71,8 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 				projects={dict.projects}
 				newTabLabel={dict.a11y.opensInNewTab}
 			/>
+			<Experience locale={locale} experience={dict.experience} />
+			<Skills skills={dict.skills} />
 			<Section id="architecture" rule>
 				<SystemStatus status={dict.systemStatus} />
 			</Section>
