@@ -78,6 +78,56 @@ describe("static export: indexable (production)", () => {
 		expect(html).not.toContain('name="robots"');
 	});
 
+	it.each(["en", "pt"])("%s home page keeps same-page section anchors", (lang) => {
+		const html = out.read(`${lang}.html`);
+		expect(html).toContain('href="#about"');
+		expect(html).not.toContain(`href="/${lang}#about"`);
+	});
+
+	it.each([
+		["en", "Page not found", "Back to home"],
+		["pt", "Página não encontrada", "Voltar para o início"],
+	])("emits %s/404.html in its own language, linking to its home page", (lang, title, home) => {
+		const html = out.read(`${lang}/404.html`);
+		expect(html).toMatch(new RegExp(`<html lang="${lang}"`));
+		expect(html).toMatch(new RegExp(`<h1[^>]*>${title}</h1>`));
+		expect(html).toMatch(new RegExp(`<a[^>]*href="/${lang}"[^>]*>${home}</a>`));
+		expect(html).toContain(`href="/${lang}#about"`);
+		expect(html).not.toContain('href="#about"');
+	});
+
+	it("emits the root 404.html in the default locale from global-not-found", () => {
+		const html = out.read("404.html");
+		expect(html).toContain('<html lang="en"');
+		expect(html).toMatch(/<h1[^>]*>Page not found<\/h1>/);
+		expect(html).toMatch(/<a[^>]*href="\/en"[^>]*>Back to home<\/a>/);
+		expect(html).toContain('href="/en#about"');
+	});
+
+	it.each(["404.html", "_not-found.html"])(
+		"%s (from Next) is noindex and has no canonical or hreflang",
+		(file) => {
+			const html = out.read(file);
+			expect(html).toContain('<meta name="robots" content="noindex"/>');
+			expect(html).not.toContain('rel="canonical"');
+			expect(html).not.toContain('rel="alternate"');
+		},
+	);
+
+	it.each(["en/404.html", "pt/404.html"])(
+		"%s is noindex on production and has no canonical or hreflang",
+		(file) => {
+			const html = out.read(file);
+			expect(html).toContain('<meta name="robots" content="noindex, nofollow"/>');
+			expect(html).not.toContain('rel="canonical"');
+			expect(html).not.toContain('rel="alternate"');
+		},
+	);
+
+	it("keeps the 404 pages out of the sitemap", () => {
+		expect(out.read("sitemap.xml")).not.toContain("404");
+	});
+
 	it("emits the OG image as a 1200x630 PNG", () => {
 		const buf = readFileSync(path.join(root, ".export-test/indexable/en/opengraph-image"));
 		expect(buf.subarray(1, 4).toString()).toBe("PNG");

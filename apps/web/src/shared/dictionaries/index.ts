@@ -12,11 +12,13 @@ export function isValidLocale(lang: string): lang is Locale {
 	return siteConfig.locales.includes(lang as Locale);
 }
 
+/** Locale of a `[lang]` route segment; anything unknown falls back to the default locale. */
+export function resolveLocale(lang: string): Locale {
+	return isValidLocale(lang) ? lang : siteConfig.defaultLocale;
+}
+
 export async function getDictionary(lang: string): Promise<Dictionary> {
-	if (isValidLocale(lang)) {
-		return dictionaries[lang];
-	}
-	return dictionaries[siteConfig.defaultLocale];
+	return dictionaries[resolveLocale(lang)];
 }
 
 export type { Dictionary };

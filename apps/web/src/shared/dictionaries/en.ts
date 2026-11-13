@@ -119,17 +119,13 @@ export const enDictionary: Dictionary = {
 			},
 		},
 	},
-	systemStatus: {
-		title: "Architecture & Skeleton Status",
-		description: "Pure static export configuration and feature-first boundary verification.",
-		operational: "Operational",
-		target: "Target",
-		targetValue: "Cloudflare Pages (output: export)",
-		framework: "Framework",
-		frameworkValue: "Next.js 16",
-		milestone: "Milestone",
-		documentation: "Documentation",
-		sourceSpecs: "Source Specs",
+	notFound: {
+		metaTitle: "Page not found — João Pedro",
+		eyebrow: "Error 404",
+		title: "Page not found",
+		message:
+			"The page you are looking for does not exist or has moved. Check the address, or go back to the home page.",
+		home: "Back to home",
 	},
 	footer: {
 		copyright: "© 2026 João Pedro",

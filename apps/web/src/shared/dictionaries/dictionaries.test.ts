@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { siteConfig } from "@/shared/config/site";
 import { enDictionary } from "./en";
-import { getDictionary, isValidLocale } from "./index";
+import { getDictionary, isValidLocale, resolveLocale } from "./index";
 import { ptDictionary } from "./pt";
 
 describe("Dictionaries", () => {
@@ -72,6 +72,12 @@ describe("Dictionaries", () => {
 		expect(isValidLocale("es")).toBe(false);
 		expect(isValidLocale("fr")).toBe(false);
 		expect(isValidLocale("")).toBe(false);
+	});
+
+	it("resolves a route segment to a locale, defaulting unknown ones", () => {
+		expect(resolveLocale("en")).toBe("en");
+		expect(resolveLocale("pt")).toBe("pt");
+		expect(resolveLocale("de")).toBe(siteConfig.defaultLocale);
 	});
 
 	it("returns corresponding dictionary for valid locale and defaults for invalid", async () => {

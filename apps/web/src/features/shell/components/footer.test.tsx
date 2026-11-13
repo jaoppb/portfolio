@@ -23,11 +23,11 @@ describe("Footer", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("renders Portuguese labels and honours hrefBase", () => {
-		render(<Footer dict={ptDictionary} hrefBase="/pt/" />);
+	it("renders Portuguese labels", () => {
+		render(<Footer dict={ptDictionary} />);
 		expect(screen.getByRole("link", { name: /^Voltar ao topo/ })).toHaveAttribute(
 			"href",
-			"/pt/#top",
+			"#top",
 		);
 		expect(screen.getByRole("link", { name: /^Código-fonte/ })).toBeInTheDocument();
 	});

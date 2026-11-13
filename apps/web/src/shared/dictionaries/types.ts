@@ -62,17 +62,13 @@ export interface Dictionary {
 		linkedin: string;
 		cv: Record<Locale, { view: string; download: string; downloadLabel: string }>;
 	};
-	systemStatus: {
+	notFound: {
+		/** Browser tab title of the 404 page. */
+		metaTitle: string;
+		eyebrow: string;
 		title: string;
-		description: string;
-		operational: string;
-		target: string;
-		targetValue: string;
-		framework: string;
-		frameworkValue: string;
-		milestone: string;
-		documentation: string;
-		sourceSpecs: string;
+		message: string;
+		home: string;
 	};
 	footer: {
 		copyright: string;

@@ -32,3 +32,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 .export-test
+
+# Local Cloudflare Pages emulator state (wrangler pages dev)
+.wrangler/
