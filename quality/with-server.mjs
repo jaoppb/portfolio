@@ -119,8 +119,9 @@ try {
 	exitCode = await run();
 } catch (error) {
 	console.error(error.message);
-	console.error(serverLog);
 } finally {
+	// The server's output explains a failed start and a server that died during the audit.
+	if (exitCode !== 0) console.error(`Server output:\n${serverLog}`);
 	await stopServer();
 }
 process.exit(exitCode);

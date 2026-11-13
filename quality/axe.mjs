@@ -51,11 +51,23 @@ async function audit({ path: pagePath, scheme, viewport, label }) {
 	}
 }
 
+const publish = (markdown) => {
+	console.log(markdown);
+	if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+};
+
 const runs = [];
+let crash = null;
 try {
 	for (const entry of buildMatrix(paths)) runs.push(await audit(entry));
+} catch (error) {
+	crash = error;
 } finally {
 	await browser.close();
+}
+if (crash) {
+	publish(`### axe: DID NOT RUN\n\nThe audit stopped on an error: ${crash.message}\n`);
+	process.exit(1);
 }
 
 const result = applyExemptions(runs, exemptions);
@@ -63,6 +75,5 @@ const { failed, markdown } = renderSummary(result);
 
 mkdirSync(reportDir, { recursive: true });
 writeFileSync(path.join(reportDir, "results.json"), JSON.stringify(result, null, "\t"));
-console.log(markdown);
-if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+publish(markdown);
 process.exit(failed ? 1 : 0);

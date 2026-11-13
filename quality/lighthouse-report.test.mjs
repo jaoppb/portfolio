@@ -7,6 +7,8 @@ const medianRun = (pagePath, performance) => ({
 	isRepresentativeRun: true,
 	summary: { performance, accessibility: 1, "best-practices": 1, seo: 1 },
 });
+const expected = { urls: ["http://127.0.0.1:8788/pt"], runs: 1 };
+const render = (input) => renderLighthouseSummary({ expected, ...input }).markdown;
 const failure = (overrides) => ({
 	url: "http://127.0.0.1:8788/pt",
 	auditId: "resource-summary",
@@ -20,14 +22,18 @@ const failure = (overrides) => ({
 
 describe("renderLighthouseSummary", () => {
 	it("reports a pass with the scores of the median run of each page", () => {
-		const markdown = renderLighthouseSummary({
+		const { markdown, complete } = renderLighthouseSummary({
 			manifest: [
 				medianRun("/en", 0.99),
 				{ ...medianRun("/en", 0.5), isRepresentativeRun: false },
 				medianRun("/pt", 1),
+				{ ...medianRun("/pt", 1), isRepresentativeRun: false },
 			],
 			assertions: [],
+			expected: { urls: ["http://127.0.0.1:8788/en", "http://127.0.0.1:8788/pt"], runs: 2 },
 		});
+
+		assert.equal(complete, true);
 
 		assert.match(markdown, /Lighthouse: passed/);
 		assert.match(markdown, /\| \/en \| 99 \| 100 \| 100 \| 100 \|/);
@@ -36,7 +42,7 @@ describe("renderLighthouseSummary", () => {
 	});
 
 	it("lists every failed budget with page, audit, expectation and value", () => {
-		const markdown = renderLighthouseSummary({
+		const markdown = render({
 			manifest: [medianRun("/pt", 1)],
 			assertions: [failure({}), { ...failure({ auditId: "canonical" }), passed: true }],
 		});
@@ -50,7 +56,7 @@ describe("renderLighthouseSummary", () => {
 	});
 
 	it("survives a failure without a numeric value and shows its message", () => {
-		const markdown = renderLighthouseSummary({
+		const markdown = render({
 			manifest: [medianRun("/pt", 1)],
 			assertions: [
 				failure({
@@ -69,7 +75,7 @@ describe("renderLighthouseSummary", () => {
 	});
 
 	it("rounds long decimals", () => {
-		const markdown = renderLighthouseSummary({
+		const markdown = render({
 			manifest: [medianRun("/pt", 1)],
 			assertions: [failure({ actual: 6970.2506 })],
 		});
@@ -78,9 +84,27 @@ describe("renderLighthouseSummary", () => {
 	});
 
 	it("does not claim a pass when Lighthouse produced no assertion results", () => {
-		const markdown = renderLighthouseSummary({ manifest: null, assertions: null });
+		const { markdown, complete } = renderLighthouseSummary({
+			manifest: null,
+			assertions: null,
+			expected,
+		});
 
+		assert.equal(complete, false);
 		assert.match(markdown, /Lighthouse: DID NOT RUN/);
+		assert.doesNotMatch(markdown, /passed/);
+	});
+
+	it("is incomplete when a page has fewer runs than expected, even with no failed budget", () => {
+		const { markdown, complete } = renderLighthouseSummary({
+			manifest: [medianRun("/en", 1)],
+			assertions: [],
+			expected: { urls: ["http://127.0.0.1:8788/en", "http://127.0.0.1:8788/pt"], runs: 1 },
+		});
+
+		assert.equal(complete, false);
+		assert.match(markdown, /Lighthouse: INCOMPLETE/);
+		assert.match(markdown, /\/pt: 0 of 1 runs/);
 		assert.doesNotMatch(markdown, /passed/);
 	});
 });

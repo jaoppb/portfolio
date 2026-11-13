@@ -57,14 +57,15 @@ Budgets judged on the **median** of the 3 runs, because timing varies between ru
 | Largest Contentful Paint | 2 000 ms | 768 to 785 ms | 2.5x |
 | Total Blocking Time | 300 ms | 30 to 95 ms | 3x |
 
-The timing headroom is wide on purpose. Between two CI runs of the same commit the runner's CPU speed differed by a factor of two (Lighthouse benchmark index 4 300 and 2 300) and TBT followed it, and one single run out of twelve had an LCP of 2 504 ms. The median of 3 absorbs one such outlier per page. These limits are there to catch a real regression, such as a render-blocking resource or heavy client-side JavaScript, and the byte budgets catch the small ones exactly.
+The timing headroom is wide on purpose. Across three CI runs of the gate the runner's CPU speed differed by a factor of two (Lighthouse benchmark index 4 300 and 2 300 to 2 500) and TBT followed it, and one single run out of eighteen had an LCP of 2 504 ms. The median of 3 absorbs one such outlier per page. These limits are there to catch a real regression, such as a render-blocking resource or heavy client-side JavaScript, and the byte budgets catch the small ones exactly.
 
 Measured on `main` at `8e52337` (2026-11-13) with Lighthouse 13.6.0 and Chrome 157 on `ubuntu-latest`. Transferred sizes are with the Brotli compression of `wrangler pages dev`.
 
 ## 4. Reading a failure
 
 - **Job summary.** The run's summary page has a table of axe runs with each violation (rule, element selector, how to fix, link to the rule), and the Lighthouse scores with every failed budget (page, audit, expected, actual).
-- **Artifact `quality-reports`** (kept 14 days): the full Lighthouse HTML and JSON report of every run under `lighthouse/`, and the raw axe results in `axe/results.json`. Open the HTML report of the failing page to see what Lighthouse suggests.
+- **Artifact `quality-reports`** (kept 14 days): the full Lighthouse HTML and JSON report of every run under `lighthouse/`, and the axe results after exemptions in `axe/results.json`. Open the HTML report of the failing page to see what Lighthouse suggests.
+- If an audit could not run at all (Chrome did not start, a page answered an error, Lighthouse skipped a page), the summary says `DID NOT RUN` or `INCOMPLETE` and the job fails. The job log has the error and the server output.
 - Reports are never uploaded to Lighthouse's public storage.
 
 ## 5. Running it locally
@@ -114,4 +115,4 @@ The rule is to fix the problem. An exemption is for a real finding that is too l
 
 ## 9. CI time
 
-The job takes about 2 minutes (build 15 s, axe 20 s, Lighthouse 65 s) and runs in parallel with the other jobs. The slowest other job takes about 1 minute, so the `CI` check finishes about 1 minute later than before.
+The job takes about 2 minutes (build 15 to 20 s, axe 10 to 20 s, Lighthouse 65 to 70 s) and runs in parallel with the other jobs. The slowest other job takes about 1 minute, so the `CI` check finishes about 1 minute later than before.
