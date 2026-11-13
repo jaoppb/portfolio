@@ -105,3 +105,20 @@ describe("renderSummary", () => {
 		assert.match(summary.markdown, /color-contrast.*`\.tag`.*#99/);
 	});
 });
+
+describe("applyExemptions with multi-part targets", () => {
+	const framed = { target: ["iframe", ".tag"], failureSummary: "Fix it" };
+	const runWith = (selector) =>
+		applyExemptions(
+			[run("/en light mobile", [{ ...violation("color-contrast", []), nodes: [framed] }])],
+			[{ rule: "color-contrast", selector, issue: 99, reason: "tracked" }],
+		);
+
+	it("matches the whole selector as the report prints it", () => {
+		assert.deepEqual(runWith("iframe .tag").runs[0].violations, []);
+	});
+
+	it("does not match a single part of the target", () => {
+		assert.equal(runWith(".tag").runs[0].violations.length, 1);
+	});
+});

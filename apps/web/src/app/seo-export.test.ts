@@ -78,6 +78,25 @@ describe("static export: indexable (production)", () => {
 		expect(html).not.toContain('name="robots"');
 	});
 
+	// Lighthouse (#45) only validates these tags when they exist, so their presence is asserted here.
+	it.each(["en", "pt"])(
+		"%s page has a canonical, hreflang alternates and a description",
+		(lang) => {
+			const html = out.read(`${lang}.html`);
+			expect(html).toContain(`<link rel="canonical" href="${SITE_URL}/${lang}"/>`);
+			for (const [hreflang, target] of [
+				["x-default", "en"],
+				["en", "en"],
+				["pt", "pt"],
+			]) {
+				expect(html).toContain(
+					`<link rel="alternate" hrefLang="${hreflang}" href="${SITE_URL}/${target}"/>`,
+				);
+			}
+			expect(html).toMatch(/<meta name="description" content="[^"]{50,}"\/>/);
+		},
+	);
+
 	it("emits the OG image as a 1200x630 PNG", () => {
 		const buf = readFileSync(path.join(root, ".export-test/indexable/en/opengraph-image"));
 		expect(buf.subarray(1, 4).toString()).toBe("PNG");

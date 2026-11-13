@@ -15,6 +15,7 @@ const readyUrl = `http://127.0.0.1:${port}${paths[0]}`;
 const READY_TIMEOUT_MS = 60_000;
 const STOP_TIMEOUT_MS = 10_000;
 const POLL_INTERVAL_MS = 250;
+const PROBE_TIMEOUT_MS = 5_000;
 
 const [command, ...args] = process.argv.slice(2);
 if (!command) {
@@ -27,7 +28,8 @@ if (!existsSync(path.join(root, "apps/web/out/index.html"))) {
 }
 
 // A server left on the port would be audited instead of this build.
-const portInUse = await fetch(readyUrl).then(
+const probe = () => fetch(readyUrl, { signal: AbortSignal.timeout(PROBE_TIMEOUT_MS) });
+const portInUse = await probe().then(
 	() => true,
 	() => false,
 );
@@ -52,6 +54,10 @@ for (const stream of [server.stdout, server.stderr]) {
 }
 server.on("exit", (code) => {
 	serverExit = code ?? 1;
+});
+server.on("error", (error) => {
+	serverLog += `Could not start the server: ${error.message}\n`;
+	serverExit = 1;
 });
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -82,7 +88,7 @@ async function waitUntilReady() {
 	while (Date.now() < deadline) {
 		if (serverExit !== null) throw new Error(`The server exited with code ${serverExit}.`);
 		try {
-			const response = await fetch(readyUrl);
+			const response = await probe();
 			if (response.ok) return;
 		} catch {
 			// Not listening yet.
@@ -92,15 +98,19 @@ async function waitUntilReady() {
 	throw new Error(`${readyUrl} did not answer within ${READY_TIMEOUT_MS / 1000} s.`);
 }
 
+let audit = null;
 const run = () =>
 	new Promise((resolve, reject) => {
-		const child = spawn(command, args, { cwd: root, stdio: "inherit" });
-		child.on("error", reject);
-		child.on("exit", (code) => resolve(code ?? 1));
+		audit = spawn(command, args, { cwd: root, stdio: "inherit" });
+		audit.on("error", reject);
+		audit.on("exit", (code) => resolve(code ?? 1));
 	});
 
 for (const signal of ["SIGINT", "SIGTERM"]) {
-	process.on(signal, () => stopServer().finally(() => process.exit(1)));
+	process.on(signal, () => {
+		audit?.kill(signal);
+		stopServer().finally(() => process.exit(1));
+	});
 }
 
 let exitCode = 1;

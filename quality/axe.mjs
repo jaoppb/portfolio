@@ -32,7 +32,13 @@ async function audit({ path: pagePath, scheme, viewport, label }) {
 			{ name: "prefers-color-scheme", value: scheme },
 			{ name: "prefers-reduced-motion", value: "reduce" },
 		]);
-		await page.goto(`http://127.0.0.1:${port}${pagePath}`, { waitUntil: "load" });
+		const url = `http://127.0.0.1:${port}${pagePath}`;
+		const response = await page.goto(url, { waitUntil: "load" });
+		// An error page would pass axe; the audit is only worth something on the real page.
+		// Revisits of a page answer 304 from the browser cache, so only error statuses fail.
+		const status = response?.status() ?? 0;
+		if (status === 0 || status >= 400)
+			throw new Error(`${url} answered ${status || "nothing"}.`);
 		await page.evaluate(() => document.fonts.ready.then(() => undefined));
 		await page.evaluate(axe.source);
 		const { violations, incomplete } = await page.evaluate(

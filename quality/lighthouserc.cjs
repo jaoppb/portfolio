@@ -12,7 +12,11 @@ const onMedian = (options) => ["error", { ...options, aggregationMethod: "median
 
 const maxBytes = (bytes) => always({ maxNumericValue: bytes });
 
-/** Asserted one by one so a failure names the audit, and so a reweighted category cannot hide one. */
+/**
+ * Asserted one by one so a failure names the audit, and so a reweighted category cannot hide one.
+ * Lighthouse validates what the page has: a missing canonical or robots.txt is "not applicable"
+ * and passes. That they exist is asserted by apps/web/src/app/seo-export.test.ts.
+ */
 const SEO_AUDITS = [
 	"is-crawlable",
 	"canonical",
@@ -49,9 +53,9 @@ module.exports = {
 				"resource-summary:third-party:count": always({ maxNumericValue: 0 }),
 				"cumulative-layout-shift": always({ maxNumericValue: 0.01 }),
 
-				"categories:performance": onMedian({ minScore: 0.5 }),
-				"largest-contentful-paint": onMedian({ maxNumericValue: 4000 }),
-				"total-blocking-time": onMedian({ maxNumericValue: 5000 }),
+				"categories:performance": onMedian({ minScore: 0.9 }),
+				"largest-contentful-paint": onMedian({ maxNumericValue: 2000 }),
+				"total-blocking-time": onMedian({ maxNumericValue: 300 }),
 			},
 		},
 		upload: {

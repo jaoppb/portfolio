@@ -20,11 +20,14 @@ export function buildMatrix(paths) {
 	);
 }
 
+/** The selector of a node as the report prints it (frames and shadow roots joined by spaces). */
+const selectorOf = (node) => node.target.flat().join(" ");
+
 const matches = (exemption, violation, node) =>
-	exemption.rule === violation.id && node.target.includes(exemption.selector);
+	exemption.rule === violation.id && selectorOf(node) === exemption.selector;
 
 /**
- * Removes the nodes covered by an exemption (one rule on one selector) and returns the
+ * Removes the nodes covered by an exemption (one rule on one selector, in every run) and returns the
  * exemptions that matched nothing, so a fixed problem cannot leave a dead exemption behind.
  */
 export function applyExemptions(runs, exemptions) {
@@ -49,8 +52,7 @@ const violationLines = (run) =>
 	run.violations.flatMap((violation) => [
 		`- **${violation.id}** (${violation.impact}) in \`${run.label}\`: [${violation.help}](${violation.helpUrl})`,
 		...violation.nodes.map(
-			(node) =>
-				`  - \`${node.target.join(" ")}\`: ${node.failureSummary.replaceAll("\n", " ")}`,
+			(node) => `  - \`${selectorOf(node)}\`: ${node.failureSummary.replaceAll("\n", " ")}`,
 		),
 	]);
 

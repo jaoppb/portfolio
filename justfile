@@ -72,6 +72,6 @@ check: architecture dead-code tf-check
 
 # Run the Lighthouse and axe quality gate on a fresh indexable build (docs/workflows/quality-gate.md)
 quality:
+    rm -rf .lighthouseci quality/reports
     NEXT_PUBLIC_SITE_URL=https://example.com NEXT_PUBLIC_ROBOTS_NOINDEX= pnpm build
-    pnpm quality:axe
-    pnpm quality:lighthouse; status=$?; pnpm quality:lighthouse:summary; exit $status
+    pnpm quality:axe; axe=$?; pnpm quality:lighthouse; lighthouse=$?; pnpm quality:lighthouse:summary; exit $((axe || lighthouse))
