@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Section } from "@/components/ui/section";
 import { About } from "@/features/about/components/about";
 import { Contact } from "@/features/contact/components/contact";
 import { Experience } from "@/features/experience/components/experience";
@@ -7,9 +6,9 @@ import { Skills } from "@/features/experience/components/skills";
 import { Hero } from "@/features/hero/components/hero";
 import { Projects } from "@/features/portfolio-showcase/components/projects";
 import { PersonJsonLd } from "@/features/seo/components/person-json-ld";
-import { SystemStatus } from "@/features/system-status/components/system-status";
+import { SiteShell } from "@/features/shell/components/site-shell";
 import { siteConfig } from "@/shared/config/site";
-import { getDictionary, isValidLocale } from "@/shared/dictionaries";
+import { getDictionary, resolveLocale } from "@/shared/dictionaries";
 
 export async function generateStaticParams() {
 	return siteConfig.locales.map((lang) => ({ lang }));
@@ -20,8 +19,7 @@ export async function generateMetadata({
 }: {
 	params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-	const { lang } = await params;
-	const locale = isValidLocale(lang) ? lang : siteConfig.defaultLocale;
+	const locale = resolveLocale((await params).lang);
 	const dict = await getDictionary(locale);
 
 	const url = `${siteConfig.url}/${locale}`;
@@ -58,12 +56,11 @@ export async function generateMetadata({
 }
 
 export default async function LocalizedPage({ params }: { params: Promise<{ lang: string }> }) {
-	const { lang } = await params;
-	const locale = isValidLocale(lang) ? lang : siteConfig.defaultLocale;
+	const locale = resolveLocale((await params).lang);
 	const dict = await getDictionary(locale);
 
 	return (
-		<div>
+		<SiteShell locale={locale} dict={dict} homePage>
 			<PersonJsonLd locale={locale} dict={dict} />
 			<Hero hero={dict.hero} />
 			<About about={dict.about} />
@@ -75,9 +72,6 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 			<Experience locale={locale} experience={dict.experience} />
 			<Skills skills={dict.skills} />
 			<Contact locale={locale} contact={dict.contact} newTabLabel={dict.a11y.opensInNewTab} />
-			<Section id="architecture" rule>
-				<SystemStatus status={dict.systemStatus} />
-			</Section>
-		</div>
+		</SiteShell>
 	);
 }

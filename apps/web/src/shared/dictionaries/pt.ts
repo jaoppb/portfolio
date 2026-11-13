@@ -119,18 +119,13 @@ export const ptDictionary: Dictionary = {
 			},
 		},
 	},
-	systemStatus: {
-		title: "Status de Arquitetura e Skeleton",
-		description:
-			"Configuração pura de exportação estática e verificação de fronteiras feature-first.",
-		operational: "Operacional",
-		target: "Destino",
-		targetValue: "Cloudflare Pages (output: export)",
-		framework: "Framework",
-		frameworkValue: "Next.js 16",
-		milestone: "Marco",
-		documentation: "Documentação",
-		sourceSpecs: "Especificações",
+	notFound: {
+		metaTitle: "Página não encontrada — João Pedro",
+		eyebrow: "Erro 404",
+		title: "Página não encontrada",
+		message:
+			"A página que você procura não existe ou foi movida. Confira o endereço ou volte para a página inicial.",
+		home: "Voltar para o início",
 	},
 	footer: {
 		copyright: "© 2026 João Pedro",

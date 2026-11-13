@@ -7,7 +7,7 @@ import { Header } from "./header";
 
 describe("Header", () => {
 	it("renders banner, wordmark link to top, labelled nav and language switcher", async () => {
-		const { container } = render(<Header locale="en" dict={enDictionary} />);
+		const { container } = render(<Header locale="en" dict={enDictionary} homePage />);
 
 		expect(screen.getByRole("banner")).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute("href", "#top");
@@ -31,7 +31,7 @@ describe("Header", () => {
 	});
 
 	it("keeps DOM order wordmark, nav, language switcher", () => {
-		render(<Header locale="en" dict={enDictionary} />);
+		render(<Header locale="en" dict={enDictionary} homePage />);
 		const names = screen.getAllByRole("link").map((l) => l.textContent);
 		expect(names).toEqual([
 			"João Pedro",
@@ -45,7 +45,7 @@ describe("Header", () => {
 	});
 
 	it("renders Portuguese labels", () => {
-		render(<Header locale="pt" dict={ptDictionary} />);
+		render(<Header locale="pt" dict={ptDictionary} homePage />);
 		const nav = screen.getByRole("navigation", { name: "Navegação principal" });
 		expect(within(nav).getByRole("link", { name: "Experiência" })).toHaveAttribute(
 			"href",
@@ -54,12 +54,14 @@ describe("Header", () => {
 		expect(within(nav).getByRole("link", { name: "Contato" })).toBeInTheDocument();
 	});
 
-	it("prefixes hrefs with hrefBase for cross-page use", () => {
-		render(<Header locale="en" dict={enDictionary} hrefBase="/en/" />);
-		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/en/#about");
-		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute(
-			"href",
-			"/en/#top",
-		);
+	it("links to the home page sections and does not claim the current page elsewhere", () => {
+		render(<Header locale="en" dict={enDictionary} />);
+		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/en#about");
+		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute("href", "/en#top");
+
+		const active = screen.getByRole("link", { name: "en" });
+		expect(active).toHaveAttribute("href", "/en");
+		expect(active).toHaveAttribute("aria-current", "true");
+		expect(screen.getByRole("link", { name: "pt" })).not.toHaveAttribute("aria-current");
 	});
 });

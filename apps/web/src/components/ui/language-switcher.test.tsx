@@ -5,7 +5,13 @@ import { LanguageSwitcher } from "./language-switcher";
 
 describe("LanguageSwitcher component", () => {
 	it("renders navigation with links for each configured locale", () => {
-		render(<LanguageSwitcher currentLocale="en" ariaLabel="Language switcher navigation" />);
+		render(
+			<LanguageSwitcher
+				currentLocale="en"
+				current="page"
+				ariaLabel="Language switcher navigation"
+			/>,
+		);
 
 		const nav = screen.getByRole("navigation", {
 			name: "Language switcher navigation",
@@ -25,7 +31,9 @@ describe("LanguageSwitcher component", () => {
 	});
 
 	it("marks Portuguese as active when currentLocale is pt", () => {
-		render(<LanguageSwitcher currentLocale="pt" ariaLabel="Alternador de idioma" />);
+		render(
+			<LanguageSwitcher currentLocale="pt" current="page" ariaLabel="Alternador de idioma" />,
+		);
 
 		const enLink = screen.getByRole("link", { name: "en" });
 		const ptLink = screen.getByRole("link", { name: "pt" });
@@ -34,10 +42,23 @@ describe("LanguageSwitcher component", () => {
 		expect(ptLink).toHaveAttribute("aria-current", "page");
 	});
 
+	it("marks the active locale as current without claiming the page when asked", () => {
+		render(
+			<LanguageSwitcher currentLocale="pt" current="true" ariaLabel="Alternador de idioma" />,
+		);
+
+		expect(screen.getByRole("link", { name: "pt" })).toHaveAttribute("aria-current", "true");
+		expect(screen.getByRole("link", { name: "en" })).not.toHaveAttribute("aria-current");
+	});
+
 	it("passes automated accessibility checks with zero violations", async () => {
 		const { container } = render(
 			<header>
-				<LanguageSwitcher currentLocale="en" ariaLabel="Language switcher navigation" />
+				<LanguageSwitcher
+					currentLocale="en"
+					current="page"
+					ariaLabel="Language switcher navigation"
+				/>
 			</header>,
 		);
 

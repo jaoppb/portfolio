@@ -35,5 +35,7 @@ terraform.rc
 
 # Quality gate reports
 .lighthouseci
-.wrangler
 quality/reports
+
+# Local Cloudflare Pages emulator state (wrangler pages dev)
+.wrangler/

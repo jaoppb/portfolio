@@ -7,11 +7,16 @@ import { navItems } from "../nav-items";
 export interface HeaderProps {
 	locale: Locale;
 	dict: Dictionary;
-	/** Prefix for in-page anchors; empty for same-page links, `/<locale>/` on other pages. */
-	hrefBase?: string;
+	/**
+	 * Set on the home page, where the sections are: its links are same-page anchors. Elsewhere
+	 * they lead to the home page of the locale.
+	 */
+	homePage?: boolean;
 }
 
-export function Header({ locale, dict, hrefBase = "" }: HeaderProps) {
+export function Header({ locale, dict, homePage = false }: HeaderProps) {
+	const hrefBase = homePage ? "" : `/${locale}`;
+
 	return (
 		<header className="border-b border-border">
 			<div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 px-5 py-3 md:px-10 md:py-4 lg:px-16">
@@ -42,6 +47,7 @@ export function Header({ locale, dict, hrefBase = "" }: HeaderProps) {
 
 				<LanguageSwitcher
 					currentLocale={locale}
+					current={homePage ? "page" : "true"}
 					ariaLabel={dict.a11y.languageSwitcher}
 					className="order-2 ml-auto md:order-3 md:ml-0"
 				/>
