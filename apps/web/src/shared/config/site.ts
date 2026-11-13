@@ -7,6 +7,8 @@ export const siteConfig = {
 	name: "João Pedro",
 	url: resolveSiteUrl(process.env),
 	noindex: isNoindex(process.env),
+	/** Public contact address, shown as a plain `mailto:` link in the contact section. */
+	email: "joaopedroperes06@gmail.com",
 	repositoryUrl: "https://github.com/jaoppb/portfolio",
 	/** Public profiles, also used as JSON-LD `sameAs` and reusable by the contact section. */
 	profiles: {

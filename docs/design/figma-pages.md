@@ -186,6 +186,16 @@ Summary for implementers:
 - Section `h2`s bind a different text style per viewport (`text/2xl` or `text/3xl`). Foundations allow weight overrides on text nodes.
 - Missing in foundations, built here as page components (no new tokens): nav link, header and footer bars, section heading, timeline entry, skill group, contact row, project card. #59 (manual theme toggle) will need its own foundations component.
 
+## Implementation deviations (Contact, #42)
+
+The built `Contact` section differs from the frames in the ways below; #67 (Figma content sync) updates the frames, not the code.
+
+- **Download link.** Each CV has a second action, a small text link `Download` (`download` attribute, accessible name "Download CV (PDF, <language>)"), next to its button. The frames draw only the two buttons.
+- **Buttons open the PDF.** The buttons are labelled "View CV (PDF, <language>)" (not "Download CV") and open the file in a new tab, with the visually hidden "(opens in a new tab)" suffix.
+- **Primary and outline follow the page language.** The CV in the page's own language comes first and is the primary button, the other is outline. The frames fix English as primary.
+- **Stacked rows at 320.** Below 360px a `Contact row` stacks its label above the value, because the 72 wide label column otherwise breaks the email address mid-word.
+- **Real content.** The email, GitHub and LinkedIn values and the lead sentence are final (the lead differs from the placeholder in the frames).
+
 ## Verification
 
 - Layout: every visible node of the 14 home frames and 12 404 frames lies inside its parent's bounds (scripted check on bounding boxes, run after the last edit), including the 320 stress frames in pt, Light and Dark. Parent-bounds clipping was checked too, not only the frame edge.

@@ -100,6 +100,25 @@ export const enDictionary: Dictionary = {
 			},
 		],
 	},
+	contact: {
+		title: "Contact",
+		lead: "Open to new challenges and conversations. Email is the best way to reach me.",
+		email: "Email",
+		github: "GitHub",
+		linkedin: "LinkedIn",
+		cv: {
+			en: {
+				view: "View CV (PDF, English)",
+				download: "Download",
+				downloadLabel: "Download CV (PDF, English)",
+			},
+			pt: {
+				view: "View CV (PDF, Portuguese)",
+				download: "Download",
+				downloadLabel: "Download CV (PDF, Portuguese)",
+			},
+		},
+	},
 	systemStatus: {
 		title: "Architecture & Skeleton Status",
 		description: "Pure static export configuration and feature-first boundary verification.",

@@ -100,6 +100,25 @@ export const ptDictionary: Dictionary = {
 			},
 		],
 	},
+	contact: {
+		title: "Contato",
+		lead: "Aberto a novos desafios e conversas. O melhor jeito de falar comigo é por e-mail.",
+		email: "E-mail",
+		github: "GitHub",
+		linkedin: "LinkedIn",
+		cv: {
+			en: {
+				view: "Ver currículo (PDF, inglês)",
+				download: "Baixar",
+				downloadLabel: "Baixar currículo (PDF, inglês)",
+			},
+			pt: {
+				view: "Ver currículo (PDF, português)",
+				download: "Baixar",
+				downloadLabel: "Baixar currículo (PDF, português)",
+			},
+		},
+	},
 	systemStatus: {
 		title: "Status de Arquitetura e Skeleton",
 		description:

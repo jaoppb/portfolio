@@ -1,3 +1,5 @@
+import type { Locale } from "@/shared/config/site";
+
 export interface Dictionary {
 	meta: {
 		title: string;
@@ -51,6 +53,14 @@ export interface Dictionary {
 	skills: {
 		title: string;
 		groups: readonly { label: string; items: readonly string[] }[];
+	};
+	contact: {
+		title: string;
+		lead: string;
+		email: string;
+		github: string;
+		linkedin: string;
+		cv: Record<Locale, { view: string; download: string; downloadLabel: string }>;
 	};
 	systemStatus: {
 		title: string;
