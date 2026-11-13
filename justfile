@@ -69,3 +69,9 @@ tf-bootstrap *args:
 # Verify architecture, dead code, formatting, linting, imports, and Terraform configurations
 check: architecture dead-code tf-check
     pnpm exec biome check .
+
+# Run the Lighthouse and axe quality gate on a fresh indexable build (docs/workflows/quality-gate.md)
+quality:
+    NEXT_PUBLIC_SITE_URL=https://example.com NEXT_PUBLIC_ROBOTS_NOINDEX= pnpm build
+    pnpm quality:axe
+    pnpm quality:lighthouse; status=$?; pnpm quality:lighthouse:summary; exit $status

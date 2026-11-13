@@ -86,6 +86,9 @@ jobs:
       - name: Run Vitest unit & accessibility tests
         run: pnpm test
 
+      - name: Run quality gate script tests
+        run: pnpm test:quality
+
   build:
     name: Static Export Build
     runs-on: ubuntu-latest
@@ -127,9 +130,45 @@ jobs:
             exit 1
           fi
 
+  quality:
+    name: Lighthouse & axe
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # Indexable build on purpose: no NEXT_PUBLIC_ROBOTS_NOINDEX, so the SEO audits
+      # check what production serves after launch (docs/workflows/quality-gate.md).
+      - name: Build site
+        id: build
+        uses: ./.github/actions/build-site
+        env:
+          NEXT_PUBLIC_SITE_URL: https://example.com
+
+      - name: Run axe on both locales
+        run: pnpm quality:axe
+
+      - name: Run Lighthouse CI
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: pnpm quality:lighthouse
+
+      - name: Publish Lighthouse summary
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: pnpm quality:lighthouse:summary
+
+      - name: Upload Lighthouse and axe reports
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: quality-reports
+          path: quality/reports
+          if-no-files-found: warn
+          retention-days: 14
+
   ci:
     name: CI
-    needs: [lint, test, build]
+    needs: [lint, test, build, quality]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -138,9 +177,11 @@ jobs:
           echo "Lint: ${{ needs.lint.result }}"
           echo "Test: ${{ needs.test.result }}"
           echo "Build: ${{ needs.build.result }}"
+          echo "Quality: ${{ needs.quality.result }}"
           if [ "${{ needs.lint.result }}" != "success" ] || \
              [ "${{ needs.test.result }}" != "success" ] || \
-             [ "${{ needs.build.result }}" != "success" ]; then
+             [ "${{ needs.build.result }}" != "success" ] || \
+             [ "${{ needs.quality.result }}" != "success" ]; then
             echo "CI pipeline failed. Please check the individual job results above."
             exit 1
           fi

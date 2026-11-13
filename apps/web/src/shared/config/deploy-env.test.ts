@@ -39,6 +39,12 @@ describe("deploy workflows build env", () => {
 		});
 	});
 
+	it("quality gate audits an indexable build with a site URL (#45)", () => {
+		const env = buildSiteEnv("ci.yml");
+		expect(env).toMatchObject({ NEXT_PUBLIC_SITE_URL: "https://example.com" });
+		expect(env).not.toHaveProperty("NEXT_PUBLIC_ROBOTS_NOINDEX");
+	});
+
 	it("CI build sets a site URL", () => {
 		const ci = readFileSync(path.join(workflows, "ci.yml"), "utf8");
 		expect(ci).toMatch(/NEXT_PUBLIC_SITE_URL: https:\/\/example\.com/);
