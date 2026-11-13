@@ -34,69 +34,61 @@ describe("LocalizedPage", () => {
 		expect(ptMeta.openGraph?.locale).toBe("pt_BR");
 	});
 
-	it(
-		"renders English page content and headings",
-		async () => {
-			const Page = await LocalizedPage({
-				params: Promise.resolve({ lang: "en" }),
-			});
-			const { container } = render(<main>{Page}</main>);
+	it("renders English page content and headings", { timeout: AXE_TIMEOUT }, async () => {
+		const Page = await LocalizedPage({
+			params: Promise.resolve({ lang: "en" }),
+		});
+		const { container } = render(<main>{Page}</main>);
 
-			expect(
-				screen.getByRole("heading", {
-					level: 1,
-					name: /full stack engineer focused on architecture and cloud/i,
-				}),
-			).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				level: 1,
+				name: /full stack engineer focused on architecture and cloud/i,
+			}),
+		).toBeInTheDocument();
 
-			expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-			expect(screen.getByRole("heading", { level: 2, name: "About" })).toBeInTheDocument();
-			expect(container.querySelector("#about")).not.toBeNull();
-			expect(container.querySelector("#hero")).not.toBeNull();
-			expect(container.querySelector("#experience")).not.toBeNull();
-			expect(container.querySelector("#skills")).not.toBeNull();
+		expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+		expect(screen.getByRole("heading", { level: 2, name: "About" })).toBeInTheDocument();
+		expect(container.querySelector("#about")).not.toBeNull();
+		expect(container.querySelector("#hero")).not.toBeNull();
+		expect(container.querySelector("#experience")).not.toBeNull();
+		expect(container.querySelector("#skills")).not.toBeNull();
 
-			expect(
-				screen.getByRole("heading", {
-					level: 2,
-					name: /architecture & skeleton status/i,
-				}),
-			).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				level: 2,
+				name: /architecture & skeleton status/i,
+			}),
+		).toBeInTheDocument();
 
-			const results = await axe(container);
-			expect(results).toHaveNoViolations();
-		},
-		AXE_TIMEOUT,
-	);
+		const results = await axe(container);
+		expect(results).toHaveNoViolations();
+	});
 
-	it(
-		"renders Portuguese page content and headings",
-		async () => {
-			const Page = await LocalizedPage({
-				params: Promise.resolve({ lang: "pt" }),
-			});
-			const { container } = render(<main>{Page}</main>);
+	it("renders Portuguese page content and headings", { timeout: AXE_TIMEOUT }, async () => {
+		const Page = await LocalizedPage({
+			params: Promise.resolve({ lang: "pt" }),
+		});
+		const { container } = render(<main>{Page}</main>);
 
-			expect(
-				screen.getByRole("heading", {
-					level: 1,
-					name: /engenheiro full stack com foco em arquitetura e cloud/i,
-				}),
-			).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				level: 1,
+				name: /engenheiro full stack com foco em arquitetura e cloud/i,
+			}),
+		).toBeInTheDocument();
 
-			expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-			expect(screen.getByRole("heading", { level: 2, name: "Sobre" })).toBeInTheDocument();
+		expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+		expect(screen.getByRole("heading", { level: 2, name: "Sobre" })).toBeInTheDocument();
 
-			expect(
-				screen.getByRole("heading", {
-					level: 2,
-					name: /status de arquitetura e skeleton/i,
-				}),
-			).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				level: 2,
+				name: /status de arquitetura e skeleton/i,
+			}),
+		).toBeInTheDocument();
 
-			const results = await axe(container);
-			expect(results).toHaveNoViolations();
-		},
-		AXE_TIMEOUT,
-	);
+		const results = await axe(container);
+		expect(results).toHaveNoViolations();
+	});
 });

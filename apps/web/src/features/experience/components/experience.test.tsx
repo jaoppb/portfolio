@@ -9,7 +9,7 @@ describe("Experience", () => {
 	it.each([
 		["en", enDictionary],
 		["pt", ptDictionary],
-	] as const)("renders a newest-first list of entries (%s)", async (locale, dict) => {
+	] as const)("renders the entries in dictionary order (%s)", async (locale, dict) => {
 		const { container } = render(<Experience locale={locale} experience={dict.experience} />);
 
 		expect(

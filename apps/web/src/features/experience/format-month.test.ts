@@ -7,13 +7,15 @@ describe("formatMonth", () => {
 		expect(formatMonth("2025-10", "pt")).toMatch(/^out\.? (de )?2025$/);
 	});
 
+	// Relies on the default forks pool, where TZ reaches ICU.
 	it("does not shift to the previous month in negative UTC offsets", () => {
 		const original = process.env.TZ;
 		process.env.TZ = "America/Sao_Paulo";
 		try {
 			expect(formatMonth("2026-01", "en")).toBe("Jan 2026");
 		} finally {
-			process.env.TZ = original;
+			if (original === undefined) delete process.env.TZ;
+			else process.env.TZ = original;
 		}
 	});
 });
