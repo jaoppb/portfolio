@@ -8,14 +8,14 @@ export interface LanguageSwitcherProps {
 	 * How the active locale is announced: `page` where its link is the page being viewed (the
 	 * home page), `true` on any other page, where it only marks the current language.
 	 */
-	current?: "page" | "true";
+	current: "page" | "true";
 	ariaLabel: string;
 	className?: string;
 }
 
 export function LanguageSwitcher({
 	currentLocale,
-	current = "page",
+	current,
 	ariaLabel,
 	className,
 }: LanguageSwitcherProps) {

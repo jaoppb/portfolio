@@ -14,8 +14,9 @@ export async function generateStaticParams() {
 }
 
 /**
- * Document only. Each page brings the shell: the home page renders it itself, because moving it
- * into a route group would detach it from `opengraph-image.tsx` (or rename that image's URL);
+ * Document only. Each page brings the shell: the home page renders it itself, because in a
+ * route group its own `openGraph` metadata would replace the image of `opengraph-image.tsx`
+ * (and moving the image along renames its URL);
  * the 404 gets it from the `(not-found)` layout.
  */
 export default async function LocalizedLayout({
