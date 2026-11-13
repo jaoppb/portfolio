@@ -32,3 +32,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 .export-test
+
+# Quality gate reports
+.lighthouseci
+.wrangler
+quality/reports
