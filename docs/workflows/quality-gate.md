@@ -45,17 +45,21 @@ Budgets that must hold on **every** run, because they do not depend on the speed
 | Third-party requests | 0 | 0 | none |
 | Cumulative Layout Shift | 0.01 | 0 | 0.01 |
 
+Lighthouse validates the SEO tags that the page has: a page with no canonical link, no hreflang links or no `robots.txt` counts as "not applicable" and passes. That those exist in the export is asserted by `apps/web/src/app/seo-export.test.ts`, in the `Test & Typecheck` job.
+
 The byte limits leave room for a small change and stop a new dependency or font. CSS and HTML are small and grow with every section, so they have more room in proportion.
 
 Budgets judged on the **median** of the 3 runs, because timing varies between runs on a shared runner:
 
-| Budget | Limit | Measured on the runner (median) | Headroom |
+| Budget | Limit | Measured on the runner (median of each CI run) | Headroom |
 |---|---|---|---|
-| Performance score | PENDING | PENDING | PENDING |
-| Largest Contentful Paint | PENDING | PENDING | PENDING |
-| Total Blocking Time | PENDING | PENDING | PENDING |
+| Performance score | 90 | 99 to 100 | 9 points |
+| Largest Contentful Paint | 2 000 ms | 768 to 785 ms | 2.5x |
+| Total Blocking Time | 300 ms | 30 to 95 ms | 3x |
 
-Measured on `main` at `8e52337` (2026-11-13), Lighthouse 13.6.0. Transferred sizes are with the Brotli compression of `wrangler pages dev`.
+The timing headroom is wide on purpose. Between two CI runs of the same commit the runner's CPU speed differed by a factor of two (Lighthouse benchmark index 4 300 and 2 300) and TBT followed it, and one single run out of twelve had an LCP of 2 504 ms. The median of 3 absorbs one such outlier per page. These limits are there to catch a real regression, such as a render-blocking resource or heavy client-side JavaScript, and the byte budgets catch the small ones exactly.
+
+Measured on `main` at `8e52337` (2026-11-13) with Lighthouse 13.6.0 and Chrome 157 on `ubuntu-latest`. Transferred sizes are with the Brotli compression of `wrangler pages dev`.
 
 ## 4. Reading a failure
 
@@ -69,7 +73,7 @@ Measured on `main` at `8e52337` (2026-11-13), Lighthouse 13.6.0. Transferred siz
 just quality
 ```
 
-It builds the indexable export, then runs both audits and prints the same summaries. Reports go to `quality/reports/` (ignored by git). It needs Chrome: either an installed Google Chrome, or `CHROME_PATH` pointing to a Chrome or Chromium binary. Timing budgets are calibrated for the GitHub runner, so the performance score, LCP and TBT can differ on your machine; everything else is identical.
+It deletes the previous reports, builds the indexable export, then runs both audits and prints the same summaries. Reports go to `quality/reports/` (ignored by git). It needs Chrome: either an installed Google Chrome, or `CHROME_PATH` pointing to a Chrome or Chromium binary. Timing budgets are calibrated for the GitHub runner, so the performance score, LCP and TBT can differ on your machine; everything else is identical.
 
 `pnpm test:quality` runs the unit tests of the report helpers.
 
@@ -87,7 +91,7 @@ The rule is to fix the problem. An exemption is for a real finding that is too l
 
 1. Open a follow-up issue for the fix.
 2. Exempt the narrowest thing possible:
-   - **axe:** one rule on one element. Add an entry to `quality/axe-exemptions.json`. `selector` is the element's selector exactly as the report prints it:
+   - **axe:** one rule on one element. Add an entry to `quality/axe-exemptions.json`. `selector` is the element's selector exactly as the report prints it. The exemption applies to that rule on that element in all 8 runs:
 
      ```json
      [{ "rule": "color-contrast", "selector": ".tag", "issue": 123, "reason": "Tag color fails AA in dark mode" }]
@@ -108,4 +112,6 @@ The rule is to fix the problem. An exemption is for a real finding that is too l
 
 `@lhci/cli` (which pins Lighthouse), `axe-core`, `puppeteer-core` and `wrangler` are exact versions in the root `package.json`, locked by `pnpm-lock.yaml`. `puppeteer-core` downloads no browser: the gate uses the Chrome preinstalled on the GitHub runner. That Chrome changes with the runner image, so a score can move without a change in this repository. If that happens, re-baseline (section 6).
 
-The job adds about PENDING minutes to CI and runs in parallel with the other jobs.
+## 9. CI time
+
+The job takes about 2 minutes (build 15 s, axe 20 s, Lighthouse 65 s) and runs in parallel with the other jobs. The slowest other job takes about 1 minute, so the `CI` check finishes about 1 minute later than before.
