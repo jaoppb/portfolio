@@ -1,3 +1,5 @@
+import type { Locale } from "@/shared/config/site";
+
 export interface Dictionary {
 	meta: {
 		title: string;
@@ -58,7 +60,7 @@ export interface Dictionary {
 		email: string;
 		github: string;
 		linkedin: string;
-		cv: Record<"en" | "pt", { view: string; download: string; downloadLabel: string }>;
+		cv: Record<Locale, { view: string; download: string; downloadLabel: string }>;
 	};
 	systemStatus: {
 		title: string;

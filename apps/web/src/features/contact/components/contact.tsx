@@ -10,8 +10,6 @@ export interface ContactProps {
 	newTabLabel: string;
 }
 
-const cvLocales = ["en", "pt"] as const;
-
 /** Visible text of a profile link: the URL without its scheme. */
 function displayUrl(url: string) {
 	return url.replace(/^https?:\/\//, "");
@@ -19,7 +17,7 @@ function displayUrl(url: string) {
 
 export function Contact({ locale, contact, newTabLabel }: ContactProps) {
 	// The page's own language comes first and is the primary action.
-	const cvs = [locale, ...cvLocales.filter((cv) => cv !== locale)];
+	const cvs = [locale, ...siteConfig.locales.filter((cv) => cv !== locale)];
 
 	return (
 		<Section id="contact" labelledBy="contact-title" rule>
