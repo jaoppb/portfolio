@@ -13,7 +13,7 @@ export default async function NotFoundLayout({
 	const locale = resolveLocale((await params).lang);
 
 	return (
-		<SiteShell locale={locale} dict={await getDictionary(locale)} hrefBase={`/${locale}`}>
+		<SiteShell locale={locale} dict={await getDictionary(locale)}>
 			{children}
 		</SiteShell>
 	);

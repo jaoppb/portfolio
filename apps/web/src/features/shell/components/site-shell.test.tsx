@@ -31,18 +31,18 @@ describe("SiteShell", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("uses same-page anchors by default", () => {
+	it("uses same-page anchors on the home page", () => {
 		render(
-			<SiteShell locale="en" dict={enDictionary}>
+			<SiteShell locale="en" dict={enDictionary} homePage>
 				<p>Home</p>
 			</SiteShell>,
 		);
 		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "#about");
 	});
 
-	it("renders localized labels and cross-page links when given an hrefBase", () => {
+	it("renders localized labels and links to the locale home page elsewhere", () => {
 		render(
-			<SiteShell locale="pt" dict={ptDictionary} hrefBase="/pt">
+			<SiteShell locale="pt" dict={ptDictionary}>
 				<p>Conteúdo</p>
 			</SiteShell>,
 		);

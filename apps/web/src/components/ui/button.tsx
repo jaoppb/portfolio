@@ -29,7 +29,6 @@ export function buttonStyles({
 	return cn(
 		"inline-flex items-center justify-center font-medium rounded-sm select-none",
 		"transition-colors duration-(--duration-base) ease-standard focus-ring",
-		"disabled:pointer-events-none disabled:opacity-50",
 		variantStyles[variant],
 		sizeStyles[size],
 		className,

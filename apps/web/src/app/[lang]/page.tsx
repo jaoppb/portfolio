@@ -60,7 +60,7 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 	const dict = await getDictionary(locale);
 
 	return (
-		<SiteShell locale={locale} dict={dict}>
+		<SiteShell locale={locale} dict={dict} homePage>
 			<PersonJsonLd locale={locale} dict={dict} />
 			<Hero hero={dict.hero} />
 			<About about={dict.about} />

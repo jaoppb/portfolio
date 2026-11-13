@@ -1,3 +1,4 @@
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import LocalizedLayout, { generateStaticParams } from "./layout";
 
@@ -12,12 +13,14 @@ describe("LocalizedLayout", () => {
 		["pt", "pt"],
 		["de", "en"],
 	])("renders the document for /%s in language %s", async (lang, expected) => {
-		const document = await LocalizedLayout({
-			params: Promise.resolve({ lang }),
-			children: <p>Child content</p>,
-		});
+		const html = renderToStaticMarkup(
+			await LocalizedLayout({
+				params: Promise.resolve({ lang }),
+				children: <p>Child content</p>,
+			}),
+		);
 
-		expect(document.props.locale).toBe(expected);
-		expect(document.props.children).toEqual(<p>Child content</p>);
+		expect(html).toMatch(new RegExp(`^<html lang="${expected}"`));
+		expect(html).toContain("<p>Child content</p>");
 	});
 });

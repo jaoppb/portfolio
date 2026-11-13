@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type * as React from "react";
-import "@/app/globals.css";
 import { LocaleDocument } from "@/app/locale-document";
 import { robotsMetadata, siteConfig } from "@/shared/config/site";
 import { resolveLocale } from "@/shared/dictionaries";

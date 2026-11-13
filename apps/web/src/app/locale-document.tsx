@@ -1,9 +1,10 @@
 import type * as React from "react";
 import { fontMono, fontSans } from "@/app/fonts";
+import "@/app/globals.css";
 import type { Locale } from "@/shared/config/site";
 import { cn } from "@/shared/utils/cn";
 
-/** The `<html>` and `<body>` of every localized page; import `globals.css` next to it. */
+/** The `<html>` and `<body>` of every localized page, with the global stylesheet. */
 export function LocaleDocument({
 	locale,
 	children,

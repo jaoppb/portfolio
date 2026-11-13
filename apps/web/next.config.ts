@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
 	},
 	reactStrictMode: true,
 	experimental: {
-		// Lets `app/global-not-found.tsx` become the root `404.html` (verified on Next 16.4.3).
+		// Lets `app/global-not-found.tsx` become the root `404.html`; `seo-export.test.ts` guards it.
 		// Without the flag Next ignores that file and exports its built-in English 404 instead;
 		// `/en/404.html` and `/pt/404.html` do not depend on it.
 		globalNotFound: true,

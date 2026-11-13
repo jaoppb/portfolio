@@ -102,8 +102,17 @@ describe("static export: indexable (production)", () => {
 		expect(html).toMatch(/<h1[^>]*>Page not found<\/h1>/);
 		expect(html).toMatch(/<a[^>]*href="\/en"[^>]*>Back to home<\/a>/);
 		expect(html).toContain('href="/en#about"');
-		expect(html).toContain('<meta name="robots" content="noindex"/>');
 	});
+
+	it.each(["404.html", "_not-found.html"])(
+		"%s (from Next) is noindex and has no canonical or hreflang",
+		(file) => {
+			const html = out.read(file);
+			expect(html).toContain('<meta name="robots" content="noindex"/>');
+			expect(html).not.toContain('rel="canonical"');
+			expect(html).not.toContain('rel="alternate"');
+		},
+	);
 
 	it.each(["en/404.html", "pt/404.html"])(
 		"%s is noindex on production and has no canonical or hreflang",

@@ -8,13 +8,15 @@ export interface HeaderProps {
 	locale: Locale;
 	dict: Dictionary;
 	/**
-	 * Prefix for the section anchors: empty on the home page (same-page links), the home page
-	 * path (`/<locale>`) on any other page.
+	 * Set on the home page, where the sections are: its links are same-page anchors. Elsewhere
+	 * they lead to the home page of the locale.
 	 */
-	hrefBase?: string;
+	homePage?: boolean;
 }
 
-export function Header({ locale, dict, hrefBase = "" }: HeaderProps) {
+export function Header({ locale, dict, homePage = false }: HeaderProps) {
+	const hrefBase = homePage ? "" : `/${locale}`;
+
 	return (
 		<header className="border-b border-border">
 			<div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 px-5 py-3 md:px-10 md:py-4 lg:px-16">
@@ -45,7 +47,7 @@ export function Header({ locale, dict, hrefBase = "" }: HeaderProps) {
 
 				<LanguageSwitcher
 					currentLocale={locale}
-					current={hrefBase === "" ? "page" : "true"}
+					current={homePage ? "page" : "true"}
 					ariaLabel={dict.a11y.languageSwitcher}
 					className="order-2 ml-auto md:order-3 md:ml-0"
 				/>

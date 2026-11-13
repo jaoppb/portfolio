@@ -90,7 +90,7 @@ Roles (hover fills must be perceptibly different from the default fill, not WCAG
 
 Mapping to the current `globals.css` tokens: `background`, `foreground`, `muted`, `muted-bg`, `border`, `accent`, `accent-foreground` keep their names; **values change** (the palette is redesigned). New: `surface`, `border-strong`, `focus-ring`, `destructive`.
 
-Applied in code by #37 (kept here as the record of what changed in the existing components): the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with `ring-offset-2` in `color/background` on every control, including the language switcher and skip link, which currently have no offset (it is essential on accent fills, where the ring against the fill is only about 1.4:1); `button.test.tsx` asserts `border-border` on the outline button and must be updated; the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px); `system-status.tsx` used `bg-emerald-500`, a colour with no role in this palette (no `success` role is defined, to keep a single accent): it now renders the status as an accent `Tag`.
+Applied in code by #37 (kept here as the record of what changed in the existing components): the outline button border moves from `border-border` (decorative, 1.21:1) to `border-strong`; focus rings move from `ring-foreground` to `ring-focus-ring` with `ring-offset-2` in `color/background` on every control, including the language switcher and skip link, which currently have no offset (it is essential on accent fills, where the ring against the fill is only about 1.4:1); `button.test.tsx` asserts `border-border` on the outline button and must be updated; the language switcher's active weight moves from `font-semibold` to Medium and its paddings (`px-1.5 py-0.5`) to `space/2` and `space/1`; transitions move from `duration-150 ease-out` to `duration/base` with the easing below; the skip link keeps `rounded-md` (6px); `system-status.tsx` used `bg-emerald-500`, a colour with no role in this palette (no `success` role is defined, to keep a single accent): it now renders the status as an accent `Tag`. (#44 later removed `system-status.tsx`, `tag.tsx` and the `<Button>` element with `button.test.tsx`; `buttonStyles` remains and is applied to links.)
 
 ### Type
 
@@ -138,7 +138,7 @@ All bind fills, strokes, padding and radius to variables and text to text styles
 | `Button` | `Variant` = primary / secondary / outline / ghost x `State` = default / hover / focus / disabled (size md) | `components/ui/button.tsx` |
 | `Button / Size` | `Size` = sm (32px) / md (40px) / lg (48px), primary | `components/ui/button.tsx` |
 | `Link` | `State` = default / hover / focus | new |
-| `Tag` | `Tone` = neutral / accent / destructive (outline, mono, no pill; critical status and git tags only) | new |
+| `Tag` | `Tone` = neutral / accent / destructive (outline, mono, no pill; critical status and git tags only) | none: Figma only since #44 removed `tag.tsx` with its last user |
 | `Card` | `State` = default / hover | new |
 | `Language switcher` | `Active` = EN / PT | `components/ui/language-switcher.tsx` |
 | `Skip link` | `State` = Focused (hidden until keyboard focus) | `components/ui/skip-link.tsx` |
