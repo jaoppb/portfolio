@@ -119,18 +119,6 @@ export const enDictionary: Dictionary = {
 			},
 		},
 	},
-	systemStatus: {
-		title: "Architecture & Skeleton Status",
-		description: "Pure static export configuration and feature-first boundary verification.",
-		operational: "Operational",
-		target: "Target",
-		targetValue: "Cloudflare Pages (output: export)",
-		framework: "Framework",
-		frameworkValue: "Next.js 16",
-		milestone: "Milestone",
-		documentation: "Documentation",
-		sourceSpecs: "Source Specs",
-	},
 	footer: {
 		copyright: "© 2026 João Pedro",
 		sourceCode: "Source code",

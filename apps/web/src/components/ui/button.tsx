@@ -1,12 +1,13 @@
-import type * as React from "react";
 import { cn } from "@/shared/utils/cn";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+/** Options of the Figma `Button` component; applied to links, since every action navigates. */
+interface ButtonStyleOptions {
 	variant?: "primary" | "secondary" | "outline" | "ghost";
 	size?: "sm" | "md" | "lg";
+	className?: string;
 }
 
-const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
+const variantStyles: Record<NonNullable<ButtonStyleOptions["variant"]>, string> = {
 	primary: "bg-accent text-accent-foreground hover:opacity-90 active:opacity-100",
 	secondary: "bg-muted-bg text-foreground hover:bg-border active:opacity-90",
 	outline:
@@ -14,7 +15,7 @@ const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
 	ghost: "bg-transparent text-foreground hover:bg-muted-bg active:opacity-90",
 };
 
-const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
+const sizeStyles: Record<NonNullable<ButtonStyleOptions["size"]>, string> = {
 	sm: "h-8 px-3 text-xs",
 	md: "h-10 px-4 text-sm",
 	lg: "h-12 px-6 text-base",
@@ -24,7 +25,7 @@ export function buttonStyles({
 	variant = "primary",
 	size = "md",
 	className,
-}: Pick<ButtonProps, "variant" | "size" | "className"> = {}) {
+}: ButtonStyleOptions = {}) {
 	return cn(
 		"inline-flex items-center justify-center font-medium rounded-sm select-none",
 		"transition-colors duration-(--duration-base) ease-standard focus-ring",
@@ -32,26 +33,5 @@ export function buttonStyles({
 		variantStyles[variant],
 		sizeStyles[size],
 		className,
-	);
-}
-
-export function Button({
-	children,
-	className,
-	variant,
-	size,
-	disabled,
-	type = "button",
-	...props
-}: ButtonProps) {
-	return (
-		<button
-			type={type}
-			disabled={disabled}
-			className={buttonStyles({ variant, size, className })}
-			{...props}
-		>
-			{children}
-		</button>
 	);
 }

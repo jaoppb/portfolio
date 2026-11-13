@@ -62,18 +62,6 @@ export interface Dictionary {
 		linkedin: string;
 		cv: Record<Locale, { view: string; download: string; downloadLabel: string }>;
 	};
-	systemStatus: {
-		title: string;
-		description: string;
-		operational: string;
-		target: string;
-		targetValue: string;
-		framework: string;
-		frameworkValue: string;
-		milestone: string;
-		documentation: string;
-		sourceSpecs: string;
-	};
 	footer: {
 		copyright: string;
 		sourceCode: string;

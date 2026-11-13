@@ -119,19 +119,6 @@ export const ptDictionary: Dictionary = {
 			},
 		},
 	},
-	systemStatus: {
-		title: "Status de Arquitetura e Skeleton",
-		description:
-			"Configuração pura de exportação estática e verificação de fronteiras feature-first.",
-		operational: "Operacional",
-		target: "Destino",
-		targetValue: "Cloudflare Pages (output: export)",
-		framework: "Framework",
-		frameworkValue: "Next.js 16",
-		milestone: "Marco",
-		documentation: "Documentação",
-		sourceSpecs: "Especificações",
-	},
 	footer: {
 		copyright: "© 2026 João Pedro",
 		sourceCode: "Código-fonte",

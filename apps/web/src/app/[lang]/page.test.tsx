@@ -54,13 +54,6 @@ describe("LocalizedPage", () => {
 		expect(container.querySelector("#experience")).not.toBeNull();
 		expect(container.querySelector("#skills")).not.toBeNull();
 
-		expect(
-			screen.getByRole("heading", {
-				level: 2,
-				name: /architecture & skeleton status/i,
-			}),
-		).toBeInTheDocument();
-
 		const results = await axe(container);
 		expect(results).toHaveNoViolations();
 	});
@@ -80,13 +73,6 @@ describe("LocalizedPage", () => {
 
 		expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
 		expect(screen.getByRole("heading", { level: 2, name: "Sobre" })).toBeInTheDocument();
-
-		expect(
-			screen.getByRole("heading", {
-				level: 2,
-				name: /status de arquitetura e skeleton/i,
-			}),
-		).toBeInTheDocument();
 
 		const results = await axe(container);
 		expect(results).toHaveNoViolations();

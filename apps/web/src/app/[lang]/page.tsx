@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Section } from "@/components/ui/section";
 import { About } from "@/features/about/components/about";
 import { Contact } from "@/features/contact/components/contact";
 import { Experience } from "@/features/experience/components/experience";
@@ -7,7 +6,6 @@ import { Skills } from "@/features/experience/components/skills";
 import { Hero } from "@/features/hero/components/hero";
 import { Projects } from "@/features/portfolio-showcase/components/projects";
 import { PersonJsonLd } from "@/features/seo/components/person-json-ld";
-import { SystemStatus } from "@/features/system-status/components/system-status";
 import { siteConfig } from "@/shared/config/site";
 import { getDictionary, isValidLocale } from "@/shared/dictionaries";
 
@@ -75,9 +73,6 @@ export default async function LocalizedPage({ params }: { params: Promise<{ lang
 			<Experience locale={locale} experience={dict.experience} />
 			<Skills skills={dict.skills} />
 			<Contact locale={locale} contact={dict.contact} newTabLabel={dict.a11y.opensInNewTab} />
-			<Section id="architecture" rule>
-				<SystemStatus status={dict.systemStatus} />
-			</Section>
 		</div>
 	);
 }
