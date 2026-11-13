@@ -168,10 +168,24 @@ Summary for implementers:
 - **Reduced motion:** the `Motion` `Reduced` mode (all durations 0), and in-page anchors scroll instantly. There is no other fallback.
 - **Tabular figures** on years, date ranges and percentages (not representable in Figma text styles).
 
-## 404 notes (for #44)
+## 404 notes (#44)
 
-- The 404 reuses the shell, but its nav and footer links must be cross-page (for example `/<locale>/#about`), not same-page anchors. `Back to top` is shown for shell parity; #44 may drop it on a one-screen page.
-- Both en and pt 404 frames are designed. How a static export picks the locale for the 404 page is an open question for #44 (the design does not decide it).
+Implemented by #44. The frames need no change apart from the notes below; #67 syncs Figma to the code, not the other way round.
+
+- **Copy (final, in the dictionaries).** The strings are the frames' strings, verbatim:
+
+  | Element | en | pt |
+  |---|---|---|
+  | Eyebrow | `Error 404` | `Erro 404` |
+  | `h1` | `Page not found` | `Página não encontrada` |
+  | Message | `The page you are looking for does not exist or has moved. Check the address, or go back to the home page.` | `A página que você procura não existe ou foi movida. Confira o endereço ou volte para a página inicial.` |
+  | Button | `Back to home` | `Voltar para o início` |
+  | Tab title (not drawn) | `Page not found — João Pedro` | `Página não encontrada — João Pedro` |
+
+- **Locale.** The export has one 404 per locale (`/en/404.html`, `/pt/404.html`) and a root `404.html` in English. Cloudflare Pages answers an unknown path with the nearest `404.html` up the directory tree, so `/pt/...` gets the pt frame, and `/en/...` and every other path get the en frame. Nothing is decided in the browser.
+- **Shell links.** On the 404 the wordmark and nav links go to the home page of that locale (`/<locale>#about`), and the button to `/<locale>`. The language switcher links to the two home pages; its active locale is marked as the current language, not the current page (`aria-current="true"`).
+- **`Back to top`** is kept, as drawn, and is a same-page link on every page.
+- **Typography.** The `h1` uses the `text/4xl` and `text/5xl` styles with their own tracking (-2.5% and -3%), as in the frames.
 
 ## Content notes
 

@@ -54,12 +54,14 @@ describe("Header", () => {
 		expect(within(nav).getByRole("link", { name: "Contato" })).toBeInTheDocument();
 	});
 
-	it("prefixes hrefs with hrefBase for cross-page use", () => {
-		render(<Header locale="en" dict={enDictionary} hrefBase="/en/" />);
-		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/en/#about");
-		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute(
-			"href",
-			"/en/#top",
-		);
+	it("links to the home page sections and does not claim the current page with an hrefBase", () => {
+		render(<Header locale="en" dict={enDictionary} hrefBase="/en" />);
+		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/en#about");
+		expect(screen.getByRole("link", { name: "João Pedro" })).toHaveAttribute("href", "/en#top");
+
+		const active = screen.getByRole("link", { name: "en" });
+		expect(active).toHaveAttribute("href", "/en");
+		expect(active).toHaveAttribute("aria-current", "true");
+		expect(screen.getByRole("link", { name: "pt" })).not.toHaveAttribute("aria-current");
 	});
 });

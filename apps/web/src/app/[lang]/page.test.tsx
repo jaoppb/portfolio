@@ -38,7 +38,7 @@ describe("LocalizedPage", () => {
 		const Page = await LocalizedPage({
 			params: Promise.resolve({ lang: "en" }),
 		});
-		const { container } = render(<main>{Page}</main>);
+		const { container } = render(Page);
 
 		expect(
 			screen.getByRole("heading", {
@@ -53,6 +53,9 @@ describe("LocalizedPage", () => {
 		expect(container.querySelector("#hero")).not.toBeNull();
 		expect(container.querySelector("#experience")).not.toBeNull();
 		expect(container.querySelector("#skills")).not.toBeNull();
+		expect(screen.getByRole("main")).toContainElement(container.querySelector("#hero"));
+		expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "#about");
+		expect(screen.getByRole("link", { name: "en" })).toHaveAttribute("aria-current", "page");
 
 		const results = await axe(container);
 		expect(results).toHaveNoViolations();
@@ -62,7 +65,7 @@ describe("LocalizedPage", () => {
 		const Page = await LocalizedPage({
 			params: Promise.resolve({ lang: "pt" }),
 		});
-		const { container } = render(<main>{Page}</main>);
+		const { container } = render(Page);
 
 		expect(
 			screen.getByRole("heading", {

@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import type * as React from "react";
-import { fontMono, fontSans } from "@/app/fonts";
 import "@/app/globals.css";
-import { SkipLink } from "@/components/ui/skip-link";
-import { Footer } from "@/features/shell/components/footer";
-import { Header } from "@/features/shell/components/header";
+import { LocaleDocument } from "@/app/locale-document";
 import { robotsMetadata, siteConfig } from "@/shared/config/site";
-import { getDictionary, isValidLocale } from "@/shared/dictionaries";
-import { cn } from "@/shared/utils/cn";
+import { resolveLocale } from "@/shared/dictionaries";
 
 export const metadata: Metadata = {
 	metadataBase: new URL(siteConfig.url),
@@ -18,6 +14,11 @@ export async function generateStaticParams() {
 	return siteConfig.locales.map((lang) => ({ lang }));
 }
 
+/**
+ * Document only. Each page brings the shell: the home page renders it itself, because moving it
+ * into a route group would detach it from `opengraph-image.tsx` (or rename that image's URL);
+ * the 404 gets it from the `(not-found)` layout.
+ */
 export default async function LocalizedLayout({
 	children,
 	params,
@@ -25,28 +26,5 @@ export default async function LocalizedLayout({
 	children: React.ReactNode;
 	params: Promise<{ lang: string }>;
 }) {
-	const { lang } = await params;
-	const locale = isValidLocale(lang) ? lang : siteConfig.defaultLocale;
-	const dict = await getDictionary(locale);
-
-	return (
-		<html lang={locale} className={cn(fontSans.variable, fontMono.variable)}>
-			<body className="min-h-screen bg-background text-foreground antialiased">
-				<div id="top" className="flex min-h-screen flex-col">
-					<SkipLink href="#main-content">{dict.a11y.skipLink}</SkipLink>
-					<Header locale={locale} dict={dict} />
-
-					<main
-						id="main-content"
-						tabIndex={-1}
-						className="mx-auto w-full max-w-7xl flex-1 px-5 outline-none md:px-10 lg:px-16"
-					>
-						{children}
-					</main>
-
-					<Footer dict={dict} />
-				</div>
-			</body>
-		</html>
-	);
+	return <LocaleDocument locale={resolveLocale((await params).lang)}>{children}</LocaleDocument>;
 }

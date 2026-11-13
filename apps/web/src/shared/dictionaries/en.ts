@@ -119,6 +119,14 @@ export const enDictionary: Dictionary = {
 			},
 		},
 	},
+	notFound: {
+		metaTitle: "Page not found — João Pedro",
+		eyebrow: "Error 404",
+		title: "Page not found",
+		message:
+			"The page you are looking for does not exist or has moved. Check the address, or go back to the home page.",
+		home: "Back to home",
+	},
 	footer: {
 		copyright: "© 2026 João Pedro",
 		sourceCode: "Source code",

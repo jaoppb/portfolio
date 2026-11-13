@@ -4,11 +4,21 @@ import { cn } from "@/shared/utils/cn";
 
 export interface LanguageSwitcherProps {
 	currentLocale: Locale;
+	/**
+	 * How the active locale is announced: `page` where its link is the page being viewed (the
+	 * home page), `true` on any other page, where it only marks the current language.
+	 */
+	current?: "page" | "true";
 	ariaLabel: string;
 	className?: string;
 }
 
-export function LanguageSwitcher({ currentLocale, ariaLabel, className }: LanguageSwitcherProps) {
+export function LanguageSwitcher({
+	currentLocale,
+	current = "page",
+	ariaLabel,
+	className,
+}: LanguageSwitcherProps) {
 	return (
 		<nav
 			aria-label={ariaLabel}
@@ -26,7 +36,7 @@ export function LanguageSwitcher({ currentLocale, ariaLabel, className }: Langua
 						<Link
 							href={`/${locale}`}
 							hrefLang={locale}
-							aria-current={isActive ? "page" : undefined}
+							aria-current={isActive ? current : undefined}
 							className={cn(
 								"rounded-sm px-2 py-1 uppercase transition-colors duration-(--duration-base) ease-standard focus-ring",
 								isActive

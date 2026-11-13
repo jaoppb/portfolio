@@ -119,6 +119,14 @@ export const ptDictionary: Dictionary = {
 			},
 		},
 	},
+	notFound: {
+		metaTitle: "Página não encontrada — João Pedro",
+		eyebrow: "Erro 404",
+		title: "Página não encontrada",
+		message:
+			"A página que você procura não existe ou foi movida. Confira o endereço ou volte para a página inicial.",
+		home: "Voltar para o início",
+	},
 	footer: {
 		copyright: "© 2026 João Pedro",
 		sourceCode: "Código-fonte",

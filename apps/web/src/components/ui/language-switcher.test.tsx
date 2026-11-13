@@ -34,6 +34,15 @@ describe("LanguageSwitcher component", () => {
 		expect(ptLink).toHaveAttribute("aria-current", "page");
 	});
 
+	it("marks the active locale as current without claiming the page when asked", () => {
+		render(
+			<LanguageSwitcher currentLocale="pt" current="true" ariaLabel="Alternador de idioma" />,
+		);
+
+		expect(screen.getByRole("link", { name: "pt" })).toHaveAttribute("aria-current", "true");
+		expect(screen.getByRole("link", { name: "en" })).not.toHaveAttribute("aria-current");
+	});
+
 	it("passes automated accessibility checks with zero violations", async () => {
 		const { container } = render(
 			<header>

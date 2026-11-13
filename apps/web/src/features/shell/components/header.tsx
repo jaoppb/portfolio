@@ -7,7 +7,10 @@ import { navItems } from "../nav-items";
 export interface HeaderProps {
 	locale: Locale;
 	dict: Dictionary;
-	/** Prefix for in-page anchors; empty for same-page links, `/<locale>/` on other pages. */
+	/**
+	 * Prefix for the section anchors: empty on the home page (same-page links), the home page
+	 * path (`/<locale>`) on any other page.
+	 */
 	hrefBase?: string;
 }
 
@@ -42,6 +45,7 @@ export function Header({ locale, dict, hrefBase = "" }: HeaderProps) {
 
 				<LanguageSwitcher
 					currentLocale={locale}
+					current={hrefBase === "" ? "page" : "true"}
 					ariaLabel={dict.a11y.languageSwitcher}
 					className="order-2 ml-auto md:order-3 md:ml-0"
 				/>
