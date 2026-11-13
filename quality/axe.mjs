@@ -19,11 +19,11 @@ const reportDir = path.join(here, "reports/axe");
 const RULE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa", "best-practice"];
 
 // CHROME_PATH selects a binary (the same variable Lighthouse reads); otherwise the installed Chrome.
-const browser = await puppeteer.launch(
-	process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : { channel: "chrome" },
-);
+const launchOptions = process.env.CHROME_PATH
+	? { executablePath: process.env.CHROME_PATH }
+	: { channel: "chrome" };
 
-async function audit({ path: pagePath, scheme, viewport, label }) {
+async function audit(browser, { path: pagePath, scheme, viewport, label }) {
 	const page = await browser.newPage();
 	try {
 		await page.setViewport({ width: viewport.width, height: viewport.height });
@@ -57,13 +57,15 @@ const publish = (markdown) => {
 };
 
 const runs = [];
+let browser = null;
 let crash = null;
 try {
-	for (const entry of buildMatrix(paths)) runs.push(await audit(entry));
+	browser = await puppeteer.launch(launchOptions);
+	for (const entry of buildMatrix(paths)) runs.push(await audit(browser, entry));
 } catch (error) {
 	crash = error;
 } finally {
-	await browser.close();
+	await browser?.close();
 }
 if (crash) {
 	publish(`### axe: DID NOT RUN\n\nThe audit stopped on an error: ${crash.message}\n`);

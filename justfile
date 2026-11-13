@@ -74,4 +74,4 @@ check: architecture dead-code tf-check
 quality:
     rm -rf .lighthouseci quality/reports
     NEXT_PUBLIC_SITE_URL=https://example.com NEXT_PUBLIC_ROBOTS_NOINDEX= pnpm build
-    pnpm quality:axe; axe=$?; pnpm quality:lighthouse; lighthouse=$?; pnpm quality:lighthouse:summary; exit $((axe || lighthouse))
+    pnpm quality:axe; axe=$?; pnpm quality:lighthouse; lighthouse=$?; pnpm quality:lighthouse:summary; summary=$?; exit $((axe || lighthouse || summary))
