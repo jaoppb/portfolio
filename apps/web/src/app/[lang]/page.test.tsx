@@ -4,6 +4,9 @@ import { axe } from "vitest-axe";
 import { siteConfig } from "@/shared/config/site";
 import LocalizedPage, { generateMetadata, generateStaticParams } from "./page";
 
+/** Whole-page axe runs in jsdom are slow once every section is on the page. */
+const AXE_TIMEOUT = 20_000;
+
 describe("LocalizedPage", () => {
 	it("returns static params for both en and pt locales", async () => {
 		const params = await generateStaticParams();
@@ -31,7 +34,7 @@ describe("LocalizedPage", () => {
 		expect(ptMeta.openGraph?.locale).toBe("pt_BR");
 	});
 
-	it("renders English page content and headings", async () => {
+	it("renders English page content and headings", { timeout: AXE_TIMEOUT }, async () => {
 		const Page = await LocalizedPage({
 			params: Promise.resolve({ lang: "en" }),
 		});
@@ -48,6 +51,8 @@ describe("LocalizedPage", () => {
 		expect(screen.getByRole("heading", { level: 2, name: "About" })).toBeInTheDocument();
 		expect(container.querySelector("#about")).not.toBeNull();
 		expect(container.querySelector("#hero")).not.toBeNull();
+		expect(container.querySelector("#experience")).not.toBeNull();
+		expect(container.querySelector("#skills")).not.toBeNull();
 
 		expect(
 			screen.getByRole("heading", {
@@ -60,7 +65,7 @@ describe("LocalizedPage", () => {
 		expect(results).toHaveNoViolations();
 	});
 
-	it("renders Portuguese page content and headings", async () => {
+	it("renders Portuguese page content and headings", { timeout: AXE_TIMEOUT }, async () => {
 		const Page = await LocalizedPage({
 			params: Promise.resolve({ lang: "pt" }),
 		});

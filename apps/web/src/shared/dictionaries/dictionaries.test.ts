@@ -25,6 +25,28 @@ describe("Dictionaries", () => {
 		expect(enKeys).toEqual(ptKeys);
 	});
 
+	it("keeps experience and skills structurally identical across locales", () => {
+		expect(ptDictionary.experience.entries.map((e) => [e.company, e.start, e.end])).toEqual(
+			enDictionary.experience.entries.map((e) => [e.company, e.start, e.end]),
+		);
+		expect(ptDictionary.experience.entries.map((e) => e.highlights.length)).toEqual(
+			enDictionary.experience.entries.map((e) => e.highlights.length),
+		);
+		expect(ptDictionary.skills.groups.map((g) => g.items.length)).toEqual(
+			enDictionary.skills.groups.map((g) => g.items.length),
+		);
+	});
+
+	it("lists experience newest first with ISO months", () => {
+		for (const { experience } of [enDictionary, ptDictionary]) {
+			const starts = experience.entries.map((e) => e.start);
+			for (const month of [...starts, ...experience.entries.flatMap((e) => e.end ?? [])]) {
+				expect(month).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
+			}
+			expect(starts).toEqual([...starts].sort().reverse());
+		}
+	});
+
 	it("contains no empty strings in translations", () => {
 		function assertNonEmpty(obj: Record<string, unknown>, path = ""): void {
 			for (const [key, value] of Object.entries(obj)) {

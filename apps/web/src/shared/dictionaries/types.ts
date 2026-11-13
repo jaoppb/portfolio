@@ -35,6 +35,23 @@ export interface Dictionary {
 		repository: string;
 		liveDemo: string;
 	};
+	experience: {
+		title: string;
+		/** Label for an open-ended role, shown instead of an end date. */
+		present: string;
+		/** Newest first. `start` and `end` are ISO months (`YYYY-MM`); no `end` means current. */
+		entries: readonly {
+			role: string;
+			company: string;
+			start: string;
+			end?: string;
+			highlights: readonly string[];
+		}[];
+	};
+	skills: {
+		title: string;
+		groups: readonly { label: string; items: readonly string[] }[];
+	};
 	systemStatus: {
 		title: string;
 		description: string;
