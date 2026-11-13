@@ -49,7 +49,7 @@ All bind fills, strokes, padding, gaps and radius to variables, and text to text
 | `Header bar` | [13:99](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-99) | `Layout` = inline / stacked | #38 header |
 | `Footer bar` | [13:114](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-114) | `Layout` = row / stack | #38 footer |
 | `Section heading` | [13:14](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-14) | `Style` = default (title and lead; the lead is hidden in About) | #39 to #42 |
-| `Project card` | [13:35](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-35) | `State` = default / hover | #40 |
+| `Project card` | [13:35](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-35) | `State` = default / hover, `Layout` = stack / row | #40 |
 | `Timeline entry` | [13:52](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-52) | `Layout` = row / stack | #41 |
 | `Skill group` | [13:56](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-56) | `Style` = default | #41 |
 | `Contact row` | [13:61](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=13-61) | `Style` = default | #42 |
@@ -65,7 +65,7 @@ Every home frame contains the same child frames, in this order and with these na
 | `Header` | #38 | Wordmark (`text/lg`, link to top), nav of 4 `Nav link`s, `Language switcher`. Hairline below. | Mobile: wordmark and switcher on row 1, nav links on row 2 (wrap, so Portuguese `Experiência` and `Contato` can drop to a third line at 320). |
 | `Hero` | #39 | Mono eyebrow, `h1`, intro (`text/lg`, Regular, `muted`), actions: primary `Button` (View projects) and outline `Button` (Get in touch). | Headline steps down 5xl, 4xl, 3xl. Buttons wrap. |
 | `About` | #39 | `Section heading` (title only) and two paragraphs. | Two columns on desktop, stacked below. |
-| `Projects` | #40 | `Section heading` with lead, grid of 4 `Project card`s: year (mono), title, summary, tech line (mono), two text links (Repository, Live demo). | Rows keep equal card height. Link labels are longer in pt and wrap inside the card. |
+| `Projects` | #40 | `Section heading` with lead, grid of 4 `Project card`s. Each card: a header row with the title left and the year (mono, tabular) right on the text baseline, the summary, then a footer under a 1px `color/border` hairline with the tech line (mono) and two text links (Repository, Live demo). | Rows keep equal card height and the footer sits at the card bottom. `Layout=row` (1280, wide cards): tech left, links right on one row. `Layout=stack` (768 and 375, 320 stress): the links sit under the tech line. Link labels are longer in pt and wrap inside the card. |
 | `Experience` | #41 | `Section heading`, list of 3 `Timeline entry`: dates (mono, 200 wide in row layout), role, company, two highlights. Each entry has a 1px top rule (including the first), no rail. | Dates move above the role on mobile. |
 | `Skills` | #41 | `Section heading`, 4 `Skill group`s: mono label and a plain list, one item per line (no pills, no bars). | 4, 2, then 1 columns. |
 | `Contact` | #42 | `Section heading` with lead, 3 `Contact row`s (email, GitHub, LinkedIn; label 72 wide), two CV buttons labelled with file type and language (primary and outline). | Rows cap at 576 on tablet and desktop, fill on mobile. CV buttons wrap. |
@@ -155,13 +155,14 @@ Frame names follow `Home / <viewport> / <Light|Dark> / <en|pt>`. The `Stress 320
 |---|---|---|
 | `Annotations / Shell states` | [18:2](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-2) | Nav link default, hover, focus; language switcher; skip link. Light and Dark. |
 | `Annotations / Hero, contact and 404 actions` | [18:78](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-78) | Primary and outline buttons and text links in default, hover and focus. Light and Dark. |
-| `Annotations / Project card` | [18:164](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-164) | Card default and hover; why the card is not a link; no image. |
+| `Annotations / Project card` | [18:164](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-164) | Card default and hover; why the card is not a link; the header/footer layout and the stack/row rule; no image. |
 | `Annotations / Rules` | [18:226](https://www.figma.com/design/ItCehqEVlGG8QTCbgHlDnG/Portfolio?node-id=18-226) | Focus ring, focus order, hover, target size, motion, reduced motion, landmarks, language switcher, tabular figures, lists, placeholder note. |
 
 Summary for implementers:
 
 - **Target size:** targets at least 24px high or spaced 24px apart (WCAG 2.2 SC 2.5.8); wrapped text-link rows (project card, footer) have a 4px row gap.
 - **Focus:** `ring-2` in `color/focus-ring` with `ring-offset-2` in `color/background`, on every interactive element, keyboard focus only (`focus-visible`).
+- **Project card layout:** `Layout=row` is used when the card content is at least about 448px wide, i.e. cards of about 498px or more; among the Figma frames only 1280 (cards 564 wide) reaches it, and every narrower card uses `Layout=stack`. In code this is a container query on the card (`@md`, 28rem), not a viewport breakpoint, so it holds at any grid width. The year is right-aligned on the title baseline, the footer is separated by a hairline and kept at the card bottom, and DOM order equals visual order (title, year, summary, tech, links).
 - **Hover:** nav link gains an underline; text links go from `accent` to `foreground` and stay underlined; project card border goes to `border-strong`; active equals hover. Disabled is not used on any page, so it is not annotated.
 - **Motion:** only colour, background and border colour, only on hover, focus-visible and active; `duration/base` (160ms) with `cubic-bezier(0.16, 1, 0.3, 1)`. Nothing continuous or on load.
 - **Reduced motion:** the `Motion` `Reduced` mode (all durations 0), and in-page anchors scroll instantly. There is no other fallback.

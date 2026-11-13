@@ -32,6 +32,12 @@ export const enDictionary: Dictionary = {
 		p1: "I work at Hotmart in Belo Horizonte on high-traffic web and backend systems for lead generation and GMV: Node.js APIs with Clean Architecture and DDD, DynamoDB modelling for unpredictable campaign traffic, and infrastructure as code with Terraform and GitHub Actions.",
 		p2: "I am studying Software Engineering at PUC Minas and build projects that run within strict hardware and budget limits, such as PUCMaps on AWS and Styx in Rust. My team depende.sh took 1st place in the Minas Gerais Programming Marathon (Greater BH).",
 	},
+	projects: {
+		title: "Projects",
+		lead: "Open-source work in Rust and TypeScript, from systems tooling to this site.",
+		repository: "Repository",
+		liveDemo: "Live demo",
+	},
 	systemStatus: {
 		title: "Architecture & Skeleton Status",
 		description: "Pure static export configuration and feature-first boundary verification.",
