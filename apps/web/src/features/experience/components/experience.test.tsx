@@ -46,6 +46,20 @@ describe("Experience", () => {
 		expect(container.querySelector("time")?.parentElement).toHaveClass("tabular-nums");
 	});
 
+	it.each([
+		["en", enDictionary],
+		["pt", ptDictionary],
+	] as const)("keeps each date range on one line in the row layout (%s)", (locale, dict) => {
+		const { container } = render(<Experience locale={locale} experience={dict.experience} />);
+		const ranges = container.querySelectorAll("p:has(> time)");
+		expect(ranges).toHaveLength(dict.experience.entries.length);
+		for (const range of ranges) {
+			expect(range).toHaveClass("md:w-60", "md:shrink-0", "md:whitespace-nowrap");
+			// The column is 240px and a 14px mono character is 8.4px wide: 28 characters fit.
+			expect(range.textContent?.length).toBeLessThanOrEqual(28);
+		}
+	});
+
 	it("exposes id=experience so the nav anchor resolves", () => {
 		render(<Experience locale="en" experience={enDictionary.experience} />);
 		expect(screen.getByRole("region", { name: enDictionary.experience.title })).toHaveAttribute(

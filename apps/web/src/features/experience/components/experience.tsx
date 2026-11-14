@@ -24,7 +24,7 @@ export function Experience({ locale, experience }: ExperienceProps) {
 							key={start}
 							className="flex flex-col gap-2 border-t border-border py-6 md:flex-row md:gap-6"
 						>
-							<p className="font-mono text-sm tabular-nums text-muted md:w-50 md:shrink-0">
+							<p className="font-mono text-sm tabular-nums text-muted md:w-60 md:shrink-0 md:whitespace-nowrap">
 								<time dateTime={start}>{formatMonth(start, locale)}</time>
 								{" – "}
 								{end ? (
