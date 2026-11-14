@@ -15,7 +15,7 @@ export function Skills({ skills }: SkillsProps) {
 				>
 					{skills.title}
 				</h2>
-				<div className="grid grid-cols-1 gap-x-6 gap-y-6 md:grid-cols-2 lg:grid-cols-3">
+				<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
 					{skills.groups.map(({ label, items }, index) => (
 						<div
 							key={label}

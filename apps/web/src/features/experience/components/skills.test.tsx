@@ -26,6 +26,14 @@ describe("Skills", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
+	it("lays the groups out in one column, then three from md", () => {
+		render(<Skills skills={enDictionary.skills} />);
+		const [firstLabel] = screen.getAllByRole("heading", { level: 3 });
+		const grid = firstLabel?.parentElement?.parentElement;
+		expect(grid).toHaveClass("grid-cols-1", "md:grid-cols-3");
+		expect(grid).not.toHaveClass("md:grid-cols-2");
+	});
+
 	it("exposes id=skills", () => {
 		render(<Skills skills={enDictionary.skills} />);
 		expect(screen.getByRole("region", { name: enDictionary.skills.title })).toHaveAttribute(

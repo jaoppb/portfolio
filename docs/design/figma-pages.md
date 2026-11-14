@@ -18,7 +18,7 @@ Design record of the portfolio's pages and sections (issue #36, epic #34). **#38
 | Name | Width | Notes |
 |---|---|---|
 | Mobile | 375 | Single column. Also checked at 320 (`Stress 320`, pt only). |
-| Tablet | 768 | Header inline, two-column project and skills grids. |
+| Tablet | 768 | Header inline, two-column project grid, three-column skills grid. |
 | Desktop | 1280 | Fluid, side padding `space/16`; content is 1152 wide at 1280. Above 1280, centre the layout (no larger max width is designed). |
 
 Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The 768 frame is the design for 768 to 1023, and the 1280 frame for 1024 and up (no frame exists at 1024; behaviour there follows the 1280 frame). The mobile layout applies fluidly from 320 to 767 (only 375 and the 320 stress check are drawn).
@@ -34,7 +34,7 @@ Breakpoints for #37/#38 (min-width): tablet 768 (`md`), desktop 1024 (`lg`). The
 | Header layout | `Layout=stacked` | `Layout=inline` | `Layout=inline` |
 | Experience entry | `Layout=stack` | `Layout=row` | `Layout=row` |
 | Project grid | 1 column | 2 columns | 2 columns |
-| Skills grid | 1 column | 2 columns | 3 columns |
+| Skills grid | 1 column | 3 columns | 3 columns |
 | About | stacked | stacked | two columns (heading 320, text fill, gap `space/16` in place of the heading gap) |
 
 Sections are separated by a single 1px `color/border` rule: the header owns the rule above `Hero` (its bottom edge, so `Hero` has no top rule), every other section has a top rule, and the footer has a top rule. The header and footer rules span the full width; the section rules are as wide as the content, because the sections sit inside the padded `Main` frame, as in the page; each `Timeline entry`, `Skill group` and `Contact row` also has its own 1px top rule (the first one included); there are no section background changes. Text measure is capped at 576 (about 60 to 70 characters at `text/base`) on the hero intro, About paragraphs, section leads and experience highlights (card summaries are narrower by construction); where a column is constrained the measure is below 55 (tablet highlights are 464 wide, mobile columns are narrower) and the design accepts that; wider columns hold shorter text; the hero headline is capped at 800 (desktop) or 700.
@@ -68,7 +68,7 @@ Every home frame mirrors the page's landmarks: `Header`, `Main` and `Footer`, in
 | `About` | #39 | `Section heading` (title only) and two paragraphs. | Two columns on desktop, stacked below. |
 | `Projects` | #40 | `Section heading` with lead, grid of 4 `Project card`s. Each card: a header row with the title left and the year (mono, tabular) right on the text baseline, the summary, then a footer under a 1px `color/border` hairline with the tech line (mono) and the text links: Repository on every card, Live demo only where the project has one (one of the four). | Rows keep equal card height (the tallest card sets the row, the others stretch) and the footer sits at the card bottom. `Layout=row` (1280, wide cards): tech left, links right on one row. `Layout=stack` (768 and 375, 320 stress): the links sit under the tech line. Link labels are longer in pt; the two links of the Portfolio card can wrap inside the card, and still fit on one row at every drawn width in the browser. |
 | `Experience` | #41 | `Section heading` (title only), list of 2 `Timeline entry`, newest first: dates (mono, 200 wide in row layout), role, company, and four and one highlights. Dates are a short month and year (`Jul 2026`, `jul. de 2026`); the current role ends in `Present` / `o momento`. Each entry has a 1px top rule (including the first), no rail. | Dates move above the role on mobile. In pt the date range is wider than 200 and wraps to two lines at 768 and 1280 (#75). |
-| `Skills` | #41 | `Section heading` (title only), 3 `Skill group`s: mono label and a plain list, one item per line (no pills, no bars). | 3, 2, then 1 columns. At 768 the third group sits alone on the second row, one column wide (#74). |
+| `Skills` | #41 | `Section heading` (title only), 3 `Skill group`s: mono label and a plain list, one item per line (no pills, no bars). | 3 columns from 768 (each 213 wide at 768, gap `space/6`), 1 column below. |
 | `Contact` | #42 | `Section heading` with lead, 3 `Contact row`s (email, GitHub, LinkedIn; label 72 wide; the value is a `Link` that fills the row and wraps), two `CV action`s. A `CV action` is a `Button` labelled `View CV (PDF, <language>)`, which opens the PDF in a new tab, and a small `Download` text link next to it. The CV in the page's own language comes first and is primary; the other is outline. | Rows cap at 576 on tablet and desktop, fill on mobile, and use `Layout=stack` below 360 (the 320 frames). The LinkedIn address wraps to two lines at 375 and 320. The `CV action`s wrap (gap 24 by 12); at 320 one `Download` link drops under its button (the first in pt, the second in en). |
 | `Footer` | #38 | Copyright, `Source code` and `Back to top` links. Hairline above. | Stacks below 640 (the 375 and 320 frames); a row from 640 up. |
 | `404` | #44 | `Header`, `Not found` (mono eyebrow, `h1`, message, primary `Button` back to home), `Footer`. Frame heights are viewport-like (800, 1024, 812). | Headline `text/5xl` at 1280 and 768, `text/4xl` at 375. `Not found` vertical padding is `space/24` at 1280 and 768 and `space/16` at 375 (larger than the home sections at 768 because the page is a single block). |
@@ -230,7 +230,6 @@ Drawn as shipped. The maintainer reviewed them on 2026-11-13. A copy slip found 
 
 | Case | Decision |
 |---|---|
-| `Skills` at 768: the third group is alone on the second row | #74 (three columns from 768); the tablet frames change when it ships |
 | `Experience` dates in pt at 768 and 1280: the range wraps inside the 200 wide column | #75 (keep the range on one line); the frames change when it ships |
 | `Contact` at 375: the LinkedIn address wraps to two lines | Accepted as shipped |
 | `Contact` at 320 in pt: the first `Download` link drops under its button, the second does not | Accepted as shipped |
