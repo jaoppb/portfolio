@@ -22,17 +22,23 @@ export function Header({ locale, dict, homePage = false }: HeaderProps) {
 			{/*
 			 * No CSS `order` here: the DOM order (wordmark, nav, language switcher) is the visual
 			 * order at every width, so the focus order follows it. Below `md` the wordmark takes
-			 * its own row and the switcher sits after the links, on their last line.
+			 * its own row and the switcher sits after the links, on their last line; if the widest
+			 * link no longer fits beside it (large text on a narrow screen) it wraps below them.
 			 */}
-			<div className="mx-auto grid max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-end gap-x-6 px-5 py-3 md:flex md:flex-wrap md:items-center md:px-10 md:py-4 lg:px-16">
-				<Link
-					href={`${hrefBase}#top`}
-					className="col-span-2 justify-self-start px-0 text-lg tracking-tight text-foreground no-underline hover:underline"
-				>
-					{dict.hero.name}
-				</Link>
+			<div className="mx-auto flex max-w-7xl flex-wrap items-end gap-x-6 px-5 py-3 md:items-center md:px-10 md:py-4 lg:px-16">
+				<div className="flex w-full md:w-auto">
+					<Link
+						href={`${hrefBase}#top`}
+						className="px-0 text-lg tracking-tight text-foreground no-underline hover:underline"
+					>
+						{dict.hero.name}
+					</Link>
+				</div>
 
-				<nav aria-label={dict.a11y.mainNavigation} className="mt-1 md:mt-0 md:ml-auto">
+				<nav
+					aria-label={dict.a11y.mainNavigation}
+					className="mt-1 min-w-min flex-1 md:mt-0 md:ml-auto md:flex-initial"
+				>
 					<ul className="flex flex-wrap gap-x-2 gap-y-1">
 						{navItems.map((item) => (
 							<li key={item.id}>
@@ -52,7 +58,7 @@ export function Header({ locale, dict, homePage = false }: HeaderProps) {
 					current={homePage ? "page" : "true"}
 					ariaLabel={dict.a11y.languageSwitcher}
 					// As tall as one line of nav links (`h-9`), so it is centred on the last one.
-					className="h-9 md:h-auto"
+					className="ml-auto h-9 md:ml-0 md:h-auto"
 				/>
 			</div>
 		</header>

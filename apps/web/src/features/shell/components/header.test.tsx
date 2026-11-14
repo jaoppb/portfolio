@@ -5,6 +5,10 @@ import { enDictionary } from "@/shared/dictionaries/en";
 import { ptDictionary } from "@/shared/dictionaries/pt";
 import { Header } from "./header";
 
+/** Utilities that can draw an element somewhere other than its place in the DOM. */
+const REORDERING_UTILITY =
+	/(^|:)-?(order-|\[order:|flex-(row|col|wrap)-reverse|(row|col)-(start|end)-|grid-flow-\S*dense|absolute|fixed|float-)/;
+
 describe("Header", () => {
 	it("renders banner, wordmark link to top, labelled nav and language switcher", async () => {
 		const { container } = render(<Header locale="en" dict={enDictionary} homePage />);
@@ -54,7 +58,7 @@ describe("Header", () => {
 		render(<Header locale="en" dict={enDictionary} homePage />);
 		const banner = screen.getByRole("banner");
 		const reordering = [banner, ...banner.querySelectorAll("*")].flatMap((el) =>
-			[...el.classList].filter((name) => /(^|:)-?(order-|flex-(row|col)-reverse)/.test(name)),
+			[...el.classList].filter((name) => REORDERING_UTILITY.test(name)),
 		);
 		expect(reordering).toEqual([]);
 		expect(banner.querySelector("[tabindex]")).toBeNull();
