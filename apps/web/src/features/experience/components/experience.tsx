@@ -40,7 +40,7 @@ export function Experience({ locale, experience }: ExperienceProps) {
 								<p className="text-sm text-muted">{company}</p>
 								<ul className="flex flex-col gap-2 py-2 text-base text-foreground">
 									{highlights.map((highlight) => (
-										<li key={highlight} className="max-w-xl">
+										<li key={highlight} className="max-w-xl text-balance">
 											{highlight}
 										</li>
 									))}
