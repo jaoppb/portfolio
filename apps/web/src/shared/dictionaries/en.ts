@@ -59,7 +59,7 @@ export const enDictionary: Dictionary = {
 				start: "2025-10",
 				end: "2026-07",
 				highlights: [
-					"Implementation of Node microservices, AWS resources (Terraform), and front-end using Next.js.",
+					"Implementation of Node.js microservices, AWS resources (Terraform), and front-end using Next.js.",
 				],
 			},
 		],
@@ -72,7 +72,7 @@ export const enDictionary: Dictionary = {
 				items: [
 					"TypeScript",
 					"Node.js",
-					"React.js",
+					"React",
 					"Next.js",
 					"Rust",
 					"Python",
