@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects. A redirect applies even when a file exists at the path,
+# so "/" never serves the stub page of app/(root) here; the stub covers servers that do not
+# read this file.
+# 302, not 301: browsers must not cache it, because #81 may negotiate the locale later.
+/ /en 302

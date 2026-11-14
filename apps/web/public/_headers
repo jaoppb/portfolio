@@ -1,3 +1,11 @@
 # The OG image route is exported without a file extension; make the type explicit.
 /*/opengraph-image
   Content-Type: image/png
+
+# Only https://jaoppb.com is indexed. The production deploy also answers on the project's
+# pages.dev host, and every deploy and branch on a subdomain of it (docs/workflows/launch.md).
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
