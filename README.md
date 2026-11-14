@@ -51,6 +51,7 @@ Run a script in the site only with `pnpm --filter web <script>`, for example `de
 | `just architecture` | Boundary and import-cycle checks with [Fallow](docs/adr/0001-boundary-enforcement-fallow.md) |
 | `just dead-code` | Unused exports and dead code with Fallow |
 | `just quality` | Lighthouse and axe [quality gate](docs/workflows/quality-gate.md) on a fresh build (needs Chrome) |
+| `just quality-production <state>` | The same audits plus URL checks on the live site, for the [launch](docs/workflows/launch.md) (`noindex` or `indexable`; needs Chrome) |
 | `just tf <args>`, `just tf-bootstrap <args>` | Run Terraform in `terraform/` or `terraform/bootstrap` |
 | `just tf-check`, `just tf-fmt` | Validate or format the Terraform configuration |
 | `just issues-check` | Audit open GitHub issues against the workflow rules |
@@ -84,6 +85,7 @@ Code is organised by feature first. Import boundaries are enforced by Fallow (`j
 - [docs/workflows/deploy-credentials.md](docs/workflows/deploy-credentials.md): Cloudflare Pages deploy isolation
 - [docs/workflows/cloudflare-import.md](docs/workflows/cloudflare-import.md): resources imported into Terraform state
 - [docs/workflows/quality-gate.md](docs/workflows/quality-gate.md): Lighthouse and axe budgets that fail CI
+- [docs/workflows/launch.md](docs/workflows/launch.md): production launch, live checks and rollback
 - [docs/adr/0001-boundary-enforcement-fallow.md](docs/adr/0001-boundary-enforcement-fallow.md): why Fallow enforces boundaries
 
 ## Contributing

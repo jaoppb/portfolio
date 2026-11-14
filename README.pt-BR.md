@@ -51,6 +51,7 @@ Para rodar um script só no site, use `pnpm --filter web <script>`, por exemplo 
 | `just architecture` | Limites e ciclos de import com o [Fallow](docs/adr/0001-boundary-enforcement-fallow.md) |
 | `just dead-code` | Exports não usados e código morto com o Fallow |
 | `just quality` | [Quality gate](docs/workflows/quality-gate.md) de Lighthouse e axe sobre um build novo (exige o Chrome) |
+| `just quality-production <state>` | As mesmas auditorias mais checagens de URL no site em produção, para o [lançamento](docs/workflows/launch.md) (`noindex` ou `indexable`; exige o Chrome) |
 | `just tf <args>`, `just tf-bootstrap <args>` | Roda o Terraform em `terraform/` ou `terraform/bootstrap` |
 | `just tf-check`, `just tf-fmt` | Valida ou formata a configuração do Terraform |
 | `just issues-check` | Audita as issues abertas contra as regras de workflow |
@@ -86,6 +87,7 @@ A documentação está em inglês.
 - [docs/workflows/deploy-credentials.md](docs/workflows/deploy-credentials.md): isolamento do deploy no Cloudflare Pages
 - [docs/workflows/cloudflare-import.md](docs/workflows/cloudflare-import.md): recursos importados para o state do Terraform
 - [docs/workflows/quality-gate.md](docs/workflows/quality-gate.md): orçamentos de Lighthouse e axe que reprovam o CI
+- [docs/workflows/launch.md](docs/workflows/launch.md): lançamento em produção, checagens no site publicado e rollback
 - [docs/adr/0001-boundary-enforcement-fallow.md](docs/adr/0001-boundary-enforcement-fallow.md): por que o Fallow garante os limites
 
 ## Contribuindo
