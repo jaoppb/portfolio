@@ -59,7 +59,7 @@ export const ptDictionary: Dictionary = {
 				start: "2025-10",
 				end: "2026-07",
 				highlights: [
-					"Implementação de microsserviços Node, recursos AWS (Terraform) e front-end com Next.JS.",
+					"Implementação de microsserviços Node.js, recursos AWS (Terraform) e front-end com Next.js.",
 				],
 			},
 		],
@@ -72,7 +72,7 @@ export const ptDictionary: Dictionary = {
 				items: [
 					"TypeScript",
 					"Node.js",
-					"React.js",
+					"React",
 					"Next.js",
 					"Rust",
 					"Python",

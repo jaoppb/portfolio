@@ -66,6 +66,41 @@ describe("Dictionaries", () => {
 		assertNonEmpty(ptDictionary as unknown as Record<string, unknown>, "pt");
 	});
 
+	it("keeps one spelling for the listed product names in both locales", () => {
+		// Suffixed and compound forms match in any casing. A bare `Node` matches only when
+		// capitalised, so the common words "node" and "react" stay free for prose, and
+		// GitHub is not checked inside an address.
+		const spellings: [RegExp, string][] = [
+			[/\bnext\.?js\b/gi, "Next.js"],
+			[/\bnode\.?js\b/gi, "Node.js"],
+			[/\bNode\b(?!\.js)/g, "Node.js"],
+			[/\breact\.?js\b/gi, "React"],
+			[/\btypescript\b/gi, "TypeScript"],
+			[/\bgithub\b(?!\.com)/gi, "GitHub"],
+			[/\bdynamodb\b/gi, "DynamoDB"],
+			[/\bpostgresql\b/gi, "PostgreSQL"],
+			[/\bterraform\b/gi, "Terraform"],
+			[/\btailwind ?css\b/gi, "Tailwind CSS"],
+			[/\bdocker\b/gi, "Docker"],
+			[/\baws\b/gi, "AWS"],
+		];
+		function collectStrings(value: unknown): string[] {
+			if (typeof value === "string") return [value];
+			if (value !== null && typeof value === "object") {
+				return Object.values(value).flatMap(collectStrings);
+			}
+			return [];
+		}
+
+		for (const text of [enDictionary, ptDictionary].flatMap(collectStrings)) {
+			for (const [pattern, spelling] of spellings) {
+				for (const found of text.match(pattern) ?? []) {
+					expect(found, `in "${text}"`).toBe(spelling);
+				}
+			}
+		}
+	});
+
 	it("correctly identifies valid and invalid locales", () => {
 		expect(isValidLocale("en")).toBe(true);
 		expect(isValidLocale("pt")).toBe(true);

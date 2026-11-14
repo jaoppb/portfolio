@@ -226,7 +226,7 @@ The first four come from the two renderers; the last two are places where the co
 
 ### Shipped layouts to revisit in code
 
-Drawn as shipped. The maintainer reviewed them on 2026-11-13. A copy slip found on the way, `Next.JS` in one pt highlight where every other string says `Next.js`, is #76; the frames show the shipped string until it is fixed.
+Drawn as shipped. The maintainer reviewed them on 2026-11-13.
 
 | Case | Decision |
 |---|---|
