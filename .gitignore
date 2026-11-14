@@ -33,5 +33,9 @@ override.tf.json
 terraform.rc
 .export-test
 
+# Quality gate reports
+.lighthouseci
+quality/reports
+
 # Local Cloudflare Pages emulator state (wrangler pages dev)
 .wrangler/

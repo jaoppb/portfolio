@@ -50,6 +50,7 @@ Run a script in the site only with `pnpm --filter web <script>`, for example `de
 | `just lint`, `just format` | Biome lint; Biome and Terraform formatting |
 | `just architecture` | Boundary and import-cycle checks with [Fallow](docs/adr/0001-boundary-enforcement-fallow.md) |
 | `just dead-code` | Unused exports and dead code with Fallow |
+| `just quality` | Lighthouse and axe [quality gate](docs/workflows/quality-gate.md) on a fresh build (needs Chrome) |
 | `just tf <args>`, `just tf-bootstrap <args>` | Run Terraform in `terraform/` or `terraform/bootstrap` |
 | `just tf-check`, `just tf-fmt` | Validate or format the Terraform configuration |
 | `just issues-check` | Audit open GitHub issues against the workflow rules |
@@ -67,6 +68,7 @@ apps/web/             Next.js site (static export)
   src/shared/         Config, dictionaries (en, pt) and utilities
   src/assets/         Fonts
 packages/             Shared workspace packages (none yet)
+quality/              Lighthouse and axe quality gate (config and scripts)
 terraform/            Cloudflare infrastructure (plus bootstrap/)
 docs/                 ADRs and workflow runbooks
 .github/              CI, deploy workflows and issue templates
@@ -81,6 +83,7 @@ Code is organised by feature first. Import boundaries are enforced by Fallow (`j
 - [docs/workflows/terraform-pipeline.md](docs/workflows/terraform-pipeline.md): how infrastructure changes are planned and applied
 - [docs/workflows/deploy-credentials.md](docs/workflows/deploy-credentials.md): Cloudflare Pages deploy isolation
 - [docs/workflows/cloudflare-import.md](docs/workflows/cloudflare-import.md): resources imported into Terraform state
+- [docs/workflows/quality-gate.md](docs/workflows/quality-gate.md): Lighthouse and axe budgets that fail CI
 - [docs/adr/0001-boundary-enforcement-fallow.md](docs/adr/0001-boundary-enforcement-fallow.md): why Fallow enforces boundaries
 
 ## Contributing

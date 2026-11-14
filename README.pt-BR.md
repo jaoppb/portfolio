@@ -50,6 +50,7 @@ Para rodar um script só no site, use `pnpm --filter web <script>`, por exemplo 
 | `just lint`, `just format` | Biome lint; formatação com Biome e Terraform |
 | `just architecture` | Limites e ciclos de import com o [Fallow](docs/adr/0001-boundary-enforcement-fallow.md) |
 | `just dead-code` | Exports não usados e código morto com o Fallow |
+| `just quality` | [Quality gate](docs/workflows/quality-gate.md) de Lighthouse e axe sobre um build novo (exige o Chrome) |
 | `just tf <args>`, `just tf-bootstrap <args>` | Roda o Terraform em `terraform/` ou `terraform/bootstrap` |
 | `just tf-check`, `just tf-fmt` | Valida ou formata a configuração do Terraform |
 | `just issues-check` | Audita as issues abertas contra as regras de workflow |
@@ -67,6 +68,7 @@ apps/web/             Site Next.js (exportação estática)
   src/shared/         Configuração, dicionários (en, pt) e utilitários
   src/assets/         Fontes
 packages/             Pacotes compartilhados do workspace (ainda nenhum)
+quality/              Quality gate de Lighthouse e axe (configuração e scripts)
 terraform/            Infraestrutura na Cloudflare (mais bootstrap/)
 docs/                 ADRs e guias de workflow
 .github/              CI, workflows de deploy e templates de issue
@@ -83,6 +85,7 @@ A documentação está em inglês.
 - [docs/workflows/terraform-pipeline.md](docs/workflows/terraform-pipeline.md): como mudanças de infraestrutura são planejadas e aplicadas
 - [docs/workflows/deploy-credentials.md](docs/workflows/deploy-credentials.md): isolamento do deploy no Cloudflare Pages
 - [docs/workflows/cloudflare-import.md](docs/workflows/cloudflare-import.md): recursos importados para o state do Terraform
+- [docs/workflows/quality-gate.md](docs/workflows/quality-gate.md): orçamentos de Lighthouse e axe que reprovam o CI
 - [docs/adr/0001-boundary-enforcement-fallow.md](docs/adr/0001-boundary-enforcement-fallow.md): por que o Fallow garante os limites
 
 ## Contribuindo
