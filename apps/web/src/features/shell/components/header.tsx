@@ -22,10 +22,13 @@ export function Header({ locale, dict, homePage = false }: HeaderProps) {
 			{/*
 			 * No CSS `order` here: the DOM order (wordmark, nav, language switcher) is the visual
 			 * order at every width, so the focus order follows it. Below `md` the wordmark takes
-			 * its own row and the switcher sits after the links, on their last line; if the widest
-			 * link no longer fits beside it (large text on a narrow screen) it wraps below them.
+			 * its own row and the switcher sits after the links, on their last line. The nav asks
+			 * for `basis-44` beside it, room for its widest pair of links: with large text on a
+			 * narrow screen that no longer fits and the switcher wraps below the links
+			 * (right-aligned by its `ml-auto`), still last.
 			 */}
 			<div className="mx-auto flex max-w-7xl flex-wrap items-end gap-x-6 px-5 py-3 md:items-center md:px-10 md:py-4 lg:px-16">
+				{/* Takes the row below `md`, so the link itself stays as wide as its text. */}
 				<div className="flex w-full md:w-auto">
 					<Link
 						href={`${hrefBase}#top`}
@@ -37,7 +40,7 @@ export function Header({ locale, dict, homePage = false }: HeaderProps) {
 
 				<nav
 					aria-label={dict.a11y.mainNavigation}
-					className="mt-1 min-w-min flex-1 md:mt-0 md:ml-auto md:flex-initial"
+					className="mt-1 grow basis-44 md:mt-0 md:ml-auto md:grow-0 md:basis-auto"
 				>
 					<ul className="flex flex-wrap gap-x-2 gap-y-1">
 						{navItems.map((item) => (

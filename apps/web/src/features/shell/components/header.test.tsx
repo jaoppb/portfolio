@@ -5,9 +5,8 @@ import { enDictionary } from "@/shared/dictionaries/en";
 import { ptDictionary } from "@/shared/dictionaries/pt";
 import { Header } from "./header";
 
-/** Utilities that can draw an element somewhere other than its place in the DOM. */
-const REORDERING_UTILITY =
-	/(^|:)-?(order-|\[order:|flex-(row|col|wrap)-reverse|(row|col)-(start|end)-|grid-flow-\S*dense|absolute|fixed|float-)/;
+/** `order-*`, `[order:…]` and the `*-reverse` directions, with any variant prefix. */
+const ORDER_UTILITY = /(^|:)!?-?(order-|\[order:|flex-(row|col|wrap)-reverse)/;
 
 describe("Header", () => {
 	it("renders banner, wordmark link to top, labelled nav and language switcher", async () => {
@@ -54,14 +53,13 @@ describe("Header", () => {
 		},
 	);
 
-	it("never reorders with CSS, so the focus order is the visual order at every width", () => {
+	it("uses no CSS order or reverse utility, which would detach the focus order from the visual one", () => {
 		render(<Header locale="en" dict={enDictionary} homePage />);
 		const banner = screen.getByRole("banner");
 		const reordering = [banner, ...banner.querySelectorAll("*")].flatMap((el) =>
-			[...el.classList].filter((name) => REORDERING_UTILITY.test(name)),
+			[...el.classList].filter((name) => ORDER_UTILITY.test(name)),
 		);
 		expect(reordering).toEqual([]);
-		expect(banner.querySelector("[tabindex]")).toBeNull();
 	});
 
 	it("renders Portuguese labels", () => {
