@@ -41,7 +41,7 @@ Revert the switch commit and let `Deploy Production` run. The deploy starts afte
 Set by the owner, by hand, before the first pull request is merged:
 
 1. **Token permissions.** Add Single Redirect and Zone Settings to the plan token (Read) and to the apply token (Edit), as listed in [terraform-pipeline.md](terraform-pipeline.md#3-cloudflare-token-scopes). A passing plan on the pull request does not prove the tokens are ready: the two resources are new, so that plan has nothing to read. The apply after the merge needs Edit, and every later plan needs Read.
-2. **Search Console property.** Create the Domain property (section 6, steps 1 and 2) and hand over the TXT value. The record is one more commit in the first pull request, so that one apply covers it.
+2. **Search Console property.** Create the Domain property (section 6, steps 1 and 2). Its TXT value is `cloudflare_record.google_site_verification` in `terraform/main.tf`, so the same apply creates the record.
 
 ## 4. Checking the live site
 
@@ -104,13 +104,13 @@ Done by the owner on `https://jaoppb.com` before the switch. Tick each one in th
 Done by the owner. Steps 1 to 3 can happen before the switch; submit the sitemap only after it.
 
 1. Open [Google Search Console](https://search.google.com/search-console), add a property and choose **Domain**. Enter `jaoppb.com`. A Domain property covers the apex, `www`, `http` and `https`.
-2. Search Console shows a TXT record of the form `google-site-verification=<value>`. Do not add it in the Cloudflare dashboard: it goes in `terraform/main.tf`, so hand over the value. It is not a secret (anyone can read a TXT record) and it only proves ownership for the Google account that asked for it.
+2. Search Console shows a TXT record of the form `google-site-verification=<value>`. Do not add it in the Cloudflare dashboard: it is `cloudflare_record.google_site_verification` in `terraform/main.tf`. If Search Console ever shows a different value, change it there. It is not a secret (anyone can read a TXT record) and it only proves ownership for the Google account that asked for it.
 3. After the Terraform apply, press **Verify** in Search Console. Check the record first with `dig +short TXT jaoppb.com`.
 4. After the switch is deployed, open Sitemaps, enter `https://jaoppb.com/sitemap.xml` and submit. The status should become "Success" with 2 discovered pages.
 5. In URL inspection, inspect `https://jaoppb.com/en` and `https://jaoppb.com/pt` and request indexing for each.
 6. Open [Bing Webmaster Tools](https://www.bing.com/webmasters), choose **Import from Google Search Console** and import `jaoppb.com`. The sitemap comes with it; check it under Sitemaps.
 
-The zone's other TXT records (SPF, DMARC, DKIM, `_vercel`) are not managed by Terraform. Leave them.
+The zone's other TXT records (SPF, DMARC, DKIM, `_vercel`) are not managed by Terraform. Leave them. The verification record sits next to the SPF record on the apex; a name can hold several TXT records.
 
 ## 7. Evidence
 

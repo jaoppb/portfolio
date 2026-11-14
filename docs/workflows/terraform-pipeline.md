@@ -62,11 +62,11 @@ What each zone permission is for:
 | Permission | Resource in `terraform/main.tf` |
 |---|---|
 | Zone: Read | `data.cloudflare_zone.selected` |
-| DNS | `cloudflare_record.*` |
+| DNS | `cloudflare_record.*` (the Pages CNAMEs and the Search Console TXT record) |
 | Single Redirect | `cloudflare_ruleset.redirects` (the `www` to apex redirect, [#47](https://github.com/jaoppb/portfolio/issues/47)) |
 | Zone Settings | `cloudflare_zone_settings_override.zone` (Email Address Obfuscation off, #47) |
 
-Zone Settings has no narrower form: Edit covers every setting of the zone, not only the one managed here. Edit a token in place (My Profile, API Tokens, Edit): the token value does not change, so the GitHub secrets stay as they are. A resource whose permission is missing makes the plan or the apply fail with an authentication error that names the API route.
+The API calls Single Redirect "Dynamic URL Redirects" and Edit "Write"; that is what a token listing shows. Zone Settings has no narrower form: Edit covers every setting of the zone, not only the one managed here. Edit a token in place (My Profile, API Tokens, Edit): the token value does not change, so the GitHub secrets stay as they are. A resource whose permission is missing makes the plan or the apply fail with an authentication error that names the API route.
 
 **R2 S3 keys** (state backend): create an R2 API token under R2, Manage API Tokens, limited to the bucket `jaoppb-portfolio-tf-state`. Use Object Read only for `terraform-plan` and Object Read & Write for `terraform-apply`. How to derive the key pair from the token is described in [cloudflare-import.md](cloudflare-import.md#4-credentials). Rotate the keys by hand.
 

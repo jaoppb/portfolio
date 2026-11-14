@@ -82,3 +82,13 @@ resource "cloudflare_zone_settings_override" "zone" {
     email_obfuscation = "off"
   }
 }
+
+# Proves ownership of the domain to Google Search Console (docs/workflows/launch.md).
+# The value is public, like every TXT record, and only works for the account that asked for it.
+resource "cloudflare_record" "google_site_verification" {
+  zone_id = data.cloudflare_zone.selected.id
+  name    = "@"
+  content = "\"google-site-verification=w7Tjw8Y15UWOGG4c-q3pg1A2RT3c0mLUDm-LtTsjK-s\""
+  type    = "TXT"
+  ttl     = 1
+}
