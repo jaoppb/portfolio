@@ -32,9 +32,9 @@ describe("deploy workflows build env", () => {
 		});
 	});
 
-	it("preview builds with a placeholder URL and noindex", () => {
+	it("preview builds with its own branch alias URL and noindex", () => {
 		expect(buildSiteEnv("deploy-preview.yml")).toMatchObject({
-			NEXT_PUBLIC_SITE_URL: "https://example.com",
+			NEXT_PUBLIC_SITE_URL: expect.stringContaining("steps.preview.outputs.alias_url"),
 			NEXT_PUBLIC_ROBOTS_NOINDEX: "1",
 		});
 	});
