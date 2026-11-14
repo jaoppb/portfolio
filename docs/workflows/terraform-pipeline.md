@@ -50,12 +50,23 @@ Create the tokens in the dashboard under My Profile, API Tokens.
 **Plan token** (`terraform-plan` / `CLOUDFLARE_API_TOKEN`):
 
 - Account: Cloudflare Pages: Read
-- Zone: Zone: Read, DNS: Read, limited to `jaoppb.com`
+- Zone: Zone: Read, DNS: Read, Single Redirect: Read, Zone Settings: Read, limited to `jaoppb.com`
 
 **Apply token** (`terraform-apply` / `TF_CLOUDFLARE_API_TOKEN`):
 
 - Account: Cloudflare Pages: Edit
-- Zone: Zone: Read, DNS: Edit, limited to `jaoppb.com`
+- Zone: Zone: Read, DNS: Edit, Single Redirect: Edit, Zone Settings: Edit, limited to `jaoppb.com`
+
+What each zone permission is for:
+
+| Permission | Resource in `terraform/main.tf` |
+|---|---|
+| Zone: Read | `data.cloudflare_zone.selected` |
+| DNS | `cloudflare_record.*` (the Pages CNAMEs and the Search Console TXT record) |
+| Single Redirect | `cloudflare_ruleset.redirects` (the `www` to apex redirect, [#47](https://github.com/jaoppb/portfolio/issues/47)) |
+| Zone Settings | `cloudflare_zone_settings_override.zone` (Email Address Obfuscation off, #47) |
+
+The API calls Single Redirect "Dynamic URL Redirects" and Edit "Write"; that is what a token listing shows. Zone Settings has no narrower form: Edit covers every setting of the zone, not only the one managed here. Edit a token in place (My Profile, API Tokens, Edit): the token value does not change, so the GitHub secrets stay as they are. A resource whose permission is missing makes the plan or the apply fail with an authentication error that names the API route.
 
 **R2 S3 keys** (state backend): create an R2 API token under R2, Manage API Tokens, limited to the bucket `jaoppb-portfolio-tf-state`. Use Object Read only for `terraform-plan` and Object Read & Write for `terraform-apply`. How to derive the key pair from the token is described in [cloudflare-import.md](cloudflare-import.md#4-credentials). Rotate the keys by hand.
 
@@ -75,3 +86,5 @@ After the first apply the ordering problem does not come back, because the Pages
 - **Plan fails with an auth error on init.** Check that the R2 key pair in `terraform-plan` is the derived pair (token ID and SHA-256 of the token value), not the raw token.
 - **Apply waits and never starts.** The `terraform-apply` approval is pending, or another apply holds the `terraform-apply` group.
 - **Apply fails on a resource that already exists.** Something was created by hand after the inventory in `cloudflare-import.md`. Import it into the state and run the apply again.
+- **Apply fails on `cloudflare_ruleset.redirects` because a ruleset already exists.** A zone has one ruleset per phase. If a redirect rule was ever created in the dashboard (Rules, Redirect Rules), the zone already has the `http_request_dynamic_redirect` ruleset and the plan does not see it. Import it (`terraform import cloudflare_ruleset.redirects zone/<zone_id>/<ruleset_id>`, run locally with the credentials of [cloudflare-import.md](cloudflare-import.md#4-credentials)) or delete the dashboard rules, then run the apply again. After that the resource owns the whole phase: a redirect rule added in the dashboard is removed by the next apply, so add rules in `terraform/main.tf`.
+- **Apply fails on `cloudflare_zone_settings_override.zone`.** The provider reads every zone setting when it creates and refreshes this resource, not only the one it manages. If the error names a missing permission, check Zone Settings on the token. If it names a setting the plan of the zone does not have, this resource changed nothing (other resources of the same apply may already be in place): report it in the issue instead of retrying.

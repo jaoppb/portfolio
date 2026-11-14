@@ -75,3 +75,8 @@ quality:
     rm -rf .lighthouseci quality/reports
     NEXT_PUBLIC_SITE_URL=https://example.com NEXT_PUBLIC_ROBOTS_NOINDEX= pnpm build
     pnpm quality:axe; axe=$?; pnpm quality:lighthouse; lighthouse=$?; pnpm quality:lighthouse:summary; summary=$?; exit $((axe || lighthouse || summary))
+
+# Audit the live production site; state is "noindex" before the launch flip, "indexable" after (docs/workflows/launch.md)
+quality-production state:
+    rm -rf .lighthouseci quality/reports
+    export QUALITY_TARGET=production QUALITY_EXPECT={{state}}; pnpm quality:live; live=$?; pnpm quality:axe:audit; axe=$?; pnpm quality:lighthouse:audit; lighthouse=$?; pnpm quality:lighthouse:summary; summary=$?; exit $((live || axe || lighthouse || summary))

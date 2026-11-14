@@ -1,4 +1,10 @@
 {
 	"port": 8788,
-	"paths": ["/en", "/pt"]
+	"paths": ["/en", "/pt"],
+	"defaultPath": "/en",
+	"production": {
+		"site": "https://jaoppb.com",
+		"www": "https://www.jaoppb.com",
+		"pagesDev": "https://jaoppb-portfolio.pages.dev"
+	}
 }

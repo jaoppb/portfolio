@@ -147,6 +147,27 @@ describe("static export: indexable (production)", () => {
 		expect(out.read("sitemap.xml")).not.toContain("404");
 	});
 
+	// Cloudflare Pages reads both files from the export. What the edge does with them is
+	// checked on the live hosts (docs/workflows/launch.md).
+	it("ships the redirect of / to the default locale", () => {
+		const rules = out
+			.read("_redirects")
+			.split("\n")
+			.filter((line) => line !== "" && !line.startsWith("#"));
+		expect(rules).toEqual(["/ /en 302"]);
+	});
+
+	it("ships a noindex header for the pages.dev hosts only", () => {
+		const headers = out.read("_headers");
+		for (const host of [
+			"https://:project.pages.dev/*",
+			"https://:version.:project.pages.dev/*",
+		]) {
+			expect(headers).toContain(`${host}\n  X-Robots-Tag: noindex\n`);
+		}
+		expect(headers.match(/X-Robots-Tag/g)).toHaveLength(2);
+	});
+
 	it("emits the OG image as a 1200x630 PNG", () => {
 		const buf = readFileSync(path.join(root, ".export-test/indexable/en/opengraph-image"));
 		expect(buf.subarray(1, 4).toString()).toBe("PNG");

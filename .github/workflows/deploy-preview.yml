@@ -28,11 +28,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
+      # The build needs the site URL, and only the branch alias is known before the deploy
+      # (the per-deploy hash URL is not). The deploy step checks the alias against wrangler.
+      - name: Resolve preview URL
+        id: preview
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          # Cloudflare Pages: lowercase, every other character becomes a hyphen, at most 28
+          # characters, no leading or trailing hyphen. Only the first two are documented.
+          ALIAS=$(printf '%s' "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | LC_ALL=C.UTF-8 sed -E 's/[^a-z0-9]/-/g' | cut -c 1-28 | sed -E 's/^-+//; s/-+$//')
+          if [ -z "$ALIAS" ]; then
+            echo "::error::Branch name has no letter or digit to build a preview alias from."
+            exit 1
+          fi
+          echo "alias_url=https://${ALIAS}.jaoppb-portfolio.pages.dev" >> "$GITHUB_OUTPUT"
+
       - name: Build site
         uses: ./.github/actions/build-site
         env:
           # Previews are not on the production domain and must never be indexed (#43).
-          NEXT_PUBLIC_SITE_URL: https://example.com
+          NEXT_PUBLIC_SITE_URL: ${{ steps.preview.outputs.alias_url }}
           NEXT_PUBLIC_ROBOTS_NOINDEX: "1"
 
       - name: Deploy Preview to Cloudflare Pages
@@ -42,6 +58,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           BRANCH_NAME: ${{ github.head_ref }}
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+          ALIAS_URL: ${{ steps.preview.outputs.alias_url }}
           NO_COLOR: "1"
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
@@ -62,6 +79,16 @@ jobs:
             exit 1
           fi
           echo "preview_url=${PREVIEW_URL}" >> "$GITHUB_OUTPUT"
+
+          # The site was built with ALIAS_URL in its canonical, hreflang and OG URLs.
+          DEPLOYED_ALIAS=$(echo "$DEPLOY_OUTPUT" | sed -n 's/.*Deployment alias URL: \(https:[^ ]*\).*/\1/p' | head -n 1)
+          if [ -z "$DEPLOYED_ALIAS" ]; then
+            # wrangler omits the alias when it cannot read the final status of the deploy.
+            echo "::warning::wrangler reported no alias URL, so $ALIAS_URL was not checked."
+          elif [ "$DEPLOYED_ALIAS" != "$ALIAS_URL" ]; then
+            echo "::error::The site was built for $ALIAS_URL but Cloudflare Pages serves the branch on $DEPLOYED_ALIAS. Fix the alias rule in the Resolve preview URL step."
+            exit 1
+          fi
 
       - name: Update Pull Request Preview Comment
         if: steps.deploy.outputs.preview_url != ''
