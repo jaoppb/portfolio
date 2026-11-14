@@ -36,11 +36,11 @@ Budgets that must hold on **every** run, because they do not depend on the speed
 | Best practices score | 100 | 100, 100 | none |
 | SEO score | 100 | 100, 100 | none |
 | SEO audits `is-crawlable`, `canonical`, `hreflang`, `meta-description`, `document-title`, `robots-txt`, `http-status-code` | pass | pass | none |
-| JavaScript, transferred | 157 000 B | 142 223 B | 10% |
-| Fonts, transferred | 95 000 B | 89 652 B | 6% |
-| CSS, transferred | 8 000 B | 5 961 B | 34% |
-| HTML document, transferred | 14 000 B | 9 923 B, 10 261 B | 36% |
-| Total, transferred | 297 000 B | 269 210 B, 269 532 B | 10% |
+| JavaScript, transferred | 157 000 B | 142 215 B | 10% |
+| Fonts, transferred | 95 000 B | 89 647 B | 6% |
+| CSS, transferred | 8 000 B | 5 852 B | 37% |
+| HTML document, transferred | 14 000 B | 9 297 B, 9 521 B | 47% |
+| Total, transferred | 297 000 B | 267 686 B, 267 899 B | 11% |
 | Requests | 22 | 20 | 2 requests |
 | Third-party requests | 0 | 0 | none |
 | Cumulative Layout Shift | 0.01 | 0 | 0.01 |
@@ -59,7 +59,7 @@ Budgets judged on the **median** of the 3 runs, because timing varies between ru
 
 The timing headroom is wide on purpose. Across three CI runs of the gate the runner's CPU speed differed by a factor of two (Lighthouse benchmark index 4 300 and 2 300 to 2 500) and TBT followed it, and one single run out of eighteen had an LCP of 2 504 ms. The median of 3 absorbs one such outlier per page. These limits are there to catch a real regression, such as a render-blocking resource or heavy client-side JavaScript, and the byte budgets catch the small ones exactly.
 
-Measured on `main` at `8e52337` (2026-11-13) with Lighthouse 13.6.0 and Chrome 157 on `ubuntu-latest`. Transferred sizes are with the Brotli compression of `wrangler pages dev`.
+The limits were set on `main` at `8e52337` (2026-11-13) and the measured values were taken again at `b09abf2` (2026-11-14), after #44 removed the SystemStatus placeholder and added the 404 pages. That change lowered the total by about 1.6 kB (under 1%), so no limit moved: nothing was loosened, and a reduction that small does not justify tightening. The timing medians of the run at `b09abf2` (performance 100, LCP 774 to 775 ms, TBT 56 to 57 ms) are inside the ranges above. Lighthouse 13.6.0 and Chrome 157 on `ubuntu-latest`. Transferred sizes are with the Brotli compression of `wrangler pages dev`.
 
 ## 4. Reading a failure
 
