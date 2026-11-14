@@ -14,6 +14,7 @@
 		"quality:lighthouse": "node quality/with-server.mjs pnpm run quality:lighthouse:audit",
 		"quality:lighthouse:audit": "lhci autorun --config=quality/lighthouserc.cjs",
 		"quality:lighthouse:summary": "node quality/lighthouse-summary.mjs",
+		"quality:live": "node quality/live-check.mjs",
 		"quality:serve": "wrangler pages dev apps/web/out --ip 127.0.0.1",
 		"test": "pnpm -r --if-present run test",
 		"test:quality": "node --test \"quality/*.test.mjs\"",

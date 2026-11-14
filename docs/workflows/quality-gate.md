@@ -6,9 +6,9 @@ Lighthouse and axe checks that fail CI when performance, accessibility, SEO or b
 
 - **The static export, in indexable mode.** The job builds the site with `NEXT_PUBLIC_SITE_URL=https://example.com` and **without** `NEXT_PUBLIC_ROBOTS_NOINDEX`. Previews and pre-launch production builds set that flag, which would fail the SEO audits by design; the gate checks what production serves after launch. The noindex output is covered by `apps/web/src/app/seo-export.test.ts`.
 - **Served like Cloudflare Pages.** `wrangler pages dev apps/web/out` serves the export on `127.0.0.1:8788`, with the Pages routing (`/en` resolves to `en.html`) and the `_headers` file. It runs offline and needs no Cloudflare credentials.
-- **Pages:** `/en` and `/pt` (`quality/targets.json`). The root `/` redirect stub is not audited.
+- **Pages:** `/en` and `/pt` (`quality/targets.json`). The root `/` is a redirect to `/en` and is not audited.
 
-Not covered: the real Cloudflare edge (compression, cache headers, CDN latency) and anything that needs interaction. End-to-end tests are [#52](https://github.com/jaoppb/portfolio/issues/52).
+Not covered: the real Cloudflare edge (compression, cache headers, CDN latency, zone features that rewrite the page) and anything that needs interaction. The live site has its own audit, run by hand and outside this gate: see [launch.md](launch.md#4-checking-the-live-site). End-to-end tests are [#52](https://github.com/jaoppb/portfolio/issues/52).
 
 ## 2. axe
 

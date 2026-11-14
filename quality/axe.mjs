@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 /**
  * Runs axe-core in a real Chrome on every page of the matrix (see axe-report.mjs) and
- * fails on any violation. Expects the site to be served already: use with-server.mjs.
+ * fails on any violation. Expects the site to be served already: use with-server.mjs, or
+ * QUALITY_TARGET=production for the live site (target.cjs).
  */
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import axe from "axe-core";
 import puppeteer from "puppeteer-core";
 import { applyExemptions, buildMatrix, renderSummary } from "./axe-report.mjs";
+import target from "./target.cjs";
 
 const here = import.meta.dirname;
 const readJson = (file) => JSON.parse(readFileSync(path.join(here, file)));
-const { port, paths } = readJson("targets.json");
+const { paths, urlOf } = target;
 const exemptions = readJson("axe-exemptions.json");
 const reportDir = path.join(here, "reports/axe");
 
@@ -32,7 +34,7 @@ async function audit(browser, { path: pagePath, scheme, viewport, label }) {
 			{ name: "prefers-color-scheme", value: scheme },
 			{ name: "prefers-reduced-motion", value: "reduce" },
 		]);
-		const url = `http://127.0.0.1:${port}${pagePath}`;
+		const url = urlOf(pagePath);
 		const response = await page.goto(url, { waitUntil: "load" });
 		// An error page would pass axe; the audit is only worth something on the real page.
 		// Revisits of a page answer 304 from the browser cache, so only error statuses fail.
