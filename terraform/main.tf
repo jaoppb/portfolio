@@ -43,6 +43,7 @@ resource "cloudflare_pages_domain" "www" {
   depends_on = [cloudflare_record.www]
 }
 
+# Plan check only, not to be merged.
 # The apex is the canonical host. www stays a proxied record and a Pages domain so the
 # request reaches Cloudflare with a valid certificate, and this rule answers it first.
 # /.well-known/ is left alone, because certificate validation may be served from it.
