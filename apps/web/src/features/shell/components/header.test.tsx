@@ -30,18 +30,34 @@ describe("Header", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("keeps DOM order wordmark, nav, language switcher", () => {
-		render(<Header locale="en" dict={enDictionary} homePage />);
-		const names = screen.getAllByRole("link").map((l) => l.textContent);
-		expect(names).toEqual([
-			"João Pedro",
-			"About",
-			"Projects",
-			"Experience",
-			"Contact",
+	it.each([
+		[
 			"en",
+			enDictionary,
+			["João Pedro", "About", "Projects", "Experience", "Contact", "en", "pt"],
+		],
+		[
 			"pt",
-		]);
+			ptDictionary,
+			["João Pedro", "Sobre", "Projetos", "Experiência", "Contato", "en", "pt"],
+		],
+	] as const)(
+		"keeps DOM order wordmark, nav, language switcher in %s",
+		(locale, dict, expected) => {
+			render(<Header locale={locale} dict={dict} homePage />);
+			const names = screen.getAllByRole("link").map((l) => l.textContent);
+			expect(names).toEqual(expected);
+		},
+	);
+
+	it("never reorders with CSS, so the focus order is the visual order at every width", () => {
+		render(<Header locale="en" dict={enDictionary} homePage />);
+		const banner = screen.getByRole("banner");
+		const reordering = [banner, ...banner.querySelectorAll("*")].flatMap((el) =>
+			[...el.classList].filter((name) => /(^|:)-?(order-|flex-(row|col)-reverse)/.test(name)),
+		);
+		expect(reordering).toEqual([]);
+		expect(banner.querySelector("[tabindex]")).toBeNull();
 	});
 
 	it("renders Portuguese labels", () => {
