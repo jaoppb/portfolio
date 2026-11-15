@@ -23,18 +23,20 @@ Notes:
 
 ## 2. The launch switch
 
-`NEXT_PUBLIC_ROBOTS_NOINDEX: "1"` in the `Build site` step of `deploy-production.yml` keeps production hidden: `robots.txt` disallows everything, the sitemap is empty and every page carries `noindex, nofollow`. Removing that line is the launch. The next production deploy is indexable.
+`NEXT_PUBLIC_ROBOTS_NOINDEX: "1"` in the `Build site` step of a deploy workflow hides that deploy: `robots.txt` disallows everything, the sitemap is empty and every page carries `noindex, nofollow`. `deploy-production.yml` had that line until the launch. Removing it was the launch: every production deploy since is indexable.
 
 Previews always set the flag (`deploy-preview.yml`), so they stay hidden.
 
-The launch is two pull requests:
+The launch was two pull requests:
 
-1. **Everything except the switch.** Redirects, headers, Terraform, the audit tooling and this document. After the merge, the owner approves the `terraform-apply` deployment, and the live state is checked while the site is still hidden (section 4, state `noindex`).
-2. **The switch alone.** One commit that removes the line. It is opened only after the owner says go, and after #74, #75, #76 and #77 are merged.
+1. **Everything except the switch** (#82). Redirects, headers, Terraform, the audit tooling and this document. After the merge the owner approved the `terraform-apply` deployment, and the live state was checked while the site was still hidden (section 4, state `noindex`).
+2. **The switch.** The last commit of its pull request removes the line, so it reverts on its own; the commit before it records the evidence. It was opened only after #74, #75, #76, #77 and #85 were merged, and pushed only after the owner said go.
 
 ### Rollback
 
-Revert the switch commit and let `Deploy Production` run. The deploy starts after the `CI` run of the revert on `main` succeeds, so the pages carry `noindex` again about five minutes after the merge. `robots.txt` is served with a four-hour browser cache by the zone, so a crawler that just fetched it can keep the old one for that long; the same delay applies right after the switch. A revert does not undo what crawlers fetched in between: pages that were indexed stay in results until the crawler sees the `noindex` again, which can take days. That is why the switch needs the owner's go.
+Revert the switch commit and let `Deploy Production` run. The deploy starts after the `CI` run of the revert on `main` succeeds, so the pages carry `noindex` again about five minutes after the merge. `robots.txt` is served with a four-hour browser cache by the zone, so a crawler that just fetched it can keep the old one for that long; the same delay applies right after the switch. A revert does not undo what crawlers fetched in between: pages that were indexed stay in results until the crawler sees the `noindex` again, which can take days. That is why the switch needed the owner's go.
+
+Revert that commit only, not the whole pull request, so the evidence in section 7 stays. While a revert is in place, this section and the quality gate document still describe the site as indexable. Record the revert in #47.
 
 ## 3. Prerequisites
 
@@ -88,7 +90,7 @@ A preview is built with its branch alias (`https://<branch>.jaoppb-portfolio.pag
 
 ## 5. Manual passes
 
-Done by the owner on `https://jaoppb.com` before the switch. Tick each one in the pull request of the switch.
+Done by the owner on `https://jaoppb.com` before the switch, and ticked in the description of the pull request of the switch.
 
 - **Keyboard.** On `/en` and `/pt`, at a phone width and at a desktop width: Tab through the whole page. The skip link is first and works, focus is always visible, the order follows the reading order, the language switcher and every link work with Enter, nothing traps focus.
 - **Screen reader.** One reader (Orca, NVDA or VoiceOver) on `/en` and `/pt`: the page language is announced correctly, headings form one outline, landmarks and the navigation are named, links make sense out of context, and links that open a new tab say so.
@@ -114,7 +116,7 @@ The zone's other TXT records (SPF, DMARC, DKIM, `_vercel`) are not managed by Te
 
 ## 7. Evidence
 
-Each run of section 4 is recorded here with its date and commit.
+Each run of section 4 up to the switch is recorded here with its date and commit. The run after the switch is recorded in #47, because it happens after the last change to this document.
 
 ### 2026-11-14, before the first pull request (`8bc1b24` deployed)
 
@@ -135,3 +137,29 @@ Read-only baseline, from a local machine. It is the state the first pull request
 | `pages.dev` | 200, no `X-Robots-Tag` (not yet set) |
 | axe on `jaoppb.com` | 0 violations in all 8 runs |
 | Lighthouse on `jaoppb.com` (median of 3, local machine) | Performance 92, accessibility 100, best practices 100 on both pages. SEO 66, as expected while hidden |
+
+### 2026-11-14, after #82 was merged and applied (`67865c3`)
+
+| Check | Result |
+|---|---|
+| Terraform apply (run `43630720947`) | `3 added, 0 changed, 0 destroyed`: the TXT record, the redirect rule, Email Address Obfuscation off |
+| Second plan, on the throwaway pull request #86 (closed, not merged) | `No changes. Your infrastructure matches the configuration.` |
+| Production deploy of `67865c3` (run `43630903405`) | Succeeded |
+| `/` | 302 to `/en` |
+| `www` | 301 to the apex, path and query kept (`/pt?x=1&y=2`) |
+| `http://` | 301 on both hosts; `http://www` goes straight to `https://jaoppb.com/` |
+| Email link | A plain `mailto:` again, no `/cdn-cgi/` in the page |
+| `pages.dev` | 200 with `X-Robots-Tag: noindex` on the project host and on the deploy's hash URL |
+| TXT record | `dig TXT jaoppb.com` shows the verification string once, in one pair of quotes, next to the SPF record |
+| `jaoppb.com` | Still hidden: `robots.txt` disallows everything, the sitemap is empty |
+| `quality/live-check.mjs`, state `noindex` | 12 of 12 checks pass |
+
+### 2026-11-15 (UTC), before the switch (`c20c2ae` deployed)
+
+`Quality Production` on GitHub, state `noindex`, run `43660915111`, after #74, #75, #76, #77 and #85 were deployed.
+
+| Check | Result |
+|---|---|
+| Live checks | 12 of 12 pass; 9 of 9 links answer on each page |
+| axe | 0 violations in all 8 runs |
+| Lighthouse, median of 3 | Performance 100, accessibility 100, best practices 100 on both pages. SEO 66, as expected while hidden |
