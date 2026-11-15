@@ -34,9 +34,9 @@ jobs:
       - name: Build site
         uses: ./.github/actions/build-site
         env:
+          # The noindex flag of the previews is deliberately absent: production is indexable
+          # since the launch (#47). docs/workflows/launch.md says how to hide the site again.
           NEXT_PUBLIC_SITE_URL: https://jaoppb.com
-          # Launch switch: remove this line at launch (#47) to make the site indexable.
-          NEXT_PUBLIC_ROBOTS_NOINDEX: "1"
 
       - name: Deploy to Cloudflare Pages
         id: deploy
