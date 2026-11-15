@@ -65,6 +65,40 @@ Effort is measured in Fibonacci points: `1`, `2`, `3`, `5`, `8`, `13`.
 - `5`–`8`: Substantial features or refactors requiring multiple files or careful coordination.
 - `13`: Upper limit for a single story. Any issue reaching `13` should be split into smaller sub-issues.
 
+### Where the fields live
+
+Priority and Effort are fields on the [Portfolio GitHub Project](https://github.com/users/jaoppb/projects/6). They are the **only** source of truth: do not write `Priority:` or `Effort:` lines in issue bodies. `just issues-check` cannot see project fields, so nothing in the repo enforces them.
+
+- **`Priority`**: single select `P0`–`P3`. Set on every open issue, epics included.
+- **`Effort`**: single select `1, 2, 3, 5, 8, 13`. Set on every open issue except epics, which are not estimated.
+- **`Status`**: `Triage` (default on add), `Todo`, `In Progress`, `Done`.
+
+New issues are added to the project automatically with Status `Triage`. Pull requests are not added. Two views list untriaged items: **Needs Triage (Priority)** (`is:open no:priority`) and **Needs Triage (Effort)** (`is:open no:effort -label:type:epic`). Triage means filling those fields and moving the item to `Todo`.
+
+Views: a board grouped by Status, a table grouped by Milestone, and the two Needs Triage views. All filter on `is:open`.
+
+Reading and setting the fields from the CLI (requires the `project` token scope):
+
+```bash
+# Read: Priority and Effort are not in `gh issue view`
+gh project item-list 6 --owner jaoppb --format json \
+  -q '.items[] | {n: .content.number, priority, effort, status}'
+
+# Write: look up ids once, then edit the item
+gh project field-list 6 --owner jaoppb --format json
+gh project item-edit --id <item-id> --project-id PVT_kwHOA6x_Is4BroOj \
+  --field-id <field-id> --single-select-option-id <option-id>
+```
+
+### Project setup (manual)
+
+`tools.toml` has no project schema, so the project is configured by hand and is not drift-checked yet. To recreate it:
+
+1. `gh project create --owner jaoppb --title Portfolio`, then `gh project link <n> --owner jaoppb --repo jaoppb/portfolio`.
+2. Create the `Priority` and `Effort` single-select fields with the options above, and add a `Triage` option to `Status`.
+3. In the project UI, Workflows: enable **Auto-add to project** with filter `is:issue is:open repo:jaoppb/portfolio`, and **Item added to project** setting Status to `Triage`. Neither workflow can be configured through the API.
+4. Create the four views above (view layout and filters are also UI-only).
+
 ---
 
 ## 5. Development Lifecycle & Git Flow
