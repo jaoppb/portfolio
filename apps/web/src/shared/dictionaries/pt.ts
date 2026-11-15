@@ -4,7 +4,7 @@ export const ptDictionary: Dictionary = {
 	meta: {
 		title: "João Pedro — Engenheiro de Software",
 		description:
-			"Portfólio pessoal e vitrine de engenharia por João Pedro. Construído com exportação estática Next.js.",
+			"Portfólio pessoal de João Pedro, engenheiro de software full stack com foco em arquitetura e cloud.",
 		siteName: "Portfólio de João Pedro",
 	},
 	a11y: {
