@@ -4,7 +4,7 @@ export const enDictionary: Dictionary = {
 	meta: {
 		title: "João Pedro — Software Engineer",
 		description:
-			"Personal portfolio and engineering showcase by João Pedro. Built with Next.js static export.",
+			"Personal portfolio of João Pedro, a full stack software engineer focused on architecture and cloud.",
 		siteName: "João Pedro Portfolio",
 	},
 	a11y: {
