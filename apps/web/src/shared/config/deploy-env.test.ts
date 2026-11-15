@@ -25,11 +25,12 @@ function buildSiteEnv(file: string): Record<string, string> {
 }
 
 describe("deploy workflows build env", () => {
-	it("production builds with its URL and stays noindex until launch (#47)", () => {
-		expect(buildSiteEnv("deploy-production.yml")).toMatchObject({
-			NEXT_PUBLIC_SITE_URL: "https://jaoppb.com",
-			NEXT_PUBLIC_ROBOTS_NOINDEX: "1",
-		});
+	it("production builds with its URL and is indexable since the launch (#47)", () => {
+		const env = buildSiteEnv("deploy-production.yml");
+		expect(env).toMatchObject({ NEXT_PUBLIC_SITE_URL: "https://jaoppb.com" });
+		// Not in the step, and not at job or workflow level either.
+		const workflow = readFileSync(path.join(workflows, "deploy-production.yml"), "utf8");
+		expect(workflow).not.toContain("NEXT_PUBLIC_ROBOTS_NOINDEX");
 	});
 
 	it("preview builds with its own branch alias URL and noindex", () => {
