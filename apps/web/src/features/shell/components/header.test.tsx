@@ -5,6 +5,9 @@ import { enDictionary } from "@/shared/dictionaries/en";
 import { ptDictionary } from "@/shared/dictionaries/pt";
 import { Header } from "./header";
 
+/** `order-*`, `[order:…]` and the `*-reverse` directions, with any variant prefix. */
+const ORDER_UTILITY = /(^|:)!?-?(order-|\[order:|flex-(row|col|wrap)-reverse)/;
+
 describe("Header", () => {
 	it("renders banner, wordmark link to top, labelled nav and language switcher", async () => {
 		const { container } = render(<Header locale="en" dict={enDictionary} homePage />);
@@ -30,18 +33,33 @@ describe("Header", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("keeps DOM order wordmark, nav, language switcher", () => {
-		render(<Header locale="en" dict={enDictionary} homePage />);
-		const names = screen.getAllByRole("link").map((l) => l.textContent);
-		expect(names).toEqual([
-			"João Pedro",
-			"About",
-			"Projects",
-			"Experience",
-			"Contact",
+	it.each([
+		[
 			"en",
+			enDictionary,
+			["João Pedro", "About", "Projects", "Experience", "Contact", "en", "pt"],
+		],
+		[
 			"pt",
-		]);
+			ptDictionary,
+			["João Pedro", "Sobre", "Projetos", "Experiência", "Contato", "en", "pt"],
+		],
+	] as const)(
+		"keeps DOM order wordmark, nav, language switcher in %s",
+		(locale, dict, expected) => {
+			render(<Header locale={locale} dict={dict} homePage />);
+			const names = screen.getAllByRole("link").map((l) => l.textContent);
+			expect(names).toEqual(expected);
+		},
+	);
+
+	it("uses no CSS order or reverse utility, which would detach the focus order from the visual one", () => {
+		render(<Header locale="en" dict={enDictionary} homePage />);
+		const banner = screen.getByRole("banner");
+		const reordering = [banner, ...banner.querySelectorAll("*")].flatMap((el) =>
+			[...el.classList].filter((name) => ORDER_UTILITY.test(name)),
+		);
+		expect(reordering).toEqual([]);
 	});
 
 	it("renders Portuguese labels", () => {
