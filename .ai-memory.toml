@@ -1,0 +1,37 @@
+workspace = "default"
+project = "jaoppb-portfolio"
+drop_subagent_captures = true
+
+[briefing]
+inject_on_session_start = true
+max_chars = 4000
+
+[capture]
+ignore_paths = [
+  ".env",
+  "**/.env",
+  ".env.*",
+  "**/.env.*",
+  "*.tfvars",
+  "**/*.tfvars",
+  "*.tfstate",
+  "*.tfstate.*",
+  "**/.terraform/**",
+  "*.pem",
+  "*.key",
+  "*.p12",
+  "*.pfx",
+  "*.db*",
+  "**/*.db*",
+  "AGENTS.md",
+  "docs/**",
+  "node_modules/**",
+  ".next/**",
+  "out/**",
+  "dist/**",
+  "coverage/**",
+  ".lighthouseci/**",
+  "quality/reports/**",
+  ".wrangler/**",
+  ".direnv/**",
+]
