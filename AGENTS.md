@@ -18,7 +18,7 @@ This repository is João Pedro's personal portfolio website and project showcase
 - **Creation and Triage.** File issues using the corresponding template from `.github/ISSUE_TEMPLATE/`. Upon creation or triage:
   - Set the appropriate `area:` label.
   - Assign the target milestone (`v0.1.0`, `v0.2.0`, etc.).
-  - Set Priority (`P0`–`P3`) and Effort (Fibonacci points: `1`, `2`, `3`, `5`, `8`, `13`).
+  - Set Priority (`P0`–`P3`) and Effort (Fibonacci points: `1`, `2`, `3`, `5`, `8`, `13`) as fields in the [Portfolio GitHub Project](https://github.com/users/jaoppb/projects/6), not in the issue body. New issues are added automatically with Status `Triage`; see [docs/workflows/issues.md](docs/workflows/issues.md#where-the-fields-live) for the `gh project` recipe.
   - Link dependencies using native GitHub blocked-by links and list them under `## Depends on`.
   - Link parent epic if the issue is part of an epic.
 - **Priority.**
@@ -42,6 +42,7 @@ This repository is João Pedro's personal portfolio website and project showcase
 | Labels (`type:*`, `area:*`) and SemVer milestones on open issues | `just issues-check` (`jaoppb/tools`) | Enforced |
 | Repository settings, label taxonomy, and milestones drift | `just repo-check` (`jaoppb/tools`) | Enforced |
 | Form structure | `.github/ISSUE_TEMPLATE/*.yml` with `blank_issues_enabled: false` | Enforced |
+| Priority and Effort set on open issues | Project fields + "Needs Triage" views (`jaoppb/tools` drift check: planned) | Manual |
 | Merge method (merge commit only) | GitHub repository settings & PR review | Enforced |
 | GitHub Actions on latest major | PR review (automated check: #30) | Manual (planned) |
 
